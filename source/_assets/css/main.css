@@ -1,0 +1,164 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+:root {
+  --font-sans: 'Noto Sans TC', sans-serif;
+  --font-en: 'Rajdhani', 'Noto Sans TC', sans-serif;
+  --color-brand: #FFC800;
+  --color-brand2: #E0AC7E;
+  --color-red: #EF4444;
+  --color-green: #00845F;
+  --color-gray5: #2F3131;
+  --color-gray4: #636568;
+  --color-gray3: #969CA6;
+  --color-gray2: #C2C6CD;
+  --color-gray1: #EFF0F2;
+  --color-bg: #F3F4F5;
+  --color-bg2: #FBFBFC;
+  --shadow-card: 0 0 40px 0 #0000000A;
+}
+
+@layer components {
+  .app-user-fixed {
+    @apply fixed top-6 right-4 md:right-12 z-30 flex items-center gap-2.5;
+  }
+
+  .sidebar-link {
+    @apply self-stretch w-full px-4 py-[10px] rounded-[10px] inline-flex items-center gap-2 text-gray4 bg-brand2/0;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 1.7;
+    letter-spacing: 0.06em;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .sidebar-link:hover {
+    @apply bg-brand2/10 text-gray5;
+  }
+
+  .sidebar-link.active {
+    @apply bg-brand2/25 text-gray5;
+    font-weight: 700;
+  }
+
+  .sidebar-link i,
+  .sidebar-link svg {
+    @apply w-4 h-4 shrink-0 text-brand2;
+    transition: color 0.3s ease;
+  }
+
+  .sidebar-link:hover i,
+  .sidebar-link:hover svg {
+    @apply text-brand2;
+  }
+
+  .sidebar-link.active i,
+  .sidebar-link.active svg {
+    @apply text-gray5;
+  }
+
+  .locale-btn {
+    @apply text-gray3 transition-colors;
+  }
+
+  .locale-btn.is-active {
+    @apply text-gray5;
+  }
+
+  .feature-card {
+    @apply self-stretch min-h-[13rem] p-6 bg-white rounded-2xl shadow-card inline-flex flex-col items-end gap-3 overflow-hidden;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+
+  .feature-card:hover {
+    @apply shadow-[0px_0px_40px_0px_rgba(0,0,0,0.08)];
+  }
+
+  .enter-btn {
+    @apply pl-4 pr-3 py-1.5 bg-brand2 rounded-[20px] inline-flex items-center justify-center gap-1.5 text-white text-eb3 uppercase;
+    transition: background-color 0.3s ease;
+  }
+
+  .feature-card:hover .enter-btn {
+    @apply bg-brand2/90;
+  }
+}
+
+@layer utilities {
+  /* ================= Chinese Body ================= */
+  .text-cb1 {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 1.8;
+    letter-spacing: 0.06em;
+  }
+
+  .text-cb2 {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1.9;
+    letter-spacing: 0.06em;
+  }
+
+  .text-cb3 {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 1.7;
+    letter-spacing: 0.06em;
+  }
+
+  /* ================= Chinese Heading ================= */
+  .text-ch3 {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 1.3;
+    letter-spacing: 0.06em;
+  }
+
+  .text-ch4 {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 1.5;
+    letter-spacing: 0.06em;
+  }
+
+  .text-ch5 {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 1.5;
+    letter-spacing: 0.06em;
+  }
+
+  /* ================= English ================= */
+  .text-eh1 {
+    font-family: var(--font-en);
+    font-weight: 600;
+    font-size: 45px;
+    line-height: 1.3;
+    letter-spacing: 0.06em;
+  }
+
+  .text-eb2 {
+    font-family: var(--font-en);
+    font-weight: 600;
+    font-size: 16px;
+    line-height: normal;
+    letter-spacing: 0.06em;
+  }
+
+  .text-eb3 {
+    font-family: var(--font-en);
+    font-weight: 600;
+    font-size: 14px;
+    line-height: normal;
+    letter-spacing: 0.06em;
+  }
+}

@@ -1,0 +1,7 @@
+[build]
+  command = "npm run build && php vendor/bin/jigsaw build production"
+  publish = "build_production"
+
+[build.environment]
+  NODE_VERSION = "22"
+  PHP_VERSION = "8.2"

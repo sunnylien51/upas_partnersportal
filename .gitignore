@@ -11,10 +11,20 @@ desktop.ini
 
 # Logs
 *.log
+npm-debug.log
+hot
 
 # Dependencies
-node_modules/
+/node_modules/
+/vendor/
 
 # Environment
 .env
 .env.*
+
+# Jigsaw
+/build_local/
+/build_staging/
+/build_production/
+/cache/
+/source/assets/build/
