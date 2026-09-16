@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="canonical" href="/support">
+<title>技術支援中心 | Partners Portal</title>
+<meta name="description" content="合作夥伴入口網站">
+
+<link rel="icon" href="/images/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32.png">
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Rajdhani:wght@600&display=swap" rel="stylesheet">
+
+<script type="module" src="http://localhost:5173/@vite/client"></script>
+<link rel="stylesheet" href="http://localhost:5173/source/_assets/css/main.css">
+<script defer type="module" src="http://localhost:5173/source/_assets/js/main.js"></script>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+    </head>
+<body class="bg-bg text-gray5 font-sans antialiased selection:bg-brand2/60 selection:text-gray5 min-h-screen overflow-x-hidden">
+    <div class="flex min-h-screen">
+        <div id="sidebar-overlay" class="fixed inset-0 z-40 bg-gray5/40 hidden md:hidden"></div>
+
+<aside id="app-sidebar" class="fixed md:sticky top-0 left-0 z-50 md:z-10 flex h-screen w-60 shrink-0 flex-col justify-between overflow-hidden bg-white border-r border-gray1 shadow-[0px_0px_60px_0px_rgba(0,0,0,0.02)] -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
+    <div class="flex-1 self-stretch px-4 py-10 flex flex-col items-center gap-10 min-h-0">
+        <a href="/" class="flex justify-center items-center">
+            <img src="/images/logo.svg" alt="Partners Portal" width="116" height="44" class="w-[116px] h-11">
+        </a>
+
+        <nav class="self-stretch flex-1 flex flex-col items-start gap-1 overflow-y-auto" aria-label="主要選單">
+                            <a
+                    href="/"
+                    class="sidebar-link "
+                    data-nav-path="/"
+                >
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                    <span>概覽</span>
+                </a>
+                            <a
+                    href="/opportunities/"
+                    class="sidebar-link "
+                    data-nav-path="/opportunities"
+                >
+                    <i data-lucide="briefcase" class="w-4 h-4"></i>
+                    <span>商機中心</span>
+                </a>
+                            <a
+                    href="/products/"
+                    class="sidebar-link "
+                    data-nav-path="/products"
+                >
+                    <i data-lucide="package" class="w-4 h-4"></i>
+                    <span>產品資訊中心</span>
+                </a>
+                            <a
+                    href="/training/"
+                    class="sidebar-link "
+                    data-nav-path="/training"
+                >
+                    <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                    <span>教育訓練中心</span>
+                </a>
+                            <a
+                    href="/marketing/"
+                    class="sidebar-link "
+                    data-nav-path="/marketing"
+                >
+                    <i data-lucide="megaphone" class="w-4 h-4"></i>
+                    <span>行銷資源中心</span>
+                </a>
+                            <a
+                    href="/support/"
+                    class="sidebar-link active"
+                    data-nav-path="/support"
+                >
+                    <i data-lucide="headset" class="w-4 h-4"></i>
+                    <span>技術支援中心</span>
+                </a>
+                            <a
+                    href="/profile/"
+                    class="sidebar-link "
+                    data-nav-path="/profile"
+                >
+                    <i data-lucide="id-card" class="w-4 h-4"></i>
+                    <span>夥伴管理</span>
+                </a>
+                    </nav>
+    </div>
+
+    <div class="self-stretch flex flex-col items-stretch">
+        
+        <div class="role-preview role-preview--sidebar self-stretch px-6 pb-4 text-left" data-role-preview>
+            <div class="flex items-center justify-start gap-2 mb-2">
+                <span class="text-[12px] font-medium tracking-[0.06em] text-gray4">預覽身分權限</span>
+                <span class="role-preview-badge">演示用</span>
+            </div>
+            <div class="role-preview-switch role-preview-switch--sidebar justify-start" role="group" aria-label="預覽身分權限">
+                <button type="button" class="role-preview-btn is-active" data-role-switch="admin" aria-pressed="true">總管</button>
+                <button type="button" class="role-preview-btn" data-role-switch="oem_manager" aria-pressed="false">主管</button>
+                <button type="button" class="role-preview-btn" data-role-switch="oem_sales" aria-pressed="false">業務</button>
+                <button type="button" class="role-preview-btn" data-role-switch="dealer_tw" aria-pressed="false">國內</button>
+                <button type="button" class="role-preview-btn" data-role-switch="dealer_overseas" aria-pressed="false">海外</button>
+            </div>
+        </div>
+
+        <div class="self-stretch px-6 py-5 border-t border-gray1 inline-flex items-center justify-start gap-2">
+            <i data-lucide="globe" class="w-4 h-4 text-gray4 shrink-0"></i>
+            <div class="locale-switch text-eb3 uppercase" role="group" aria-label="語言">
+                                                        <button type="button" data-locale="TW" class="locale-btn is-active">TW</button>
+                                                            <span class="text-gray3"> / </span>
+                                        <button type="button" data-locale="EN" class="locale-btn ">EN</button>
+                                                            <span class="text-gray3"> / </span>
+                                        <button type="button" data-locale="JP" class="locale-btn ">JP</button>
+                            </div>
+        </div>
+    </div>
+</aside>
+
+        <div class="flex-1 min-w-0 flex flex-col">
+            <header class="relative z-20 px-4 md:px-12 pt-8 pb-5">
+    <div class="flex items-center gap-2 min-w-0 pr-[11.5rem] md:pr-[18.5rem]">
+        <button id="sidebar-toggle" type="button" class="md:hidden p-2 -ml-1 text-gray5 shrink-0" aria-label="開啟選單" aria-controls="app-sidebar">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+        <img src="/images/yellow-slash-motif.svg" alt="" class="w-3 h-6 shrink-0" aria-hidden="true" />
+        <h1 class="text-ch5 text-gray5 truncate">技術支援中心</h1>
+    </div>
+
+            <nav class="breadcrumb mt-8 pr-[11.5rem] md:pr-[18.5rem]" aria-label="麵包屑">
+            <i data-lucide="home" class="breadcrumb-home"></i>
+            <a href="/" class="breadcrumb-link">首頁</a>
+                            <span class="breadcrumb-sep">/</span>
+                                    <span
+                        class="breadcrumb-text"
+                                            >技術支援中心</span>
+                                    </nav>
+    </header>
+
+<div class="app-user-fixed">
+    <button type="button" class="size-12 bg-white rounded-2xl shadow-card border border-gray1 inline-flex items-center justify-center text-gray3 hover:text-gray5 transition-colors" aria-label="通知">
+        <i data-lucide="bell" class="w-4 h-4"></i>
+    </button>
+
+    <div class="app-user-menu" data-user-menu>
+        <button
+            type="button"
+            class="app-user-trigger w-auto max-w-[14rem] md:w-56 pl-1.5 pr-3 py-1.5 bg-white rounded-2xl shadow-card border border-gray1 flex items-center gap-3 text-left"
+            data-user-menu-trigger
+            aria-haspopup="menu"
+            aria-expanded="false"
+            aria-controls="app-user-dropdown"
+        >
+            <span class="size-10 shrink-0 bg-brand2 rounded-xl flex items-center justify-center">
+                <i data-lucide="user" class="w-4 h-4 text-white"></i>
+            </span>
+            <span class="flex-1 min-w-0 flex flex-col items-start gap-0.5">
+                <span class="self-stretch text-[14px] font-medium text-gray5 line-clamp-1">經銷商公司名稱</span>
+                <span class="text-[10px] font-medium tracking-[0.06em] text-gray3" data-role-label>總管理者</span>
+            </span>
+            <i data-lucide="more-vertical" class="w-4 h-4 text-gray3 shrink-0"></i>
+        </button>
+        <div id="app-user-dropdown" class="app-user-dropdown" role="menu">
+            <a href="/account/" class="app-user-menu-item" role="menuitem">
+                <i data-lucide="circle-user" class="w-4 h-4"></i>
+                <span>用戶資料</span>
+            </a>
+            <a href="/login/" class="app-user-menu-item is-brand" role="menuitem">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <span>登出</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+            <main class="flex-1 flex flex-col min-h-0">
+                    <div class="page-body">
+        <div
+            class="content-wrapper"
+            data-support-center
+            data-faq-page-size="5"
+            data-ticket-page-size="5"
+            data-download-page-size="5"
+            data-manage="support.manage"
+            data-list-url="/support/"
+            data-ticket-url="/support/ticket/"
+            data-faq-create-url="/support/faq/"
+            data-download-create-url="/support/download/"
+        >
+
+            <div class="self-stretch flex justify-end">
+                <a href="/support/create/" class="btn-primary" data-requires="support.create">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    <span>建立技術工單</span>
+                </a>
+            </div>
+
+            
+            <section class="list-card">
+                <div class="self-stretch px-5 pt-5 pb-5 flex flex-col gap-4">
+                    <div class="self-stretch flex flex-col gap-4">
+                        <div class="self-stretch flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                            <div class="inline-flex items-center gap-3">
+                                <span class="section-accent" aria-hidden="true"></span>
+                                <h2 class="text-ch5 text-gray5">技術 FAQ</h2>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <button type="button" class="btn-secondary shrink-0" data-faq-manage-categories="type" data-requires="support.manage">
+                                    <i data-lucide="layers" class="w-4 h-4"></i>
+                                    <span>管理分類</span>
+                                </button>
+                                <button type="button" class="btn-secondary shrink-0" data-faq-sort data-requires="support.manage">
+                                    <i data-lucide="list-ordered" class="w-4 h-4"></i>
+                                    <span>排序 FAQ</span>
+                                </button>
+                                <a href="/support/faq/" class="btn-primary shrink-0" data-requires="support.manage">
+                                    <i data-lucide="plus" class="w-4 h-4"></i>
+                                    <span>新增 FAQ</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="self-stretch flex flex-col py-2 px-2 bg-bg border border-gray1 rounded-[8px] md:flex-row md:items-center md:justify-start gap-2">
+                            <label class="search-field w-full px-3 py-2.5 bg-white rounded-[8px] outline outline-1 outline-offset-[-1px] outline-gray1 inline-flex items-center gap-2">
+                                <i data-lucide="search" class="w-3.5 h-3.5 text-gray3 shrink-0"></i>
+                                <span class="sr-only">搜尋關鍵字</span>
+                                <input type="search" name="q" placeholder="搜尋關鍵字" class="w-full min-w-0 bg-transparent text-cb3 text-gray5 placeholder:text-gray3 outline-none" data-support-search>
+                                <button type="button" class="search-clear" data-search-clear hidden aria-label="清除搜尋">
+                                    <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </label>
+
+                            <div class="form-select w-full md:w-56" data-form-select data-faq-filter="type">
+                                <input type="hidden" value="" data-form-select-value>
+                                <button type="button" class="form-select-trigger" data-form-select-trigger aria-haspopup="listbox" aria-expanded="false">
+                                    <span class="is-placeholder" data-form-select-label>問題類型</span>
+                                    <i data-lucide="chevron-down" class="w-4 h-4 text-gray4"></i>
+                                </button>
+                                <div class="form-select-menu" data-form-select-menu hidden role="listbox">
+                                    <button type="button" class="form-select-option is-selected" role="option" data-form-select-option data-value="" data-label="問題類型">全部</button>
+                                                                            <button type="button" class="form-select-option" role="option" data-form-select-option data-value="incident" data-label="異常排除">異常排除</button>
+                                                                            <button type="button" class="form-select-option" role="option" data-form-select-option data-value="ops" data-label="操作使用">操作使用</button>
+                                                                            <button type="button" class="form-select-option" role="option" data-form-select-option data-value="access" data-label="權限設定">權限設定</button>
+                                                                            <button type="button" class="form-select-option" role="option" data-form-select-option data-value="deploy" data-label="安裝部署">安裝部署</button>
+                                                                    </div>
+                            </div>
+
+                            <div class="form-select w-full md:w-56" data-form-select data-faq-filter="module">
+                                <input type="hidden" value="" data-form-select-value>
+                                <button type="button" class="form-select-trigger" data-form-select-trigger aria-haspopup="listbox" aria-expanded="false">
+                                    <span class="is-placeholder" data-form-select-label>對應模組</span>
+                                    <i data-lucide="chevron-down" class="w-4 h-4 text-gray4"></i>
+                                </button>
+                                <div class="form-select-menu" data-form-select-menu hidden role="listbox">
+                                    <button type="button" class="form-select-option is-selected" role="option" data-form-select-option data-value="" data-label="對應模組">全部</button>
+                                                                            <button type="button" class="form-select-option" role="option" data-form-select-option data-value="mac" data-label="MACManager">MACManager</button>
+                                                                            <button type="button" class="form-select-option" role="option" data-form-select-option data-value="ip" data-label="IPLocator">IPLocator</button>
+                                                                            <button type="button" class="form-select-option" role="option" data-form-select-option data-value="arp" data-label="ARPScanner">ARPScanner</button>
+                                                                            <button type="button" class="form-select-option" role="option" data-form-select-option data-value="dhcp" data-label="DHCPManager">DHCPManager</button>
+                                                                            <button type="button" class="form-select-option" role="option" data-form-select-option data-value="portal" data-label="夥伴入口">夥伴入口</button>
+                                                                    </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="self-stretch flex flex-col">
+                        <div class="self-stretch flex flex-col" data-faq-list></div>
+                        <div class="px-1 py-10 text-center text-cb3 text-gray3" data-faq-empty hidden>
+                            沒有符合條件的 FAQ
+                        </div>
+                    </div>
+
+                    <div class="pagination-bar px-0 pt-4">
+                        <p class="text-eb3 text-gray3 uppercase" data-faq-summary>Showing 1-5 of 12 results</p>
+                        <nav class="pagination-nav self-start md:self-auto" aria-label="FAQ 分頁" data-faq-pagination>
+                            <button type="button" class="pagination-btn" aria-label="上一頁" disabled>
+                                <i data-lucide="chevron-left" class="w-4 h-4 text-gray4"></i>
+                            </button>
+                            <button type="button" class="pagination-btn is-active">1</button>
+                            <button type="button" class="pagination-btn border-r-0" aria-label="下一頁">
+                                <i data-lucide="chevron-right" class="w-4 h-4 text-gray4"></i>
+                            </button>
+                        </nav>
+                    </div>
+                </div>
+            </section>
+
+            
+            <section class="list-card">
+                <div class="self-stretch px-5 pt-5 pb-2 inline-flex items-center gap-3">
+                    <span class="section-accent" aria-hidden="true"></span>
+                    <h2 class="text-ch5 text-gray5">我的技術工單</h2>
+                </div>
+
+                <div class="list-card-body">
+                    <div class="self-stretch overflow-x-auto">
+                        <div class="min-w-[880px]">
+                            <div class="list-head">
+                                <div class="w-32 text-cb3 text-gray4">工單編號</div>
+                                <div class="w-28 text-cb3 text-gray4">客戶</div>
+                                <div class="flex-1 text-cb3 text-gray4">問題主旨</div>
+                                <div class="w-28 text-cb3 text-gray4">更新</div>
+                                <div class="w-24 text-cb3 text-gray4">處理人員</div>
+                                <div class="w-24 text-cb3 text-gray4">狀態</div>
+                                <div class="w-14 text-cb3 text-gray4 text-right pr-1">動作</div>
+                            </div>
+
+                            <div class="flex flex-col" data-ticket-rows>
+                                                                                                        <div
+                                        class="list-row list-row-link"
+                                        data-ticket-row
+                                        data-ticket-open
+                                        data-ticket-id="TKT-2601"
+                                        data-status="resolved"
+                                        data-search="TKT-2601 A 公司 部分網路設備未出現在資產盤點清單 Joy 已處理"
+                                        role="button"
+                                        tabindex="0"
+                                        aria-label="檢視工單 TKT-2601"
+                                    >
+                                        <div class="w-32 text-eb2 text-gray5 uppercase" data-ticket-id-text>TKT-2601</div>
+                                        <div class="w-28 text-cb3 text-gray5">A 公司</div>
+                                        <div class="flex-1 pr-4 text-cb3 text-gray5">部分網路設備未出現在資產盤點清單</div>
+                                        <div class="w-28 text-cb3 text-gray4" data-ticket-updated>10 分鐘前</div>
+                                        <div class="w-24 text-cb3 text-gray5" data-ticket-assignee>Joy</div>
+                                        <div class="w-24">
+                                            <span class="status-pill status-resolved" data-ticket-status>已處理</span>
+                                        </div>
+                                        <div class="w-14 shrink-0 inline-flex items-center justify-end">
+                                            <span class="icon-action pointer-events-none" aria-hidden="true">
+                                                <i data-lucide="eye" class="w-4 h-4"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                                                                                        <div
+                                        class="list-row list-row-link"
+                                        data-ticket-row
+                                        data-ticket-open
+                                        data-ticket-id="TKT-2602"
+                                        data-status="progress"
+                                        data-search="TKT-2602 B 科技 Sensor 無法接收指定 VLAN 的設備資訊 志銘 處理中"
+                                        role="button"
+                                        tabindex="0"
+                                        aria-label="檢視工單 TKT-2602"
+                                    >
+                                        <div class="w-32 text-eb2 text-gray5 uppercase" data-ticket-id-text>TKT-2602</div>
+                                        <div class="w-28 text-cb3 text-gray5">B 科技</div>
+                                        <div class="flex-1 pr-4 text-cb3 text-gray5">Sensor 無法接收指定 VLAN 的設備資訊</div>
+                                        <div class="w-28 text-cb3 text-gray4" data-ticket-updated>2 天前</div>
+                                        <div class="w-24 text-cb3 text-gray5" data-ticket-assignee>志銘</div>
+                                        <div class="w-24">
+                                            <span class="status-pill status-progress" data-ticket-status>處理中</span>
+                                        </div>
+                                        <div class="w-14 shrink-0 inline-flex items-center justify-end">
+                                            <span class="icon-action pointer-events-none" aria-hidden="true">
+                                                <i data-lucide="eye" class="w-4 h-4"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                                                                                        <div
+                                        class="list-row list-row-link"
+                                        data-ticket-row
+                                        data-ticket-open
+                                        data-ticket-id="TKT-2603"
+                                        data-status="open"
+                                        data-search="TKT-2603 C 集團 終端設備補丁狀態未正常更新 志銘 未處理"
+                                        role="button"
+                                        tabindex="0"
+                                        aria-label="檢視工單 TKT-2603"
+                                    >
+                                        <div class="w-32 text-eb2 text-gray5 uppercase" data-ticket-id-text>TKT-2603</div>
+                                        <div class="w-28 text-cb3 text-gray5">C 集團</div>
+                                        <div class="flex-1 pr-4 text-cb3 text-gray5">終端設備補丁狀態未正常更新</div>
+                                        <div class="w-28 text-cb3 text-gray4" data-ticket-updated>2026-05-12</div>
+                                        <div class="w-24 text-cb3 text-gray5" data-ticket-assignee>志銘</div>
+                                        <div class="w-24">
+                                            <span class="status-pill status-open" data-ticket-status>未處理</span>
+                                        </div>
+                                        <div class="w-14 shrink-0 inline-flex items-center justify-end">
+                                            <span class="icon-action pointer-events-none" aria-hidden="true">
+                                                <i data-lucide="eye" class="w-4 h-4"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                                                                                        <div
+                                        class="list-row list-row-link"
+                                        data-ticket-row
+                                        data-ticket-open
+                                        data-ticket-id="TKT-2604"
+                                        data-status="progress"
+                                        data-search="TKT-2604 G 醫院 訪客 MAC 核准後仍無法連線 Joy 處理中"
+                                        role="button"
+                                        tabindex="0"
+                                        aria-label="檢視工單 TKT-2604"
+                                    >
+                                        <div class="w-32 text-eb2 text-gray5 uppercase" data-ticket-id-text>TKT-2604</div>
+                                        <div class="w-28 text-cb3 text-gray5">G 醫院</div>
+                                        <div class="flex-1 pr-4 text-cb3 text-gray5">訪客 MAC 核准後仍無法連線</div>
+                                        <div class="w-28 text-cb3 text-gray4" data-ticket-updated>5 小時前</div>
+                                        <div class="w-24 text-cb3 text-gray5" data-ticket-assignee>Joy</div>
+                                        <div class="w-24">
+                                            <span class="status-pill status-progress" data-ticket-status>處理中</span>
+                                        </div>
+                                        <div class="w-14 shrink-0 inline-flex items-center justify-end">
+                                            <span class="icon-action pointer-events-none" aria-hidden="true">
+                                                <i data-lucide="eye" class="w-4 h-4"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                                                                                        <div
+                                        class="list-row list-row-link"
+                                        data-ticket-row
+                                        data-ticket-open
+                                        data-ticket-id="TKT-2605"
+                                        data-status="resolved"
+                                        data-search="TKT-2605 D 數位 申請將夥伴入口帳號改為總管理者 Joy 已處理"
+                                        role="button"
+                                        tabindex="0"
+                                        aria-label="檢視工單 TKT-2605"
+                                    >
+                                        <div class="w-32 text-eb2 text-gray5 uppercase" data-ticket-id-text>TKT-2605</div>
+                                        <div class="w-28 text-cb3 text-gray5">D 數位</div>
+                                        <div class="flex-1 pr-4 text-cb3 text-gray5">申請將夥伴入口帳號改為總管理者</div>
+                                        <div class="w-28 text-cb3 text-gray4" data-ticket-updated>1 週前</div>
+                                        <div class="w-24 text-cb3 text-gray5" data-ticket-assignee>Joy</div>
+                                        <div class="w-24">
+                                            <span class="status-pill status-resolved" data-ticket-status>已處理</span>
+                                        </div>
+                                        <div class="w-14 shrink-0 inline-flex items-center justify-end">
+                                            <span class="icon-action pointer-events-none" aria-hidden="true">
+                                                <i data-lucide="eye" class="w-4 h-4"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                                                <div class="list-empty" data-ticket-empty hidden>
+                                    沒有符合條件的工單
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pagination-bar">
+                        <p class="text-eb3 text-gray3 uppercase" data-ticket-summary>Showing 1-5 of 5 results</p>
+                        <nav class="pagination-nav self-start md:self-auto" aria-label="工單分頁" data-ticket-pagination>
+                            <button type="button" class="pagination-btn" aria-label="上一頁" disabled>
+                                <i data-lucide="chevron-left" class="w-4 h-4 text-gray4"></i>
+                            </button>
+                            <button type="button" class="pagination-btn is-active">1</button>
+                            <button type="button" class="pagination-btn border-r-0" aria-label="下一頁">
+                                <i data-lucide="chevron-right" class="w-4 h-4 text-gray4"></i>
+                            </button>
+                        </nav>
+                    </div>
+                </div>
+            </section>
+
+            
+            <section class="list-card">
+                <div class="self-stretch px-5 pt-5 pb-2 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                    <div class="inline-flex items-center gap-3">
+                        <span class="section-accent" aria-hidden="true"></span>
+                        <h2 class="text-ch5 text-gray5">檔案下載</h2>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button type="button" class="btn-secondary shrink-0" data-download-sort data-requires="support.manage">
+                            <i data-lucide="list-ordered" class="w-4 h-4"></i>
+                            <span>排序檔案</span>
+                        </button>
+                        <a href="/support/download/" class="btn-primary shrink-0" data-requires="support.manage">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            <span>新增檔案</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="self-stretch px-5 pt-3 pb-5 flex flex-col gap-2">
+                    <div class="self-stretch flex flex-col gap-2" data-download-list></div>
+                    <div class="px-1 py-10 text-center text-cb3 text-gray3" data-download-empty hidden>
+                        尚未提供可下載的檔案
+                    </div>
+
+                    <div class="pagination-bar px-0 pt-4">
+                        <p class="text-eb3 text-gray3 uppercase" data-download-summary>Showing 1-5 of 7 results</p>
+                        <nav class="pagination-nav self-start md:self-auto" aria-label="檔案下載分頁" data-download-pagination>
+                            <button type="button" class="pagination-btn" aria-label="上一頁" disabled>
+                                <i data-lucide="chevron-left" class="w-4 h-4 text-gray4"></i>
+                            </button>
+                            <button type="button" class="pagination-btn is-active">1</button>
+                            <button type="button" class="pagination-btn border-r-0" aria-label="下一頁">
+                                <i data-lucide="chevron-right" class="w-4 h-4 text-gray4"></i>
+                            </button>
+                        </nav>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <template data-ticket-row-template>
+        <div
+            class="list-row list-row-link"
+            data-ticket-row
+            data-ticket-open
+            data-ticket-id=""
+            data-status=""
+            data-search=""
+            role="button"
+            tabindex="0"
+            aria-label="檢視工單"
+        >
+            <div class="w-32 text-eb2 text-gray5 uppercase" data-ticket-id-text></div>
+            <div class="w-28 text-cb3 text-gray5" data-ticket-customer></div>
+            <div class="flex-1 pr-4 text-cb3 text-gray5" data-ticket-subject></div>
+            <div class="w-28 text-cb3 text-gray4" data-ticket-updated></div>
+            <div class="w-24 text-cb3 text-gray5" data-ticket-assignee></div>
+            <div class="w-24">
+                <span class="status-pill" data-ticket-status></span>
+            </div>
+            <div class="w-14 shrink-0 inline-flex items-center justify-end">
+                <span class="icon-action pointer-events-none" aria-hidden="true">
+                    <i data-lucide="eye" class="w-4 h-4"></i>
+                </span>
+            </div>
+        </div>
+    </template>
+
+    <div class="app-modal-host" data-ticket-modal hidden>
+        <div class="app-modal-backdrop" data-ticket-modal-dismiss></div>
+        <div class="app-modal-panel ticket-modal-panel" role="dialog" aria-modal="true" aria-labelledby="ticket-modal-title">
+            <div class="ticket-modal-header">
+                <div class="min-w-0 flex flex-col items-start gap-1.5">
+                    <div class="inline-flex items-center gap-2">
+                        <span class="text-eb2 text-gray4 uppercase" data-ticket-modal-id>—</span>
+                        <span class="status-pill" data-ticket-modal-status-pill></span>
+                    </div>
+                    <h3 id="ticket-modal-title" class="text-ch5 text-gray5" data-ticket-modal-subject>—</h3>
+                </div>
+                <button type="button" class="icon-action shrink-0" data-ticket-modal-dismiss aria-label="關閉">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <div class="ticket-modal-body">
+                <section class="self-stretch flex flex-col gap-3">
+                    <div class="inline-flex items-center gap-3">
+                        <span class="section-accent" aria-hidden="true"></span>
+                        <h4 class="text-cb1 text-gray5">工單資訊</h4>
+                    </div>
+                    <div class="review-result-card">
+                        <div class="review-result-row">
+                            <span class="w-24 shrink-0 text-cb3 text-gray3">客戶</span>
+                            <span class="flex-1 min-w-0 text-cb3 text-gray5" data-ticket-modal-customer>—</span>
+                        </div>
+                        <div class="review-result-row">
+                            <span class="w-24 shrink-0 text-cb3 text-gray3">產品 / 版本</span>
+                            <span class="flex-1 min-w-0 text-cb3 text-gray5" data-ticket-modal-product>—</span>
+                        </div>
+                        <div class="review-result-row">
+                            <span class="w-24 shrink-0 text-cb3 text-gray3">問題類型</span>
+                            <span class="flex-1 min-w-0 text-cb3 text-gray5" data-ticket-modal-type>—</span>
+                        </div>
+                        <div class="review-result-row">
+                            <span class="w-24 shrink-0 text-cb3 text-gray3">聯絡人</span>
+                            <span class="flex-1 min-w-0 text-cb3 text-gray5" data-ticket-modal-contact>—</span>
+                        </div>
+                        <div class="review-result-row">
+                            <span class="w-24 shrink-0 text-cb3 text-gray3">處理人員</span>
+                            <span class="flex-1 min-w-0 text-cb3 text-gray5" data-ticket-modal-assignee>—</span>
+                        </div>
+                        <div class="review-result-row">
+                            <span class="w-24 shrink-0 text-cb3 text-gray3">建立時間</span>
+                            <span class="flex-1 min-w-0 text-cb3 text-gray5" data-ticket-modal-created>—</span>
+                        </div>
+                        <div class="review-result-row">
+                            <span class="w-24 shrink-0 text-cb3 text-gray3">最後更新</span>
+                            <span class="flex-1 min-w-0 text-cb3 text-gray5" data-ticket-modal-updated>—</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="self-stretch flex flex-col gap-3">
+                    <div class="inline-flex items-center gap-3">
+                        <span class="section-accent" aria-hidden="true"></span>
+                        <h4 class="text-cb1 text-gray5">詳細狀況描述</h4>
+                    </div>
+                    <p class="text-cb3 text-gray4 whitespace-pre-wrap" data-ticket-modal-description>—</p>
+                </section>
+
+                <section class="self-stretch flex flex-col gap-3" data-ticket-modal-attachment-section hidden>
+                    <div class="inline-flex items-center gap-3">
+                        <span class="section-accent" aria-hidden="true"></span>
+                        <h4 class="text-cb1 text-gray5">附件</h4>
+                    </div>
+                    <div class="file-upload-item">
+                        <div class="inline-flex items-center gap-3 min-w-0">
+                            <span class="file-icon">
+                                <i data-lucide="file-text" class="w-4 h-4 text-gray4"></i>
+                            </span>
+                            <span class="min-w-0 flex flex-col items-start gap-0.5">
+                                <span class="text-cb3 text-gray5 truncate max-w-full" data-ticket-modal-attachment-name>—</span>
+                                <span class="text-[11px] font-medium text-gray3" data-ticket-modal-attachment-meta></span>
+                            </span>
+                        </div>
+                        <a
+                            href="#"
+                            class="px-3 py-2 text-[12px] btn-secondary shrink-0"
+                            data-ticket-modal-attachment-link
+                        >
+                            查看／下載
+                        </a>
+                    </div>
+                </section>
+
+                <section class="self-stretch flex flex-col gap-3" data-ticket-modal-note-section>
+                    <div class="inline-flex items-center gap-3">
+                        <span class="section-accent" aria-hidden="true"></span>
+                        <h4 class="text-cb1 text-gray5">處理說明</h4>
+                    </div>
+                    <p class="text-cb3 text-gray4 whitespace-pre-wrap" data-ticket-modal-note>—</p>
+                </section>
+
+                
+                <section class="self-stretch flex flex-col gap-4" data-ticket-manage hidden>
+                    <div class="inline-flex items-center gap-3">
+                        <span class="section-accent" aria-hidden="true"></span>
+                        <h4 class="text-cb1 text-gray5">處理工單</h4>
+                    </div>
+
+                    <div class="self-stretch grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="self-stretch flex flex-col items-start gap-2">
+                            <span class="form-label">
+                                <span>狀態</span>
+                            </span>
+                            <div class="form-select self-stretch" data-form-select data-ticket-manage-status>
+                                <input type="hidden" value="" data-form-select-value>
+                                <button type="button" class="form-select-trigger" data-form-select-trigger aria-haspopup="listbox" aria-expanded="false">
+                                    <span data-form-select-label>未處理</span>
+                                    <i data-lucide="chevron-down" class="w-4 h-4 text-gray4"></i>
+                                </button>
+                                <div class="form-select-menu" data-form-select-menu hidden role="listbox">
+                                    <div class="form-select-options" data-form-select-options>
+                                                                                    <button type="button" class="form-select-option" role="option" data-form-select-option data-value="open" data-label="未處理">未處理</button>
+                                                                                    <button type="button" class="form-select-option" role="option" data-form-select-option data-value="progress" data-label="處理中">處理中</button>
+                                                                                    <button type="button" class="form-select-option" role="option" data-form-select-option data-value="resolved" data-label="已處理">已處理</button>
+                                                                            </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <label class="form-field">
+                            <span class="form-label">
+                                <span>處理人員</span>
+                            </span>
+                            <input type="text" class="form-input" placeholder="請輸入處理人員" maxlength="20" data-ticket-manage-assignee>
+                        </label>
+                    </div>
+
+                    <label class="form-field">
+                        <span class="form-label">
+                            <span>回覆建單人</span>
+                        </span>
+                        <textarea class="form-input min-h-[8rem]" rows="5" placeholder="請輸入回覆內容，建單人會在工單的「處理說明」看到這段文字" data-ticket-manage-note></textarea>
+                    </label>
+                </section>
+            </div>
+
+            <div class="ticket-modal-footer">
+                <button type="button" class="btn-secondary" data-ticket-modal-dismiss>關閉</button>
+                <button type="button" class="btn-primary" data-ticket-manage-save hidden>儲存處理結果</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="application/json" id="support-center-data">
+        {"tickets":[{"id":"TKT-2601","customer":"A 公司","product":"IPLocator / v3.5.2","subject":"部分網路設備未出現在資產盤點清單","updated":"10 分鐘前","updatedAt":"2026-09-09 15:32","createdAt":"2026-09-09 09:18","assignee":"Joy","status":"resolved","type":"system","contact":"林佳穎 ・ 02-2555-1001","description":"客戶反映內湖辦公網段有多台印表機與 AP 未出現在 IPLocator 資產盤點清單，現場已確認設備在線。","note":"已補齊該 VLAN 的掃描範圍，清單已可看到缺漏設備。","attachment":{"name":"缺漏設備清單.xlsx","size":18944,"sizeLabel":"18.5 KB","type":"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","url":"#"}},{"id":"TKT-2602","customer":"B 科技","product":"ARPScanner / v3.4.1","subject":"Sensor 無法接收指定 VLAN 的設備資訊","updated":"2 天前","updatedAt":"2026-09-07 11:05","createdAt":"2026-09-07 10:40","assignee":"志銘","status":"progress","type":"system","contact":"陳威宇 ・ 03-5123-8899","description":"板橋機房 Sensor 對 VLAN 80 收不到 ARP 資訊，其他 VLAN 正常。交換器 SPAN 設定已請客戶協助確認中。","note":""},{"id":"TKT-2603","customer":"C 集團","product":"夥伴入口 / v2.1.0","subject":"終端設備補丁狀態未正常更新","updated":"2026-05-12","updatedAt":"2026-05-12 16:20","createdAt":"2026-05-11 14:02","assignee":"志銘","status":"open","type":"operation","contact":"黃詩涵 ・ 04-2200-7788","description":"海外據點回報終端補丁狀態停留在上月結果，主控台重新整理後仍未更新。請協助確認同步排程與帳號權限。","note":"","attachment":{"name":"補丁狀態截圖.png","size":512000,"sizeLabel":"500.0 KB","type":"image/png","url":"#"}},{"id":"TKT-2604","customer":"G 醫院","product":"MACManager / v3.5.0","subject":"訪客 MAC 核准後仍無法連線","updated":"5 小時前","updatedAt":"2026-09-09 10:20","createdAt":"2026-09-09 08:55","assignee":"Joy","status":"progress","type":"feature","contact":"張志偉 ・ 02-8888-6600","description":"門診大廳訪客完成核准後無法取得位址。已提供交換器埠號與訪客 MAC，請協助確認准入政策與導引網段。","note":""},{"id":"TKT-2605","customer":"D 數位","product":"夥伴入口 / v2.1.0","subject":"申請將夥伴入口帳號改為總管理者","updated":"1 週前","updatedAt":"2026-09-02 17:48","createdAt":"2026-09-02 17:48","assignee":"Joy","status":"resolved","type":"operation","contact":"王小明 ・ 02-8888-7777","description":"請將聯絡人王小明的帳號角色調整為總管理者，以便進行商機審核。","note":"已完成角色調整，請重新登入後確認選單。"}],"statuses":{"open":{"value":"open","label":"未處理","icon":"circle-alert"},"progress":{"value":"progress","label":"處理中","icon":"clock"},"resolved":{"value":"resolved","label":"已處理","icon":"check-circle"}},"types":{"incident":"異常排除","ops":"操作使用","access":"權限設定","deploy":"安裝部署"},"ticketTypes":{"operation":"操作問題","system":"系統問題","feature":"功能問題"},"modules":{"mac":"MACManager","ip":"IPLocator","arp":"ARPScanner","dhcp":"DHCPManager","portal":"夥伴入口"},"typeOptions":[{"value":"incident","label":"異常排除"},{"value":"ops","label":"操作使用"},{"value":"access","label":"權限設定"},{"value":"deploy","label":"安裝部署"}],"moduleOptions":[{"value":"mac","label":"MACManager"},{"value":"ip","label":"IPLocator"},{"value":"arp","label":"ARPScanner"},{"value":"dhcp","label":"DHCPManager"},{"value":"portal","label":"夥伴入口"}],"faqs":[{"id":"faq-mac-duplicate","type":"incident","module":"mac","question":"當相同 MAC 出現時，UPAS 可以同時阻斷兩者或只阻斷攻擊者嗎？","answer":"<p>可以依政策選擇。系統偵測到相同 MAC 出現在不同埠或不同位置時，預設會標示衝突並依「衝突處置」設定處理。</p><ul><li><strong>僅阻斷攻擊者：</strong>保留先註冊或已核准的合法裝置，阻斷後續冒用來源。</li><li><strong>同時阻斷兩者：</strong>適用於無法判斷誰是合法裝置、需先隔離再人工放行的環境。</li></ul><p>建議先在測試網段驗證政策，再套用到生產網段，避免誤阻關鍵設備。</p>"},{"id":"faq-rbac","type":"access","module":"portal","question":"角色的存取控制 (RBAC) 如何運作？","answer":"<p>Partners Portal 以角色決定可見選單與可執行操作。總管理者可審核商機、管理夥伴資料；一般使用者以報備、查詢、下載資源與開立技術工單為主。</p><ul><li>同一公司可有多位使用者，權限依角色而非個人帳號硬編碼。</li><li>技術工單開立後，處理人員由原廠指派，夥伴端可追蹤狀態但不可自行改狀態。</li></ul><p>若需要調整既有帳號角色，請由總管理者於夥伴資料提出，或開立權限類工單。</p>"},{"id":"faq-asset-missing","type":"incident","module":"ip","question":"部分網路設備未出現在資產盤點清單怎麼排查？","answer":"<p>常見原因是盤點範圍未涵蓋該網段、裝置離線，或被現有過濾條件排除。</p><ol><li>確認 Sensor／掃描器是否涵蓋該 VLAN 或實體網段。</li><li>檢查設備當下是否在線，離線裝置需等下次掃描或改為被動蒐集。</li><li>核對排除清單、過濾條件與認證範圍。</li></ol><p>若範圍設定正確仍缺資料，請附上網段資訊與設備範例開立工單。</p>"},{"id":"faq-sensor-vlan","type":"incident","module":"arp","question":"Sensor 無法接收指定 VLAN 的設備資訊？","answer":"<p>請先確認交換器已把該 VLAN 的流量鏡像或允許 Sensor 所在埠接收 ARP／相關封包。</p><ul><li>Trunk 是否允許目標 VLAN</li><li>SPAN／RSPAN 來源是否包含該 VLAN</li><li>Sensor 介面 VLAN 與管理位址是否正確</li></ul><p>完成網路側確認後，再到主控台查看該 Sensor 的即時流量與最近一次心跳。</p>"},{"id":"faq-dhcp-conflict","type":"incident","module":"dhcp","question":"DHCP 租約衝突時應如何處理？","answer":"<p>先在 DHCPManager 找出衝突位址、租約來源與時間，再決定是回收租約或調整範圍。</p><ul><li>確認是否有第二台 DHCP 在同一網段發放</li><li>固定／浮動位址區段是否重疊</li><li>裝置是否使用過期的自行設定位址</li></ul><p>大型環境建議先處理單一網段，確認無誤再擴到全區。</p>"},{"id":"faq-mac-guest","type":"ops","module":"mac","question":"MAC 准入政策生效後，訪客仍無法上網？","answer":"<p>請依序檢查訪客是否已取得暫時許可、對應的 VLAN／ACL 是否放行，以及認證頁是否可開啟。</p><ul><li>訪客 MAC 是否已出現在待核准清單</li><li>暫時上網時段是否已過期</li><li>交換器是否有把未認證流量導向導引網段</li></ul><p>現場排查時建議同時提供交換器埠號與訪客裝置 MAC。</p>"},{"id":"faq-ip-scope","type":"deploy","module":"ip","question":"首次安裝後如何確認盤點範圍？","answer":"<p>安裝完成後，先用一個已知網段做驗證，確認清單數量與現場資產大致相符，再擴大範圍。</p><ol><li>設定掃描或被動蒐集的網段清單</li><li>對照現有 IP 表或 DHCP 範圍</li><li>標記不明裝置與離線裝置，避免一次當成異常</li></ol><p>POC 建議選擇非關鍵網段，降低對營運的影響。</p>"},{"id":"faq-portal-role","type":"access","module":"portal","question":"如何為夥伴入口帳號指定角色？","answer":"<p>新帳號預設為一般使用者。若需改為總管理者，請由既有總管理者於夥伴資料提出，或開立「權限設定」工單並註明公司統編與帳號信箱。</p><p>角色變更會影響商機審核、匯出與夥伴資料維護等操作，請避免多人同時擁有不必要的最高權限。</p>"},{"id":"faq-mac-export","type":"ops","module":"mac","question":"如何匯出 MAC 准入與阻斷紀錄？","answer":"<p>在 MACManager 的紀錄頁選擇時間範圍與結果類型後即可匯出。建議先篩選網段或政策，再下載，避免一次帶出過大的檔案。</p><ul><li>可用 CSV 交給現場核對交換器埠位</li><li>阻斷紀錄請一併保留政策名稱與生效時間</li></ul><p>若匯出欄位與現場報表不一致，請開立操作使用類工單並附上範例檔。</p>"},{"id":"faq-dhcp-apply","type":"ops","module":"dhcp","question":"調整 DHCP 範圍後，新設定何時會生效？","answer":"<p>範圍與選項變更會先寫入待發布設定，需發布後才會套用到對應網段。既有租約通常等到續約或到期才改用新範圍。</p><ol><li>確認發布對象是正確的 DHCP 服務或站點</li><li>觀察新裝置是否取得新範圍的位址</li><li>舊裝置可在維護時段手動更新租約</li></ol><p>正式環境建議先在測試網段發布，確認無誤再擴大。</p>"},{"id":"faq-arp-compare","type":"ops","module":"arp","question":"ARPScanner 與 IPLocator 的資料不一致怎麼對照？","answer":"<p>兩者蒐集來源不同：ARPScanner 偏即時流量，IPLocator 則含掃描與既有資產。短暫不一致很常見，先對時間與網段再判斷是否異常。</p><ul><li>比對同一 VLAN、同一時間窗的清單</li><li>確認其中一邊是否被排除清單過濾</li><li>離線或靜音裝置可能只出現在盤點結果</li></ul><p>若同一網段長期落差很大，請附上兩個模組的匯出與交換器資訊開立工單。</p>"},{"id":"faq-portal-manual","type":"ops","module":"portal","question":"夥伴入口的故障排除手冊要在哪裡下載？","answer":"<p>技術支援中心最下方的「檔案下載」可取得手冊與相關連結。下載前請確認帳號已通過審核，否則部分資源會被權限隱藏。</p><p>若清單沒有你需要的版本，請開立工單並註明產品與版號，由原廠補上後即可再下載。</p>"}],"downloads":[{"title":"UPAS NOC 系統故障排除手冊","format":"PDF","attachment":"download","attachmentName":"UPAS-NOC-troubleshooting.pdf","id":"SD-001"},{"title":"2026 系統故障排除手冊連結","format":"Link","attachment":"link","attachmentUrl":"https://support.upas.com.tw/docs/troubleshooting-2026","id":"SD-002"},{"title":"MACManager 准入政策設定指引","format":"PDF","attachment":"download","attachmentName":"MACManager-policy-guide.pdf","id":"SD-003"},{"title":"IPLocator 盤點範圍設定說明","format":"PDF","attachment":"download","attachmentName":"IPLocator-scope-guide.pdf","id":"SD-004"},{"title":"ARPScanner 部署檢查清單","format":"PDF","attachment":"download","attachmentName":"ARPScanner-checklist.pdf","id":"SD-005"},{"title":"DHCPManager 常見問題整理","format":"PDF","attachment":"download","attachmentName":"DHCPManager-faq.pdf","id":"SD-006"},{"title":"技術支援開單注意事項","format":"Link","attachment":"link","attachmentUrl":"https://support.upas.com.tw/docs/ticket-guidelines","id":"SD-007"}],"locales":["TW","EN","JP"],"capability":"support.manage","ticketUrl":"/support/ticket/","createFaqUrl":"/support/faq/","createDownloadUrl":"/support/download/","listUrl":"/support/"}
+    </script>
+            </main>
+        </div>
+    </div>
+
+    
+    <script type="application/json" id="app-roles-config">
+        {"defaultRole":"admin","roles":{"admin":{"label":"總管理者","identity":"admin","partnerId":"","nav":["/","/opportunities","/products","/training","/marketing","/support","/profile"],"can":["opportunity.view","opportunity.create","opportunity.export","opportunity.status.edit","opportunity.actions","opportunity.review","product.manage","marketing.manage","training.manage","support.create","support.manage","profile.manage"]},"oem_manager":{"label":"原廠主管","identity":"oem_manager","partnerId":"P260100001","nav":["/","/opportunities","/products","/training","/marketing","/support"],"can":["opportunity.view","opportunity.create","opportunity.export","opportunity.actions","support.create"]},"oem_sales":{"label":"原廠業務","identity":"oem_sales","partnerId":"P260101001","nav":["/","/opportunities","/products","/training","/marketing","/support"],"can":["opportunity.view","opportunity.create","opportunity.export","opportunity.actions","support.create"]},"dealer_tw":{"label":"國內經銷商","identity":"dealer_tw","partnerId":"P260312001","nav":["/","/opportunities","/products","/training","/marketing","/support"],"can":["opportunity.view","opportunity.create","opportunity.export","opportunity.actions","support.create"]},"dealer_overseas":{"label":"海外經銷商","identity":"dealer_overseas","partnerId":"P251106001","nav":["/","/opportunities","/products","/training","/marketing","/support"],"can":["opportunity.view","opportunity.create","opportunity.export","opportunity.actions","support.create"]}}}
+    </script>
+    <script type="application/json" id="partners-seed-data">
+        [{"id":"P260312001","identity":"dealer_tw","level":"gold","oem_sales":"林佳穎","oem_sales_id":"P260101001","manager_id":"","company":"數位聯防科技股份有限公司","tax_id":"24567890","country":"tw","name":"王小明","email":"ming.wang@digidefend.com.tw","phone":"02-1234-5678","job_title":"業務經理 / 通路部","status":"approved","applied_at":"2026-03-12"},{"id":"P260821001","identity":"","level":"","oem_sales":"陳志偉","oem_sales_id":"","manager_id":"","company":"雲端資安股份有限公司","tax_id":"53881234","country":"tw","name":"張雅婷","email":"yating.chang@cloudsec.com.tw","phone":"02-8765-4321","job_title":"協理 / 業務處","status":"reviewing","applied_at":"2026-08-21"},{"id":"P260118001","identity":"dealer_tw","level":"platinum","oem_sales":"林佳穎","oem_sales_id":"P260101001","manager_id":"","company":"高雄網通系統有限公司","tax_id":"16774521","country":"tw","name":"黃建宏","email":"chienhung@khnetsys.com.tw","phone":"07-336-8800","job_title":"業務主任 / 南區","status":"approved","applied_at":"2026-01-18"},{"id":"P251106001","identity":"dealer_overseas","level":"gold","oem_sales":"吳佩珊","oem_sales_id":"P260102001","manager_id":"","company":"香港網絡防護有限公司","tax_id":"68901234","country":"hk","name":"李浩然","email":"horan.lee@netguard.hk","phone":"+852-2123-7788","job_title":"Sales Manager / Channel","status":"approved","applied_at":"2025-11-06"},{"id":"P260704001","identity":"dealer_overseas","level":"standard","oem_sales":"佐藤 健","oem_sales_id":"P260103001","manager_id":"","company":"東京セキュア株式会社","tax_id":"T8010001123456","country":"jp","name":"田中 美咲","email":"misaki.tanaka@tokyosecure.jp","phone":"+81-3-1234-5678","job_title":"営業部 / マネージャー","status":"approved","applied_at":"2026-07-04"},{"id":"P260902001","identity":"","level":"","oem_sales":"陳志偉","oem_sales_id":"","manager_id":"","company":"新加坡網安方案 Pte. Ltd.","tax_id":"202412345K","country":"sg","name":"Aisha Rahman","email":"aisha.rahman@sgcyber.sg","phone":"+65-6789-1200","job_title":"Channel Specialist / Sales","status":"reviewing","applied_at":"2026-09-02"},{"id":"P260615001","identity":"dealer_overseas","level":"","oem_sales":"吳佩珊","oem_sales_id":"P260102001","manager_id":"","company":"澳門資訊服務有限公司","tax_id":"MO-88321","country":"mo","name":"周曉琳","email":"xiaolin.chou@macauits.com","phone":"+853-2871-6655","job_title":"客戶經理 / 商務部","status":"rejected","applied_at":"2026-06-15"},{"id":"P260828001","identity":"","level":"","oem_sales":"林佳穎","oem_sales_id":"","manager_id":"","company":"華南網絡科技有限公司","tax_id":"91440101MA5DXXXXX","country":"cn","name":"劉振宇","email":"zhenyu.liu@hnnetsec.cn","phone":"+86-20-3888-1200","job_title":"區域經理 / 渠道部","status":"reviewing","applied_at":"2026-08-28"},{"id":"P250920001","identity":"dealer_overseas","level":"diamond","oem_sales":"James Cole","oem_sales_id":"P260104001","manager_id":"","company":"Pacific Secure Partners LLC","tax_id":"98-7654321","country":"us","name":"Emily Chen","email":"emily.chen@pacificsecure.com","phone":"+1-415-555-0188","job_title":"Account Director / APAC Desk","status":"approved","applied_at":"2025-09-20"},{"id":"P260510001","identity":"dealer_overseas","level":"","oem_sales":"佐藤 健","oem_sales_id":"P260103001","manager_id":"","company":"서울인포섹 주식회사","tax_id":"110-81-12345","country":"kr","name":"박지훈","email":"jihoon.park@seoulinfosec.kr","phone":"+82-2-555-0199","job_title":"과장 / 영업팀","status":"rejected","applied_at":"2026-05-10"},{"id":"P260903001","identity":"","level":"","oem_sales":"陳志偉","oem_sales_id":"","manager_id":"","company":"馬來西亞資安通路 Sdn. Bhd.","tax_id":"202301234567","country":"my","name":"Daniel Lim","email":"daniel.lim@mysecure.my","phone":"+60-3-2166-8800","job_title":"Sales Executive / Channel","status":"reviewing","applied_at":"2026-09-03"},{"id":"P260101001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"林佳穎","email":"chiaying.lin@upas.com.tw","phone":"02-2658-1001","job_title":"原廠業務 / 通路部","status":"approved","applied_at":"2026-01-01"},{"id":"P260102001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"吳佩珊","email":"peishan.wu@upas.com.tw","phone":"02-2658-1002","job_title":"原廠業務 / 海外組","status":"approved","applied_at":"2026-01-02"},{"id":"P260103001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"佐藤 健","email":"ken.sato@upas.com.tw","phone":"02-2658-1003","job_title":"原廠業務 / 亞太組","status":"approved","applied_at":"2026-01-03"},{"id":"P260104001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"James Cole","email":"james.cole@upas.com.tw","phone":"02-2658-1004","job_title":"OEM Sales / APAC","status":"approved","applied_at":"2026-01-04"},{"id":"P260100001","identity":"oem_manager","level":"","oem_sales":"","oem_sales_id":"","manager_id":"","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"王經理","email":"manager.wang@upas.com.tw","phone":"02-2658-1000","job_title":"原廠業務主管","status":"approved","applied_at":"2026-01-01"},{"id":"P260105001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"陳志偉","email":"chihwei.chen@upas.com.tw","phone":"02-2658-1005","job_title":"原廠業務 / 通路部","status":"approved","applied_at":"2026-01-05"}]
+    </script>
+</body>
+</html>

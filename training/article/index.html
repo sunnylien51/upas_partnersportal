@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="canonical" href="/training/article">
+<title>教育訓練中心 | Partners Portal</title>
+<meta name="description" content="合作夥伴入口網站">
+
+<link rel="icon" href="/images/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32.png">
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Rajdhani:wght@600&display=swap" rel="stylesheet">
+
+<script type="module" src="http://localhost:5173/@vite/client"></script>
+<link rel="stylesheet" href="http://localhost:5173/source/_assets/css/main.css">
+<script defer type="module" src="http://localhost:5173/source/_assets/js/main.js"></script>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+    </head>
+<body class="bg-bg text-gray5 font-sans antialiased selection:bg-brand2/60 selection:text-gray5 min-h-screen overflow-x-hidden">
+    <div class="flex min-h-screen">
+        <div id="sidebar-overlay" class="fixed inset-0 z-40 bg-gray5/40 hidden md:hidden"></div>
+
+<aside id="app-sidebar" class="fixed md:sticky top-0 left-0 z-50 md:z-10 flex h-screen w-60 shrink-0 flex-col justify-between overflow-hidden bg-white border-r border-gray1 shadow-[0px_0px_60px_0px_rgba(0,0,0,0.02)] -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
+    <div class="flex-1 self-stretch px-4 py-10 flex flex-col items-center gap-10 min-h-0">
+        <a href="/" class="flex justify-center items-center">
+            <img src="/images/logo.svg" alt="Partners Portal" width="116" height="44" class="w-[116px] h-11">
+        </a>
+
+        <nav class="self-stretch flex-1 flex flex-col items-start gap-1 overflow-y-auto" aria-label="主要選單">
+                            <a
+                    href="/"
+                    class="sidebar-link "
+                    data-nav-path="/"
+                >
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                    <span>概覽</span>
+                </a>
+                            <a
+                    href="/opportunities/"
+                    class="sidebar-link "
+                    data-nav-path="/opportunities"
+                >
+                    <i data-lucide="briefcase" class="w-4 h-4"></i>
+                    <span>商機中心</span>
+                </a>
+                            <a
+                    href="/products/"
+                    class="sidebar-link "
+                    data-nav-path="/products"
+                >
+                    <i data-lucide="package" class="w-4 h-4"></i>
+                    <span>產品資訊中心</span>
+                </a>
+                            <a
+                    href="/training/"
+                    class="sidebar-link active"
+                    data-nav-path="/training"
+                >
+                    <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                    <span>教育訓練中心</span>
+                </a>
+                            <a
+                    href="/marketing/"
+                    class="sidebar-link "
+                    data-nav-path="/marketing"
+                >
+                    <i data-lucide="megaphone" class="w-4 h-4"></i>
+                    <span>行銷資源中心</span>
+                </a>
+                            <a
+                    href="/support/"
+                    class="sidebar-link "
+                    data-nav-path="/support"
+                >
+                    <i data-lucide="headset" class="w-4 h-4"></i>
+                    <span>技術支援中心</span>
+                </a>
+                            <a
+                    href="/profile/"
+                    class="sidebar-link "
+                    data-nav-path="/profile"
+                >
+                    <i data-lucide="id-card" class="w-4 h-4"></i>
+                    <span>夥伴管理</span>
+                </a>
+                    </nav>
+    </div>
+
+    <div class="self-stretch flex flex-col items-stretch">
+        
+        <div class="role-preview role-preview--sidebar self-stretch px-6 pb-4 text-left" data-role-preview>
+            <div class="flex items-center justify-start gap-2 mb-2">
+                <span class="text-[12px] font-medium tracking-[0.06em] text-gray4">預覽身分權限</span>
+                <span class="role-preview-badge">演示用</span>
+            </div>
+            <div class="role-preview-switch role-preview-switch--sidebar justify-start" role="group" aria-label="預覽身分權限">
+                <button type="button" class="role-preview-btn is-active" data-role-switch="admin" aria-pressed="true">總管</button>
+                <button type="button" class="role-preview-btn" data-role-switch="oem_manager" aria-pressed="false">主管</button>
+                <button type="button" class="role-preview-btn" data-role-switch="oem_sales" aria-pressed="false">業務</button>
+                <button type="button" class="role-preview-btn" data-role-switch="dealer_tw" aria-pressed="false">國內</button>
+                <button type="button" class="role-preview-btn" data-role-switch="dealer_overseas" aria-pressed="false">海外</button>
+            </div>
+        </div>
+
+        <div class="self-stretch px-6 py-5 border-t border-gray1 inline-flex items-center justify-start gap-2">
+            <i data-lucide="globe" class="w-4 h-4 text-gray4 shrink-0"></i>
+            <div class="locale-switch text-eb3 uppercase" role="group" aria-label="語言">
+                                                        <button type="button" data-locale="TW" class="locale-btn is-active">TW</button>
+                                                            <span class="text-gray3"> / </span>
+                                        <button type="button" data-locale="EN" class="locale-btn ">EN</button>
+                                                            <span class="text-gray3"> / </span>
+                                        <button type="button" data-locale="JP" class="locale-btn ">JP</button>
+                            </div>
+        </div>
+    </div>
+</aside>
+
+        <div class="flex-1 min-w-0 flex flex-col">
+            <header class="relative z-20 px-4 md:px-12 pt-8 pb-5">
+    <div class="flex items-center gap-2 min-w-0 pr-[11.5rem] md:pr-[18.5rem]">
+        <button id="sidebar-toggle" type="button" class="md:hidden p-2 -ml-1 text-gray5 shrink-0" aria-label="開啟選單" aria-controls="app-sidebar">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+        <img src="/images/yellow-slash-motif.svg" alt="" class="w-3 h-6 shrink-0" aria-hidden="true" />
+        <h1 class="text-ch5 text-gray5 truncate">教育訓練中心</h1>
+    </div>
+
+            <nav class="breadcrumb mt-8 pr-[11.5rem] md:pr-[18.5rem]" aria-label="麵包屑">
+            <i data-lucide="home" class="breadcrumb-home"></i>
+            <a href="/" class="breadcrumb-link">首頁</a>
+                            <span class="breadcrumb-sep">/</span>
+                                    <a
+                        href="/training/"
+                        class="breadcrumb-link"
+                    >教育訓練中心</a>
+                                            <span class="breadcrumb-sep">/</span>
+                                    <span
+                        class="breadcrumb-text is-current"
+                         data-training-crumb                     >文章內容</span>
+                                    </nav>
+    </header>
+
+<div class="app-user-fixed">
+    <button type="button" class="size-12 bg-white rounded-2xl shadow-card border border-gray1 inline-flex items-center justify-center text-gray3 hover:text-gray5 transition-colors" aria-label="通知">
+        <i data-lucide="bell" class="w-4 h-4"></i>
+    </button>
+
+    <div class="app-user-menu" data-user-menu>
+        <button
+            type="button"
+            class="app-user-trigger w-auto max-w-[14rem] md:w-56 pl-1.5 pr-3 py-1.5 bg-white rounded-2xl shadow-card border border-gray1 flex items-center gap-3 text-left"
+            data-user-menu-trigger
+            aria-haspopup="menu"
+            aria-expanded="false"
+            aria-controls="app-user-dropdown"
+        >
+            <span class="size-10 shrink-0 bg-brand2 rounded-xl flex items-center justify-center">
+                <i data-lucide="user" class="w-4 h-4 text-white"></i>
+            </span>
+            <span class="flex-1 min-w-0 flex flex-col items-start gap-0.5">
+                <span class="self-stretch text-[14px] font-medium text-gray5 line-clamp-1">經銷商公司名稱</span>
+                <span class="text-[10px] font-medium tracking-[0.06em] text-gray3" data-role-label>總管理者</span>
+            </span>
+            <i data-lucide="more-vertical" class="w-4 h-4 text-gray3 shrink-0"></i>
+        </button>
+        <div id="app-user-dropdown" class="app-user-dropdown" role="menu">
+            <a href="/account/" class="app-user-menu-item" role="menuitem">
+                <i data-lucide="circle-user" class="w-4 h-4"></i>
+                <span>用戶資料</span>
+            </a>
+            <a href="/login/" class="app-user-menu-item is-brand" role="menuitem">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <span>登出</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+            <main class="flex-1 flex flex-col min-h-0">
+                    <div class="page-body">
+        <div
+            class="content-wrapper"
+            data-training-center
+            data-manage="training.manage"
+            data-create-url="/training/create/"
+            data-article-url="/training/article/"
+            data-list-url="/training/"
+        >
+            <div class="self-stretch inline-flex flex-wrap items-center justify-end gap-2">
+                <button type="button" class="btn-secondary shrink-0" data-manage-categories data-requires="training.manage">
+                    <i data-lucide="layers" class="w-4 h-4"></i>
+                    <span>管理分類</span>
+                </button>
+                <a href="/training/create/" class="btn-primary shrink-0" data-requires="training.manage">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    <span>新增文章</span>
+                </a>
+                <a href="/training/" class="btn-secondary shrink-0">返回總覽</a>
+            </div>
+
+            <div class="self-stretch flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
+                <aside class="w-full lg:w-64 shrink-0 lg:sticky lg:top-6">
+                    <button
+                        type="button"
+                        class="w-full px-4 py-3 bg-white rounded-2xl shadow-[0px_0px_40px_0px_rgba(0,0,0,0.04)] inline-flex items-center gap-2.5 text-left text-cb2 text-gray5 lg:hidden"
+                        data-training-mobile-toggle
+                        aria-expanded="false"
+                        aria-controls="training-tree-panel"
+                    >
+                        <i data-lucide="list-tree" class="w-4 h-4 text-gray4 shrink-0"></i>
+                        <span class="flex-1 min-w-0 truncate" data-training-mobile-label>文章目錄</span>
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-gray3 shrink-0"></i>
+                    </button>
+
+                    <nav id="training-tree-panel" class="training-tree-panel" data-training-tree-panel aria-label="文章目錄">
+                        <ul class="training-tree" data-training-tree></ul>
+                    </nav>
+                </aside>
+
+                <div class="flex-1 min-w-0 w-full" data-training-article>
+                    <div class="bg-white rounded-2xl shadow-card overflow-hidden flex flex-col min-w-0" data-training-panels></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="application/json" id="training-catalog-data">
+        {"capability":"training.manage","createUrl":"/training/create/","articleUrl":"/training/article/","listUrl":"/training/","locales":["TW","EN","JP"],"courses":[{"id":"onboarding","label":"夥伴入門","labels":{"TW":"夥伴入門","EN":"Partner Onboarding","JP":"パートナー入門"},"icon":"compass","articles":[{"id":"portal-guide","label":"平台導覽","title":"認識 Partners Portal","body":"<p>帶你快速走完合作夥伴入口的六大功能區塊，以及總管理者與一般使用者看到的差異。</p>\n<p>Partners Portal 是給經銷夥伴使用的工作台。左側主選單可進入各中心；右上角顯示目前公司與角色。本頁右側的課程內容會隨左側目錄切換。</p>\n<h2>你可以完成什麼</h2>\n<ul>\n<li>商機中心：註冊、查詢、續期與審核</li>\n<li>產品資訊中心：新品、EOL／EOS 與版本更新</li>\n<li>教育訓練中心：線上課程與認證導讀</li>\n<li>行銷資源中心：文件、簡報與 Campaign Kit</li>\n<li>技術支援中心：FAQ 與技術工單</li>\n<li>夥伴管理：註冊申請、公司與聯絡人資料</li>\n</ul>\n<p>演示時可使用左下角「預覽身分權限」切換總管理者與業務／經銷商，觀察選單與操作差異。</p>"},{"id":"opportunity-flow","label":"商機報備流程","title":"商機報備怎麼走","body":"<p>從填寫註冊到保護期生效，掌握每個關卡要準備的資料，減少退回補件。</p>\n<p>商機需先完成報備並通過審核，才會進入保護期。資料愈完整，審核愈快；Key Man、時程與產品組合是最常被退回的欄位。</p>\n<h2>標準路徑</h2>\n<ol>\n<li><strong>填寫註冊：</strong>選擇商機來源、客戶資料、產品與數量級距，並附上需求說明。</li>\n<li><strong>送出審核：</strong>送出後狀態改為審核中，此時仍可於列表追蹤進度。</li>\n<li><strong>原廠審核：</strong>通過後會指派原廠業務並產生報備編號；不足則退回補件。</li>\n<li><strong>保護期生效：</strong>核准後開始計算保護期，到期前可申請續期。</li>\n</ol>\n<p>若狀態為「退回補件」，請依審核意見補齊資料後再送出，無需重新開立一筆商機。</p>"},{"id":"partner-rights","label":"權益與保護期","title":"商機保護期與夥伴權益","body":"<p>了解保護期怎麼算、什麼情況會失效，以及夥伴可使用的資源範圍。</p>\n<p>保護期自審核通過當日起算。列表會標示即將到期案件，建議在到期前 14 天提出續期，並補充最新進度。</p>\n<h2>保護期常見規則</h2>\n<ul>\n<li>同一客戶、相同產品線原則上不可重複報備</li>\n<li>保護期結束且未續期，案件改為已到期</li>\n<li>客戶確認無需求或重複商機，可能改為已失效</li>\n<li>夥伴可主動取消尚未成交的報備</li>\n</ul>\n<h2>夥伴可使用的資源</h2>\n<ul>\n<li>產品規格書、銷售簡報與案例</li>\n<li>本中心的線上課程與認證導讀</li>\n<li>技術支援 FAQ 與工單</li>\n</ul>\n<p>總管理者可檢視審核紀錄與指派業務；一般使用者以報備、查詢與續期為主。</p>"}]},{"id":"products","label":"產品訓練","labels":{"TW":"產品訓練","EN":"Product Training","JP":"製品トレーニング"},"icon":"cpu","articles":[{"id":"iplocator","label":"IPLocator 位址解析","title":"IPLocator IP 位址解析模組","body":"<p>協助客戶把散落在各網段的 IP 資產一次看清楚，是多數導入案的第一個切點。</p>\n<p>IPLocator 用來盤點與解析 IP 位址，讓資訊單位掌握「誰在用哪個位址」。適合正在做資產盤點、稽核或網段重整的客戶。</p>\n<h2>適合什麼客戶</h2>\n<ul>\n<li>多棟辦公或跨據點、IP 資料分散在試算表</li>\n<li>即將導入 ISO 27001 或內部稽核</li>\n<li>規劃與 ARPScanner、MACManager 一併評估</li>\n</ul>\n<p>銷售話術可先問「現在 IP 清單多久更新一次」，通常能快速對到痛點。</p>"},{"id":"arpscanner","label":"ARPScanner IP 管理","title":"ARPScanner IP 管理系統","body":"<p>在位址盤點之後，進一步做衝突偵測與日常管理，是中大型網路常見的下一步。</p>\n<p>ARPScanner 協助偵測 IP 衝突、掌握連線狀態，減少「位址被佔用卻找不到人」的工單。常與 IPLocator 搭配提案。</p>\n<h2>銷售重點</h2>\n<ul>\n<li>降低人工作業與重複派工</li>\n<li>對製造、醫療等 24 小時運作環境特別有感</li>\n<li>可依節點數量選擇數量級距，方便報價</li>\n</ul>\n<p>提案時請一併確認客戶現有網管工具，避免功能重疊造成疑慮。</p>"},{"id":"dhcpmanager","label":"DHCPManager 管理","title":"DHCPManager DHCP 管理系統","body":"<p>當客戶的位址發放仍靠多台 DHCP、政策不一致時，這門課幫你對齊話術與導入順序。</p>\n<p>DHCPManager 讓位址發放政策可被集中檢視與調整，適合據點多、租約衝突頻繁的環境。</p>\n<h2>導入時要先問</h2>\n<ul>\n<li>DHCP 伺服器數量與分布</li>\n<li>是否已有固定／浮動位址的區隔</li>\n<li>與現有防火牆或網管的整合需求</li>\n</ul>\n<p>大型案建議先 POC 單一網段，再擴到全區，較容易過決策。</p>"},{"id":"macmanager","label":"MACManager 位址管理","title":"MACManager MAC 位址管理系統","body":"<p>訪客、BYOD 與設備准入是常見切點，適合與 IP 管理方案一起談。</p>\n<p>MACManager 用來管理裝置位址與准入政策，常出現在訪客管理、門市與醫療場域。</p>\n<h2>常見場景</h2>\n<ul>\n<li>訪客裝置需暫時上網且要留下紀錄</li>\n<li>內部設備要避免未授權接入</li>\n<li>與 IPLocator 一併做資產與准入閉環</li>\n</ul>\n<p>若客戶已在評估訪客管理，請同步準備行銷資源中心的方案簡報。</p>"}]},{"id":"sales","label":"銷售與案例","labels":{"TW":"銷售與案例","EN":"Sales & Cases","JP":"セールスと事例"},"icon":"presentation","articles":[{"id":"discovery","label":"需求訪談技巧","title":"需求訪談怎麼問","body":"<p>用四個問題把現況、痛點、決策鏈與時程問清楚，報備資料也會比較完整。</p>\n<p>訪談不是一次介紹完所有產品。先確認客戶現在怎麼管 IP／MAC，再對應模組，最後才談時程與預算。</p>\n<ol>\n<li><strong>現況盤點：</strong>清單在哪、多久更新、由誰維護。</li>\n<li><strong>痛點：</strong>衝突、找不到人、稽核抽問時交不出資料。</li>\n<li><strong>決策鏈：</strong>承辦人與 Key Man 是否同一人，誰能拍板。</li>\n<li><strong>時程：</strong>POC、決策、交貨與上線的大致月份。</li>\n</ol>\n<p>這四項正好對應商機註冊欄位。訪談當下記下來，可減少退回補件。</p>"},{"id":"hospital-case","label":"醫療業導入案例","title":"成功案例：醫療網段 IP 管理","body":"<p>以醫療場域為例，說明如何從網段盤點走到 DHCP 管理，並對應商機中心的結案情境。</p>\n<p>醫療環境網段多、設備異質，IP 衝突會直接影響診療流程。此案先以 IPLocator 完成盤點，再導入 DHCPManager 統一發放政策。</p>\n<h2>為什麼成交</h2>\n<ul>\n<li>對齊稽核與營運不中斷兩項需求</li>\n<li>POC 先選非急診網段，降低風險</li>\n<li>原廠與夥伴共同參與決策會議</li>\n</ul>\n<blockquote>「先把位址看清楚，後續的准入與發放才有依據。」<br>G 醫院　資訊室</blockquote>\n<p>完整簡報與規格書可至行銷資源中心下載。</p>"},{"id":"compete","label":"競爭分析要點","title":"面對競爭時怎麼說","body":"<p>客戶同時評估其他網管或 NAC 時，把差異說在「盤點完整性」與「落地支援」，而不是比功能清單。</p>\n<p>競爭不一定要正面否定對方。先確認客戶真正要解決的是盤點、衝突還是准入，再對應 UPAS 模組組合。</p>\n<h2>建議強調</h2>\n<ul>\n<li>IP／MAC 資產可視性，而不只是阻擋</li>\n<li>可分模組導入，降低一次換系統的阻力</li>\n<li>在地支援與 Partners Portal 的報備、訓練資源</li>\n</ul>\n<p>行銷資源中心有「競爭分析與話術卡」，可與本課一起使用。</p>"}]},{"id":"cert","label":"認證課程","labels":{"TW":"認證課程","EN":"Certification","JP":"認定コース"},"icon":"badge-check","articles":[{"id":"sales-cert","label":"銷售認證導讀","title":"銷售認證考前導讀","body":"<p>整理銷售認證的出題範圍與準備順序，建議先完成本中心「夥伴入門」與「銷售與案例」。</p>\n<p>銷售認證檢核你是否能獨立完成需求訪談、模組對應與商機報備。通過後可在對外場合使用認證夥伴識別。</p>\n<h2>準備範圍</h2>\n<ul>\n<li>六大功能區塊與角色權限差異</li>\n<li>商機報備欄位與保護期規則</li>\n<li>四個核心產品的適用場景</li>\n<li>醫療與跨據點兩類案例話術</li>\n</ul>\n<p>本頁為示意導讀。正式考場與報名流程將由原廠訓練窗口另行通知。</p>"},{"id":"tech-cert","label":"技術認證實作","title":"技術認證實作指引","body":"<p>技術認證著重 POC 環境準備、盤點流程與常見問題排除，適合售前與導入工程師。</p>\n<p>實作評量會要求你完成小型網段盤點，並說明如何把結果對應到 IPLocator 與 ARPScanner 的下一步。</p>\n<ol>\n<li><strong>準備環境：</strong>確認測試網段、帳號權限與現有 DHCP 範圍。</li>\n<li><strong>執行盤點：</strong>產出位址清單，標示衝突與不明裝置。</li>\n<li><strong>對應方案：</strong>說明哪些問題由哪個模組承接。</li>\n<li><strong>回報結果：</strong>用客戶聽得懂的語言整理 POC 結論。</li>\n</ol>\n<p>實作細節若與現場環境衝突，請改走技術支援中心開立工單。</p>"}]}]}
+    </script>
+            </main>
+        </div>
+    </div>
+
+    
+    <script type="application/json" id="app-roles-config">
+        {"defaultRole":"admin","roles":{"admin":{"label":"總管理者","identity":"admin","partnerId":"","nav":["/","/opportunities","/products","/training","/marketing","/support","/profile"],"can":["opportunity.view","opportunity.create","opportunity.export","opportunity.status.edit","opportunity.actions","opportunity.review","product.manage","marketing.manage","training.manage","support.create","support.manage","profile.manage"]},"oem_manager":{"label":"原廠主管","identity":"oem_manager","partnerId":"P260100001","nav":["/","/opportunities","/products","/training","/marketing","/support"],"can":["opportunity.view","opportunity.create","opportunity.export","opportunity.actions","support.create"]},"oem_sales":{"label":"原廠業務","identity":"oem_sales","partnerId":"P260101001","nav":["/","/opportunities","/products","/training","/marketing","/support"],"can":["opportunity.view","opportunity.create","opportunity.export","opportunity.actions","support.create"]},"dealer_tw":{"label":"國內經銷商","identity":"dealer_tw","partnerId":"P260312001","nav":["/","/opportunities","/products","/training","/marketing","/support"],"can":["opportunity.view","opportunity.create","opportunity.export","opportunity.actions","support.create"]},"dealer_overseas":{"label":"海外經銷商","identity":"dealer_overseas","partnerId":"P251106001","nav":["/","/opportunities","/products","/training","/marketing","/support"],"can":["opportunity.view","opportunity.create","opportunity.export","opportunity.actions","support.create"]}}}
+    </script>
+    <script type="application/json" id="partners-seed-data">
+        [{"id":"P260312001","identity":"dealer_tw","level":"gold","oem_sales":"林佳穎","oem_sales_id":"P260101001","manager_id":"","company":"數位聯防科技股份有限公司","tax_id":"24567890","country":"tw","name":"王小明","email":"ming.wang@digidefend.com.tw","phone":"02-1234-5678","job_title":"業務經理 / 通路部","status":"approved","applied_at":"2026-03-12"},{"id":"P260821001","identity":"","level":"","oem_sales":"陳志偉","oem_sales_id":"","manager_id":"","company":"雲端資安股份有限公司","tax_id":"53881234","country":"tw","name":"張雅婷","email":"yating.chang@cloudsec.com.tw","phone":"02-8765-4321","job_title":"協理 / 業務處","status":"reviewing","applied_at":"2026-08-21"},{"id":"P260118001","identity":"dealer_tw","level":"platinum","oem_sales":"林佳穎","oem_sales_id":"P260101001","manager_id":"","company":"高雄網通系統有限公司","tax_id":"16774521","country":"tw","name":"黃建宏","email":"chienhung@khnetsys.com.tw","phone":"07-336-8800","job_title":"業務主任 / 南區","status":"approved","applied_at":"2026-01-18"},{"id":"P251106001","identity":"dealer_overseas","level":"gold","oem_sales":"吳佩珊","oem_sales_id":"P260102001","manager_id":"","company":"香港網絡防護有限公司","tax_id":"68901234","country":"hk","name":"李浩然","email":"horan.lee@netguard.hk","phone":"+852-2123-7788","job_title":"Sales Manager / Channel","status":"approved","applied_at":"2025-11-06"},{"id":"P260704001","identity":"dealer_overseas","level":"standard","oem_sales":"佐藤 健","oem_sales_id":"P260103001","manager_id":"","company":"東京セキュア株式会社","tax_id":"T8010001123456","country":"jp","name":"田中 美咲","email":"misaki.tanaka@tokyosecure.jp","phone":"+81-3-1234-5678","job_title":"営業部 / マネージャー","status":"approved","applied_at":"2026-07-04"},{"id":"P260902001","identity":"","level":"","oem_sales":"陳志偉","oem_sales_id":"","manager_id":"","company":"新加坡網安方案 Pte. Ltd.","tax_id":"202412345K","country":"sg","name":"Aisha Rahman","email":"aisha.rahman@sgcyber.sg","phone":"+65-6789-1200","job_title":"Channel Specialist / Sales","status":"reviewing","applied_at":"2026-09-02"},{"id":"P260615001","identity":"dealer_overseas","level":"","oem_sales":"吳佩珊","oem_sales_id":"P260102001","manager_id":"","company":"澳門資訊服務有限公司","tax_id":"MO-88321","country":"mo","name":"周曉琳","email":"xiaolin.chou@macauits.com","phone":"+853-2871-6655","job_title":"客戶經理 / 商務部","status":"rejected","applied_at":"2026-06-15"},{"id":"P260828001","identity":"","level":"","oem_sales":"林佳穎","oem_sales_id":"","manager_id":"","company":"華南網絡科技有限公司","tax_id":"91440101MA5DXXXXX","country":"cn","name":"劉振宇","email":"zhenyu.liu@hnnetsec.cn","phone":"+86-20-3888-1200","job_title":"區域經理 / 渠道部","status":"reviewing","applied_at":"2026-08-28"},{"id":"P250920001","identity":"dealer_overseas","level":"diamond","oem_sales":"James Cole","oem_sales_id":"P260104001","manager_id":"","company":"Pacific Secure Partners LLC","tax_id":"98-7654321","country":"us","name":"Emily Chen","email":"emily.chen@pacificsecure.com","phone":"+1-415-555-0188","job_title":"Account Director / APAC Desk","status":"approved","applied_at":"2025-09-20"},{"id":"P260510001","identity":"dealer_overseas","level":"","oem_sales":"佐藤 健","oem_sales_id":"P260103001","manager_id":"","company":"서울인포섹 주식회사","tax_id":"110-81-12345","country":"kr","name":"박지훈","email":"jihoon.park@seoulinfosec.kr","phone":"+82-2-555-0199","job_title":"과장 / 영업팀","status":"rejected","applied_at":"2026-05-10"},{"id":"P260903001","identity":"","level":"","oem_sales":"陳志偉","oem_sales_id":"","manager_id":"","company":"馬來西亞資安通路 Sdn. Bhd.","tax_id":"202301234567","country":"my","name":"Daniel Lim","email":"daniel.lim@mysecure.my","phone":"+60-3-2166-8800","job_title":"Sales Executive / Channel","status":"reviewing","applied_at":"2026-09-03"},{"id":"P260101001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"林佳穎","email":"chiaying.lin@upas.com.tw","phone":"02-2658-1001","job_title":"原廠業務 / 通路部","status":"approved","applied_at":"2026-01-01"},{"id":"P260102001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"吳佩珊","email":"peishan.wu@upas.com.tw","phone":"02-2658-1002","job_title":"原廠業務 / 海外組","status":"approved","applied_at":"2026-01-02"},{"id":"P260103001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"佐藤 健","email":"ken.sato@upas.com.tw","phone":"02-2658-1003","job_title":"原廠業務 / 亞太組","status":"approved","applied_at":"2026-01-03"},{"id":"P260104001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"James Cole","email":"james.cole@upas.com.tw","phone":"02-2658-1004","job_title":"OEM Sales / APAC","status":"approved","applied_at":"2026-01-04"},{"id":"P260100001","identity":"oem_manager","level":"","oem_sales":"","oem_sales_id":"","manager_id":"","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"王經理","email":"manager.wang@upas.com.tw","phone":"02-2658-1000","job_title":"原廠業務主管","status":"approved","applied_at":"2026-01-01"},{"id":"P260105001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"陳志偉","email":"chihwei.chen@upas.com.tw","phone":"02-2658-1005","job_title":"原廠業務 / 通路部","status":"approved","applied_at":"2026-01-05"}]
+    </script>
+</body>
+</html>

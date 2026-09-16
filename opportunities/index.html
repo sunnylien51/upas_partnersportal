@@ -1,0 +1,2322 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="canonical" href="/opportunities">
+<title>商機中心 | Partners Portal</title>
+<meta name="description" content="合作夥伴入口網站">
+
+<link rel="icon" href="/images/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32.png">
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Rajdhani:wght@600&display=swap" rel="stylesheet">
+
+<script type="module" src="http://localhost:5173/@vite/client"></script>
+<link rel="stylesheet" href="http://localhost:5173/source/_assets/css/main.css">
+<script defer type="module" src="http://localhost:5173/source/_assets/js/main.js"></script>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+    </head>
+<body class="bg-bg text-gray5 font-sans antialiased selection:bg-brand2/60 selection:text-gray5 min-h-screen overflow-x-hidden">
+    <div class="flex min-h-screen">
+        <div id="sidebar-overlay" class="fixed inset-0 z-40 bg-gray5/40 hidden md:hidden"></div>
+
+<aside id="app-sidebar" class="fixed md:sticky top-0 left-0 z-50 md:z-10 flex h-screen w-60 shrink-0 flex-col justify-between overflow-hidden bg-white border-r border-gray1 shadow-[0px_0px_60px_0px_rgba(0,0,0,0.02)] -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
+    <div class="flex-1 self-stretch px-4 py-10 flex flex-col items-center gap-10 min-h-0">
+        <a href="/" class="flex justify-center items-center">
+            <img src="/images/logo.svg" alt="Partners Portal" width="116" height="44" class="w-[116px] h-11">
+        </a>
+
+        <nav class="self-stretch flex-1 flex flex-col items-start gap-1 overflow-y-auto" aria-label="主要選單">
+                            <a
+                    href="/"
+                    class="sidebar-link "
+                    data-nav-path="/"
+                >
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                    <span>概覽</span>
+                </a>
+                            <a
+                    href="/opportunities/"
+                    class="sidebar-link active"
+                    data-nav-path="/opportunities"
+                >
+                    <i data-lucide="briefcase" class="w-4 h-4"></i>
+                    <span>商機中心</span>
+                </a>
+                            <a
+                    href="/products/"
+                    class="sidebar-link "
+                    data-nav-path="/products"
+                >
+                    <i data-lucide="package" class="w-4 h-4"></i>
+                    <span>產品資訊中心</span>
+                </a>
+                            <a
+                    href="/training/"
+                    class="sidebar-link "
+                    data-nav-path="/training"
+                >
+                    <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                    <span>教育訓練中心</span>
+                </a>
+                            <a
+                    href="/marketing/"
+                    class="sidebar-link "
+                    data-nav-path="/marketing"
+                >
+                    <i data-lucide="megaphone" class="w-4 h-4"></i>
+                    <span>行銷資源中心</span>
+                </a>
+                            <a
+                    href="/support/"
+                    class="sidebar-link "
+                    data-nav-path="/support"
+                >
+                    <i data-lucide="headset" class="w-4 h-4"></i>
+                    <span>技術支援中心</span>
+                </a>
+                            <a
+                    href="/profile/"
+                    class="sidebar-link "
+                    data-nav-path="/profile"
+                >
+                    <i data-lucide="id-card" class="w-4 h-4"></i>
+                    <span>夥伴管理</span>
+                </a>
+                    </nav>
+    </div>
+
+    <div class="self-stretch flex flex-col items-stretch">
+        
+        <div class="role-preview role-preview--sidebar self-stretch px-6 pb-4 text-left" data-role-preview>
+            <div class="flex items-center justify-start gap-2 mb-2">
+                <span class="text-[12px] font-medium tracking-[0.06em] text-gray4">預覽身分權限</span>
+                <span class="role-preview-badge">演示用</span>
+            </div>
+            <div class="role-preview-switch role-preview-switch--sidebar justify-start" role="group" aria-label="預覽身分權限">
+                <button type="button" class="role-preview-btn is-active" data-role-switch="admin" aria-pressed="true">總管</button>
+                <button type="button" class="role-preview-btn" data-role-switch="oem_manager" aria-pressed="false">主管</button>
+                <button type="button" class="role-preview-btn" data-role-switch="oem_sales" aria-pressed="false">業務</button>
+                <button type="button" class="role-preview-btn" data-role-switch="dealer_tw" aria-pressed="false">國內</button>
+                <button type="button" class="role-preview-btn" data-role-switch="dealer_overseas" aria-pressed="false">海外</button>
+            </div>
+        </div>
+
+        <div class="self-stretch px-6 py-5 border-t border-gray1 inline-flex items-center justify-start gap-2">
+            <i data-lucide="globe" class="w-4 h-4 text-gray4 shrink-0"></i>
+            <div class="locale-switch text-eb3 uppercase" role="group" aria-label="語言">
+                                                        <button type="button" data-locale="TW" class="locale-btn is-active">TW</button>
+                                                            <span class="text-gray3"> / </span>
+                                        <button type="button" data-locale="EN" class="locale-btn ">EN</button>
+                                                            <span class="text-gray3"> / </span>
+                                        <button type="button" data-locale="JP" class="locale-btn ">JP</button>
+                            </div>
+        </div>
+    </div>
+</aside>
+
+        <div class="flex-1 min-w-0 flex flex-col">
+            <header class="relative z-20 px-4 md:px-12 pt-8 pb-5">
+    <div class="flex items-center gap-2 min-w-0 pr-[11.5rem] md:pr-[18.5rem]">
+        <button id="sidebar-toggle" type="button" class="md:hidden p-2 -ml-1 text-gray5 shrink-0" aria-label="開啟選單" aria-controls="app-sidebar">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+        <img src="/images/yellow-slash-motif.svg" alt="" class="w-3 h-6 shrink-0" aria-hidden="true" />
+        <h1 class="text-ch5 text-gray5 truncate">商機中心</h1>
+    </div>
+
+            <nav class="breadcrumb mt-8 pr-[11.5rem] md:pr-[18.5rem]" aria-label="麵包屑">
+            <i data-lucide="home" class="breadcrumb-home"></i>
+            <a href="/" class="breadcrumb-link">首頁</a>
+                            <span class="breadcrumb-sep">/</span>
+                                    <span
+                        class="breadcrumb-text"
+                                            >商機中心</span>
+                                    </nav>
+    </header>
+
+<div class="app-user-fixed">
+    <button type="button" class="size-12 bg-white rounded-2xl shadow-card border border-gray1 inline-flex items-center justify-center text-gray3 hover:text-gray5 transition-colors" aria-label="通知">
+        <i data-lucide="bell" class="w-4 h-4"></i>
+    </button>
+
+    <div class="app-user-menu" data-user-menu>
+        <button
+            type="button"
+            class="app-user-trigger w-auto max-w-[14rem] md:w-56 pl-1.5 pr-3 py-1.5 bg-white rounded-2xl shadow-card border border-gray1 flex items-center gap-3 text-left"
+            data-user-menu-trigger
+            aria-haspopup="menu"
+            aria-expanded="false"
+            aria-controls="app-user-dropdown"
+        >
+            <span class="size-10 shrink-0 bg-brand2 rounded-xl flex items-center justify-center">
+                <i data-lucide="user" class="w-4 h-4 text-white"></i>
+            </span>
+            <span class="flex-1 min-w-0 flex flex-col items-start gap-0.5">
+                <span class="self-stretch text-[14px] font-medium text-gray5 line-clamp-1">經銷商公司名稱</span>
+                <span class="text-[10px] font-medium tracking-[0.06em] text-gray3" data-role-label>總管理者</span>
+            </span>
+            <i data-lucide="more-vertical" class="w-4 h-4 text-gray3 shrink-0"></i>
+        </button>
+        <div id="app-user-dropdown" class="app-user-dropdown" role="menu">
+            <a href="/account/" class="app-user-menu-item" role="menuitem">
+                <i data-lucide="circle-user" class="w-4 h-4"></i>
+                <span>用戶資料</span>
+            </a>
+            <a href="/login/" class="app-user-menu-item is-brand" role="menuitem">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <span>登出</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+            <main class="flex-1 flex flex-col min-h-0">
+                    <div class="page-body">
+        <div class="content-wrapper">
+
+            
+            <div class="self-stretch flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                
+                <div class="flex items-center gap-2 min-w-0">
+                    <label class="search-field search-bar w-56">
+                        <i data-lucide="search" class="w-3.5 h-3.5 text-gray3 shrink-0"></i>
+                        <span class="sr-only">搜尋案件/客戶</span>
+                        <input type="search" name="q" placeholder="搜尋案件/客戶" class="w-full min-w-0 bg-transparent text-cb3 text-gray5 placeholder:text-gray3 outline-none" data-search-input>
+                        <button type="button" class="search-clear" data-search-clear hidden aria-label="清除搜尋">
+                            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </label>
+
+                    <div class="filter-dropdown shrink-0" data-filter-dropdown>
+                        <button type="button" class="filter-trigger" data-filter-trigger aria-haspopup="dialog" aria-expanded="false" aria-controls="opportunity-filter-panel">
+                            <span class="text-cb3 text-gray3 line-clamp-1">狀態篩選</span>
+                            <span class="relative size-8 bg-gray1 rounded-lg inline-flex items-center justify-center">
+                                <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5 text-gray3"></i>
+                                <span class="absolute top-1.5 right-1.5 size-1.5 rounded-full bg-brand2" data-filter-dot hidden></span>
+                            </span>
+                        </button>
+
+                        <div id="opportunity-filter-panel" class="filter-panel" data-filter-panel hidden role="dialog" aria-label="篩選條件">
+                            <div class="self-stretch px-5 py-3 border-b border-gray1">
+                                <p class="text-cb3 text-gray5">篩選條件</p>
+                            </div>
+
+                            <div class="self-stretch px-5 py-4 flex flex-col gap-4">
+                                                                    <div class="self-stretch flex flex-col items-start gap-2" data-filter-group="dealer">
+                                        <p class="text-cb3 text-gray4">所屬</p>
+                                        <div class="self-stretch inline-flex justify-start items-start gap-2 flex-wrap content-start">
+                                                                                            <button
+                                                    type="button"
+                                                    class="filter-chip is-selected"
+                                                    data-filter-chip
+                                                    data-value="all"
+                                                    aria-pressed="true"
+                                                >
+                                                    全部
+                                                </button>
+                                                                                            <button
+                                                    type="button"
+                                                    class="filter-chip "
+                                                    data-filter-chip
+                                                    data-value="oem"
+                                                    aria-pressed="false"
+                                                >
+                                                    原廠業務
+                                                </button>
+                                                                                            <button
+                                                    type="button"
+                                                    class="filter-chip "
+                                                    data-filter-chip
+                                                    data-value="tw"
+                                                    aria-pressed="false"
+                                                >
+                                                    台灣經銷商
+                                                </button>
+                                                                                            <button
+                                                    type="button"
+                                                    class="filter-chip "
+                                                    data-filter-chip
+                                                    data-value="overseas"
+                                                    aria-pressed="false"
+                                                >
+                                                    海外經銷商
+                                                </button>
+                                                                                    </div>
+                                    </div>
+                                                                    <div class="self-stretch flex flex-col items-start gap-2" data-filter-group="status">
+                                        <p class="text-cb3 text-gray4">商機狀態</p>
+                                        <div class="self-stretch inline-flex justify-start items-start gap-2 flex-wrap content-start">
+                                                                                            <button
+                                                    type="button"
+                                                    class="filter-chip is-selected"
+                                                    data-filter-chip
+                                                    data-value="all"
+                                                    aria-pressed="true"
+                                                >
+                                                    全部
+                                                </button>
+                                                                                            <button
+                                                    type="button"
+                                                    class="filter-chip "
+                                                    data-filter-chip
+                                                    data-value="draft"
+                                                    aria-pressed="false"
+                                                >
+                                                    暫存
+                                                </button>
+                                                                                            <button
+                                                    type="button"
+                                                    class="filter-chip "
+                                                    data-filter-chip
+                                                    data-value="approved"
+                                                    aria-pressed="false"
+                                                >
+                                                    已核准
+                                                </button>
+                                                                                            <button
+                                                    type="button"
+                                                    class="filter-chip "
+                                                    data-filter-chip
+                                                    data-value="reviewing"
+                                                    aria-pressed="false"
+                                                >
+                                                    審核中
+                                                </button>
+                                                                                            <button
+                                                    type="button"
+                                                    class="filter-chip "
+                                                    data-filter-chip
+                                                    data-value="rejected"
+                                                    aria-pressed="false"
+                                                >
+                                                    退回補件
+                                                </button>
+                                                                                            <button
+                                                    type="button"
+                                                    class="filter-chip "
+                                                    data-filter-chip
+                                                    data-value="expiring"
+                                                    aria-pressed="false"
+                                                >
+                                                    即將到期
+                                                </button>
+                                                                                            <button
+                                                    type="button"
+                                                    class="filter-chip "
+                                                    data-filter-chip
+                                                    data-value="expired"
+                                                    aria-pressed="false"
+                                                >
+                                                    已到期
+                                                </button>
+                                                                                            <button
+                                                    type="button"
+                                                    class="filter-chip "
+                                                    data-filter-chip
+                                                    data-value="cancelled"
+                                                    aria-pressed="false"
+                                                >
+                                                    已取消
+                                                </button>
+                                                                                            <button
+                                                    type="button"
+                                                    class="filter-chip "
+                                                    data-filter-chip
+                                                    data-value="completed"
+                                                    aria-pressed="false"
+                                                >
+                                                    已結案
+                                                </button>
+                                                                                            <button
+                                                    type="button"
+                                                    class="filter-chip "
+                                                    data-filter-chip
+                                                    data-value="invalid"
+                                                    aria-pressed="false"
+                                                >
+                                                    已失效
+                                                </button>
+                                                                                    </div>
+                                    </div>
+                                                            </div>
+
+                            <div class="self-stretch px-4 py-3 border-t border-gray1 inline-flex justify-end items-center gap-2.5">
+                                <button type="button" class="px-6 py-2 bg-white rounded-[8px] outline outline-1 outline-offset-[-1px] outline-gray1 text-cb3 text-gray4 transition-colors hover:text-gray5 hover:outline-gray2" data-filter-clear>清除條件</button>
+                                <button type="button" class="px-6 py-2 bg-gray5 rounded-[8px] text-cb3 text-white transition-colors hover:bg-gray5/90" data-filter-apply>套用篩選</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="flex flex-wrap items-center gap-2">
+                    <button type="button" class="btn-secondary" data-requires="opportunity.export" data-opportunity-export>匯出 Excel</button>
+                    <a href="/opportunities/create/" class="btn-primary" data-requires="opportunity.create">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        <span>新增商機</span>
+                    </a>
+                </div>
+            </div>
+
+            
+            <div class="self-stretch px-6 py-4 bg-white rounded-2xl shadow-card flex flex-col md:flex-row md:items-stretch gap-4 md:gap-7">
+                                                                            <div class="flex-1 flex flex-col items-start gap-2" data-opp-stat="active">
+                        <p class="text-cb3 text-gray4">進行中商機</p>
+                        <div class="self-stretch inline-flex justify-end items-baseline gap-1">
+                            <span class="font-en font-semibold text-[48px] leading-none tracking-[3px]  text-gray5 " data-opp-stat-count>12</span>
+                            <span class="text-cb3  text-gray5 ">筆</span>
+                        </div>
+                    </div>
+                                                                                <div class="hidden md:block w-px self-stretch bg-gray1 shrink-0" aria-hidden="true"></div>
+                        <div class="md:hidden h-px w-full bg-gray1" aria-hidden="true"></div>
+                                        <div class="flex-1 flex flex-col items-start gap-2" data-opp-stat="reviewing">
+                        <p class="text-cb3 text-gray4">審核中</p>
+                        <div class="self-stretch inline-flex justify-end items-baseline gap-1">
+                            <span class="font-en font-semibold text-[48px] leading-none tracking-[3px]  text-brand2 " data-opp-stat-count>2</span>
+                            <span class="text-cb3  text-brand2 ">筆</span>
+                        </div>
+                    </div>
+                                                                                <div class="hidden md:block w-px self-stretch bg-gray1 shrink-0" aria-hidden="true"></div>
+                        <div class="md:hidden h-px w-full bg-gray1" aria-hidden="true"></div>
+                                        <div class="flex-1 flex flex-col items-start gap-2" data-opp-stat="draft">
+                        <p class="text-cb3 text-gray4">暫存檔</p>
+                        <div class="self-stretch inline-flex justify-end items-baseline gap-1">
+                            <span class="font-en font-semibold text-[48px] leading-none tracking-[3px]  text-gray5 " data-opp-stat-count>1</span>
+                            <span class="text-cb3  text-gray5 ">筆</span>
+                        </div>
+                    </div>
+                                                                                <div class="hidden md:block w-px self-stretch bg-gray1 shrink-0" aria-hidden="true"></div>
+                        <div class="md:hidden h-px w-full bg-gray1" aria-hidden="true"></div>
+                                        <div class="flex-1 flex flex-col items-start gap-2" data-opp-stat="expiring">
+                        <p class="text-cb3 text-gray4">30天內即將到期</p>
+                        <div class="self-stretch inline-flex justify-end items-baseline gap-1">
+                            <span class="font-en font-semibold text-[48px] leading-none tracking-[3px]  text-red " data-opp-stat-count>2</span>
+                            <span class="text-cb3  text-red ">筆</span>
+                        </div>
+                    </div>
+                            </div>
+
+            
+            <div class="list-card">
+                <div class="list-card-body">
+                    <div class="self-stretch overflow-x-auto">
+                        <div class="min-w-[800px]">
+
+                            
+                            <div class="list-head">
+                                <div class="w-36 text-cb3 text-gray4">編號</div>
+                                <div class="flex-1 text-cb3 text-gray4">客戶</div>
+                                <div class="w-32 text-cb3 text-gray4">所屬</div>
+                                <div class="w-40 text-cb3 text-gray4">狀態</div>
+                                <div class="w-28 text-cb3 text-gray4">保護期</div>
+                                <div class="w-32 text-cb3 text-gray4 text-right pr-1">動作</div>
+                            </div>
+
+                            
+                            <div class="flex flex-col">
+                                                                                                        <div
+                                        class="list-row py-2"
+                                        data-opp-row
+                                        data-opp-id="DRAFT-001"
+                                        data-dealer="tw"
+                                        data-amount="0"
+                                        data-status="draft"
+                                        data-created-by="P260312001"
+                                        data-oem-sales-id="P260101001"
+                                        data-search="DRAFT-001 （暫存）尚未填寫完整 台灣經銷商"
+                                    >
+                                        <div class="w-36 text-eb2 text-gray5 uppercase">DRAFT-001</div>
+                                        <div class="flex-1 text-cb3 text-gray5" data-opp-customer>（暫存）尚未填寫完整</div>
+                                        <div class="w-32 shrink-0 text-cb3 text-gray5" data-opp-dealer>台灣經銷商</div>
+
+                                        
+                                        <div class="w-40 shrink-0 flex items-center">
+                                            <div class="status-select" data-status-select>
+                                                <button type="button" class="status-trigger status-draft" data-status-trigger aria-haspopup="listbox" aria-expanded="false">
+                                                    <span class="status-trigger-main">
+                                                        <i data-lucide="file-pen-line" class="status-trigger-icon" data-status-icon></i>
+                                                        <span class="truncate" data-status-label>暫存</span>
+                                                    </span>
+                                                    <i data-lucide="chevron-down" class="status-trigger-caret"></i>
+                                                </button>
+
+                                                <div class="status-menu" data-status-menu hidden role="listbox">
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-draft is-selected"
+                                                            data-status-option
+                                                            data-value="draft"
+                                                            data-label="暫存"
+                                                            data-icon="file-pen-line"
+                                                            aria-selected="true"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="file-pen-line" class="status-option-icon"></i>
+                                                                <span>暫存</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-approved "
+                                                            data-status-option
+                                                            data-value="approved"
+                                                            data-label="已核准"
+                                                            data-icon="check-circle"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="check-circle" class="status-option-icon"></i>
+                                                                <span>已核准</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-reviewing "
+                                                            data-status-option
+                                                            data-value="reviewing"
+                                                            data-label="審核中"
+                                                            data-icon="clock"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="clock" class="status-option-icon"></i>
+                                                                <span>審核中</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-rejected "
+                                                            data-status-option
+                                                            data-value="rejected"
+                                                            data-label="退回補件"
+                                                            data-icon="file-warning"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="file-warning" class="status-option-icon"></i>
+                                                                <span>退回補件</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-expiring "
+                                                            data-status-option
+                                                            data-value="expiring"
+                                                            data-label="即將到期"
+                                                            data-icon="alert-circle"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="alert-circle" class="status-option-icon"></i>
+                                                                <span>即將到期</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-expired "
+                                                            data-status-option
+                                                            data-value="expired"
+                                                            data-label="已到期"
+                                                            data-icon="circle-x"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="circle-x" class="status-option-icon"></i>
+                                                                <span>已到期</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-cancelled "
+                                                            data-status-option
+                                                            data-value="cancelled"
+                                                            data-label="已取消"
+                                                            data-icon="ban"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="ban" class="status-option-icon"></i>
+                                                                <span>已取消</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-completed "
+                                                            data-status-option
+                                                            data-value="completed"
+                                                            data-label="已結案"
+                                                            data-icon="circle-check"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="circle-check" class="status-option-icon"></i>
+                                                                <span>已結案</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-invalid "
+                                                            data-status-option
+                                                            data-value="invalid"
+                                                            data-label="已失效"
+                                                            data-icon="circle-off"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="circle-off" class="status-option-icon"></i>
+                                                                <span>已失效</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                    </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="w-28 shrink-0 text-eb2 text-gray5 uppercase" data-opp-protection>-</div>
+
+                                        
+                                        <div class="w-32 shrink-0 inline-flex items-center justify-end gap-1" data-opp-actions>
+                                            <a
+                                                href="/opportunities/create/?draft=DRAFT-001"
+                                                class="icon-action"
+                                                data-opp-edit-action
+                                                 data-requires="opportunity.create"                                                 aria-label="繼續編輯 DRAFT-001"
+                                                title="繼續編輯暫存檔"
+                                            >
+                                                <i data-lucide="square-pen" class="w-4 h-4"></i>
+                                            </a>
+
+                                            <div class="row-more" data-row-more>
+                                                <button
+                                                    type="button"
+                                                    class="icon-action"
+                                                    data-row-more-trigger
+                                                    aria-haspopup="menu"
+                                                    aria-expanded="false"
+                                                    aria-label="更多 DRAFT-001"
+                                                >
+                                                    <i data-lucide="more-vertical" class="w-4 h-4"></i>
+                                                </button>
+                                                <div class="row-more-menu" data-row-more-menu hidden role="menu">
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                                                                                        <div
+                                        class="list-row py-2"
+                                        data-opp-row
+                                        data-opp-id="N260728005"
+                                        data-dealer="tw"
+                                        data-amount="500000"
+                                        data-status="approved"
+                                        data-created-by="P260312001"
+                                        data-oem-sales-id="P260101001"
+                                        data-search="N260728005 A 公司 台灣經銷商"
+                                    >
+                                        <div class="w-36 text-eb2 text-gray5 uppercase">N260728005</div>
+                                        <div class="flex-1 text-cb3 text-gray5" data-opp-customer>A 公司</div>
+                                        <div class="w-32 shrink-0 text-cb3 text-gray5" data-opp-dealer>台灣經銷商</div>
+
+                                        
+                                        <div class="w-40 shrink-0 flex items-center">
+                                            <div class="status-select" data-status-select>
+                                                <button type="button" class="status-trigger status-approved" data-status-trigger aria-haspopup="listbox" aria-expanded="false">
+                                                    <span class="status-trigger-main">
+                                                        <i data-lucide="check-circle" class="status-trigger-icon" data-status-icon></i>
+                                                        <span class="truncate" data-status-label>已核准</span>
+                                                    </span>
+                                                    <i data-lucide="chevron-down" class="status-trigger-caret"></i>
+                                                </button>
+
+                                                <div class="status-menu" data-status-menu hidden role="listbox">
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-draft "
+                                                            data-status-option
+                                                            data-value="draft"
+                                                            data-label="暫存"
+                                                            data-icon="file-pen-line"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="file-pen-line" class="status-option-icon"></i>
+                                                                <span>暫存</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-approved is-selected"
+                                                            data-status-option
+                                                            data-value="approved"
+                                                            data-label="已核准"
+                                                            data-icon="check-circle"
+                                                            aria-selected="true"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="check-circle" class="status-option-icon"></i>
+                                                                <span>已核准</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-reviewing "
+                                                            data-status-option
+                                                            data-value="reviewing"
+                                                            data-label="審核中"
+                                                            data-icon="clock"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="clock" class="status-option-icon"></i>
+                                                                <span>審核中</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-rejected "
+                                                            data-status-option
+                                                            data-value="rejected"
+                                                            data-label="退回補件"
+                                                            data-icon="file-warning"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="file-warning" class="status-option-icon"></i>
+                                                                <span>退回補件</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-expiring "
+                                                            data-status-option
+                                                            data-value="expiring"
+                                                            data-label="即將到期"
+                                                            data-icon="alert-circle"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="alert-circle" class="status-option-icon"></i>
+                                                                <span>即將到期</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-expired "
+                                                            data-status-option
+                                                            data-value="expired"
+                                                            data-label="已到期"
+                                                            data-icon="circle-x"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="circle-x" class="status-option-icon"></i>
+                                                                <span>已到期</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-cancelled "
+                                                            data-status-option
+                                                            data-value="cancelled"
+                                                            data-label="已取消"
+                                                            data-icon="ban"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="ban" class="status-option-icon"></i>
+                                                                <span>已取消</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-completed "
+                                                            data-status-option
+                                                            data-value="completed"
+                                                            data-label="已結案"
+                                                            data-icon="circle-check"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="circle-check" class="status-option-icon"></i>
+                                                                <span>已結案</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-invalid "
+                                                            data-status-option
+                                                            data-value="invalid"
+                                                            data-label="已失效"
+                                                            data-icon="circle-off"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="circle-off" class="status-option-icon"></i>
+                                                                <span>已失效</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                    </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="w-28 shrink-0 text-eb2 text-gray5 uppercase" data-opp-protection>2026-09-30</div>
+
+                                        
+                                        <div class="w-32 shrink-0 inline-flex items-center justify-end gap-1" data-opp-actions>
+                                            <a
+                                                href="/opportunities/review/?id=N260728005"
+                                                class="icon-action"
+                                                data-opp-edit-action
+                                                                                                aria-label="編輯 N260728005"
+                                                title="編輯商機"
+                                            >
+                                                <i data-lucide="square-pen" class="w-4 h-4"></i>
+                                            </a>
+
+                                            <div class="row-more" data-row-more>
+                                                <button
+                                                    type="button"
+                                                    class="icon-action"
+                                                    data-row-more-trigger
+                                                    aria-haspopup="menu"
+                                                    aria-expanded="false"
+                                                    aria-label="更多 N260728005"
+                                                >
+                                                    <i data-lucide="more-vertical" class="w-4 h-4"></i>
+                                                </button>
+                                                <div class="row-more-menu" data-row-more-menu hidden role="menu">
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                                                                                        <div
+                                        class="list-row py-2"
+                                        data-opp-row
+                                        data-opp-id="N260728004"
+                                        data-dealer="oem"
+                                        data-amount="80000"
+                                        data-status="reviewing"
+                                        data-created-by="P260101001"
+                                        data-oem-sales-id="P260101001"
+                                        data-search="N260728004 B 科技 原廠業務"
+                                    >
+                                        <div class="w-36 text-eb2 text-gray5 uppercase">N260728004</div>
+                                        <div class="flex-1 text-cb3 text-gray5" data-opp-customer>B 科技</div>
+                                        <div class="w-32 shrink-0 text-cb3 text-gray5" data-opp-dealer>原廠業務</div>
+
+                                        
+                                        <div class="w-40 shrink-0 flex items-center">
+                                            <div class="status-select" data-status-select>
+                                                <button type="button" class="status-trigger status-reviewing" data-status-trigger aria-haspopup="listbox" aria-expanded="false">
+                                                    <span class="status-trigger-main">
+                                                        <i data-lucide="clock" class="status-trigger-icon" data-status-icon></i>
+                                                        <span class="truncate" data-status-label>審核中</span>
+                                                    </span>
+                                                    <i data-lucide="chevron-down" class="status-trigger-caret"></i>
+                                                </button>
+
+                                                <div class="status-menu" data-status-menu hidden role="listbox">
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-draft "
+                                                            data-status-option
+                                                            data-value="draft"
+                                                            data-label="暫存"
+                                                            data-icon="file-pen-line"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="file-pen-line" class="status-option-icon"></i>
+                                                                <span>暫存</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-approved "
+                                                            data-status-option
+                                                            data-value="approved"
+                                                            data-label="已核准"
+                                                            data-icon="check-circle"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="check-circle" class="status-option-icon"></i>
+                                                                <span>已核准</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-reviewing is-selected"
+                                                            data-status-option
+                                                            data-value="reviewing"
+                                                            data-label="審核中"
+                                                            data-icon="clock"
+                                                            aria-selected="true"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="clock" class="status-option-icon"></i>
+                                                                <span>審核中</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-rejected "
+                                                            data-status-option
+                                                            data-value="rejected"
+                                                            data-label="退回補件"
+                                                            data-icon="file-warning"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="file-warning" class="status-option-icon"></i>
+                                                                <span>退回補件</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-expiring "
+                                                            data-status-option
+                                                            data-value="expiring"
+                                                            data-label="即將到期"
+                                                            data-icon="alert-circle"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="alert-circle" class="status-option-icon"></i>
+                                                                <span>即將到期</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-expired "
+                                                            data-status-option
+                                                            data-value="expired"
+                                                            data-label="已到期"
+                                                            data-icon="circle-x"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="circle-x" class="status-option-icon"></i>
+                                                                <span>已到期</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-cancelled "
+                                                            data-status-option
+                                                            data-value="cancelled"
+                                                            data-label="已取消"
+                                                            data-icon="ban"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="ban" class="status-option-icon"></i>
+                                                                <span>已取消</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-completed "
+                                                            data-status-option
+                                                            data-value="completed"
+                                                            data-label="已結案"
+                                                            data-icon="circle-check"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="circle-check" class="status-option-icon"></i>
+                                                                <span>已結案</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-invalid "
+                                                            data-status-option
+                                                            data-value="invalid"
+                                                            data-label="已失效"
+                                                            data-icon="circle-off"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="circle-off" class="status-option-icon"></i>
+                                                                <span>已失效</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                    </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="w-28 shrink-0 text-eb2 text-gray5 uppercase" data-opp-protection>-</div>
+
+                                        
+                                        <div class="w-32 shrink-0 inline-flex items-center justify-end gap-1" data-opp-actions>
+                                            <a
+                                                href="/opportunities/review/?id=N260728004"
+                                                class="icon-action"
+                                                data-opp-edit-action
+                                                                                                aria-label="編輯 N260728004"
+                                                title="檢視／審核商機"
+                                            >
+                                                <i data-lucide="square-pen" class="w-4 h-4"></i>
+                                            </a>
+
+                                            <div class="row-more" data-row-more>
+                                                <button
+                                                    type="button"
+                                                    class="icon-action"
+                                                    data-row-more-trigger
+                                                    aria-haspopup="menu"
+                                                    aria-expanded="false"
+                                                    aria-label="更多 N260728004"
+                                                >
+                                                    <i data-lucide="more-vertical" class="w-4 h-4"></i>
+                                                </button>
+                                                <div class="row-more-menu" data-row-more-menu hidden role="menu">
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                                                                                        <div
+                                        class="list-row py-2"
+                                        data-opp-row
+                                        data-opp-id="N260728002"
+                                        data-dealer="tw"
+                                        data-amount="350000"
+                                        data-status="rejected"
+                                        data-created-by="P260118001"
+                                        data-oem-sales-id="P260101001"
+                                        data-search="N260728002 D 數位 台灣經銷商"
+                                    >
+                                        <div class="w-36 text-eb2 text-gray5 uppercase">N260728002</div>
+                                        <div class="flex-1 text-cb3 text-gray5" data-opp-customer>D 數位</div>
+                                        <div class="w-32 shrink-0 text-cb3 text-gray5" data-opp-dealer>台灣經銷商</div>
+
+                                        
+                                        <div class="w-40 shrink-0 flex items-center">
+                                            <div class="status-select" data-status-select>
+                                                <button type="button" class="status-trigger status-rejected" data-status-trigger aria-haspopup="listbox" aria-expanded="false">
+                                                    <span class="status-trigger-main">
+                                                        <i data-lucide="file-warning" class="status-trigger-icon" data-status-icon></i>
+                                                        <span class="truncate" data-status-label>退回補件</span>
+                                                    </span>
+                                                    <i data-lucide="chevron-down" class="status-trigger-caret"></i>
+                                                </button>
+
+                                                <div class="status-menu" data-status-menu hidden role="listbox">
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-draft "
+                                                            data-status-option
+                                                            data-value="draft"
+                                                            data-label="暫存"
+                                                            data-icon="file-pen-line"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="file-pen-line" class="status-option-icon"></i>
+                                                                <span>暫存</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-approved "
+                                                            data-status-option
+                                                            data-value="approved"
+                                                            data-label="已核准"
+                                                            data-icon="check-circle"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="check-circle" class="status-option-icon"></i>
+                                                                <span>已核准</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-reviewing "
+                                                            data-status-option
+                                                            data-value="reviewing"
+                                                            data-label="審核中"
+                                                            data-icon="clock"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="clock" class="status-option-icon"></i>
+                                                                <span>審核中</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-rejected is-selected"
+                                                            data-status-option
+                                                            data-value="rejected"
+                                                            data-label="退回補件"
+                                                            data-icon="file-warning"
+                                                            aria-selected="true"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="file-warning" class="status-option-icon"></i>
+                                                                <span>退回補件</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-expiring "
+                                                            data-status-option
+                                                            data-value="expiring"
+                                                            data-label="即將到期"
+                                                            data-icon="alert-circle"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="alert-circle" class="status-option-icon"></i>
+                                                                <span>即將到期</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-expired "
+                                                            data-status-option
+                                                            data-value="expired"
+                                                            data-label="已到期"
+                                                            data-icon="circle-x"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="circle-x" class="status-option-icon"></i>
+                                                                <span>已到期</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-cancelled "
+                                                            data-status-option
+                                                            data-value="cancelled"
+                                                            data-label="已取消"
+                                                            data-icon="ban"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="ban" class="status-option-icon"></i>
+                                                                <span>已取消</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-completed "
+                                                            data-status-option
+                                                            data-value="completed"
+                                                            data-label="已結案"
+                                                            data-icon="circle-check"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="circle-check" class="status-option-icon"></i>
+                                                                <span>已結案</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-invalid "
+                                                            data-status-option
+                                                            data-value="invalid"
+                                                            data-label="已失效"
+                                                            data-icon="circle-off"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="circle-off" class="status-option-icon"></i>
+                                                                <span>已失效</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                    </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="w-28 shrink-0 text-eb2 text-gray5 uppercase" data-opp-protection>-</div>
+
+                                        
+                                        <div class="w-32 shrink-0 inline-flex items-center justify-end gap-1" data-opp-actions>
+                                            <a
+                                                href="/opportunities/create/?id=N260728002"
+                                                class="icon-action"
+                                                data-opp-edit-action
+                                                                                                aria-label="補件編輯 N260728002"
+                                                title="補件編輯"
+                                            >
+                                                <i data-lucide="square-pen" class="w-4 h-4"></i>
+                                            </a>
+
+                                            <div class="row-more" data-row-more>
+                                                <button
+                                                    type="button"
+                                                    class="icon-action"
+                                                    data-row-more-trigger
+                                                    aria-haspopup="menu"
+                                                    aria-expanded="false"
+                                                    aria-label="更多 N260728002"
+                                                >
+                                                    <i data-lucide="more-vertical" class="w-4 h-4"></i>
+                                                </button>
+                                                <div class="row-more-menu" data-row-more-menu hidden role="menu">
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                                                                                        <div
+                                        class="list-row py-2"
+                                        data-opp-row
+                                        data-opp-id="N260728001"
+                                        data-dealer="overseas"
+                                        data-amount="1200000"
+                                        data-status="expiring"
+                                        data-created-by="P251106001"
+                                        data-oem-sales-id="P260102001"
+                                        data-search="N260728001 C 集團 海外經銷商"
+                                    >
+                                        <div class="w-36 text-eb2 text-gray5 uppercase">N260728001</div>
+                                        <div class="flex-1 text-cb3 text-gray5" data-opp-customer>C 集團</div>
+                                        <div class="w-32 shrink-0 text-cb3 text-gray5" data-opp-dealer>海外經銷商</div>
+
+                                        
+                                        <div class="w-40 shrink-0 flex items-center">
+                                            <div class="status-select" data-status-select>
+                                                <button type="button" class="status-trigger status-expiring" data-status-trigger aria-haspopup="listbox" aria-expanded="false">
+                                                    <span class="status-trigger-main">
+                                                        <i data-lucide="alert-circle" class="status-trigger-icon" data-status-icon></i>
+                                                        <span class="truncate" data-status-label>即將到期</span>
+                                                    </span>
+                                                    <i data-lucide="chevron-down" class="status-trigger-caret"></i>
+                                                </button>
+
+                                                <div class="status-menu" data-status-menu hidden role="listbox">
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-draft "
+                                                            data-status-option
+                                                            data-value="draft"
+                                                            data-label="暫存"
+                                                            data-icon="file-pen-line"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="file-pen-line" class="status-option-icon"></i>
+                                                                <span>暫存</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-approved "
+                                                            data-status-option
+                                                            data-value="approved"
+                                                            data-label="已核准"
+                                                            data-icon="check-circle"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="check-circle" class="status-option-icon"></i>
+                                                                <span>已核准</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-reviewing "
+                                                            data-status-option
+                                                            data-value="reviewing"
+                                                            data-label="審核中"
+                                                            data-icon="clock"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="clock" class="status-option-icon"></i>
+                                                                <span>審核中</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-rejected "
+                                                            data-status-option
+                                                            data-value="rejected"
+                                                            data-label="退回補件"
+                                                            data-icon="file-warning"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="file-warning" class="status-option-icon"></i>
+                                                                <span>退回補件</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-expiring is-selected"
+                                                            data-status-option
+                                                            data-value="expiring"
+                                                            data-label="即將到期"
+                                                            data-icon="alert-circle"
+                                                            aria-selected="true"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="alert-circle" class="status-option-icon"></i>
+                                                                <span>即將到期</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-expired "
+                                                            data-status-option
+                                                            data-value="expired"
+                                                            data-label="已到期"
+                                                            data-icon="circle-x"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="circle-x" class="status-option-icon"></i>
+                                                                <span>已到期</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-cancelled "
+                                                            data-status-option
+                                                            data-value="cancelled"
+                                                            data-label="已取消"
+                                                            data-icon="ban"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="ban" class="status-option-icon"></i>
+                                                                <span>已取消</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-completed "
+                                                            data-status-option
+                                                            data-value="completed"
+                                                            data-label="已結案"
+                                                            data-icon="circle-check"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="circle-check" class="status-option-icon"></i>
+                                                                <span>已結案</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-invalid "
+                                                            data-status-option
+                                                            data-value="invalid"
+                                                            data-label="已失效"
+                                                            data-icon="circle-off"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="circle-off" class="status-option-icon"></i>
+                                                                <span>已失效</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                    </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="w-28 shrink-0 text-eb2 text-gray5 uppercase" data-opp-protection>2026-07-15</div>
+
+                                        
+                                        <div class="w-32 shrink-0 inline-flex items-center justify-end gap-1" data-opp-actions>
+                                            <a
+                                                href="/opportunities/review/?id=N260728001"
+                                                class="icon-action"
+                                                data-opp-edit-action
+                                                                                                aria-label="編輯 N260728001"
+                                                title="編輯商機"
+                                            >
+                                                <i data-lucide="square-pen" class="w-4 h-4"></i>
+                                            </a>
+
+                                            <div class="row-more" data-row-more>
+                                                <button
+                                                    type="button"
+                                                    class="icon-action"
+                                                    data-row-more-trigger
+                                                    aria-haspopup="menu"
+                                                    aria-expanded="false"
+                                                    aria-label="更多 N260728001"
+                                                >
+                                                    <i data-lucide="more-vertical" class="w-4 h-4"></i>
+                                                </button>
+                                                <div class="row-more-menu" data-row-more-menu hidden role="menu">
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                                                                                        <div
+                                        class="list-row py-2"
+                                        data-opp-row
+                                        data-opp-id="N260728003"
+                                        data-dealer="oem"
+                                        data-amount="750000"
+                                        data-status="expired"
+                                        data-created-by="P260102001"
+                                        data-oem-sales-id="P260102001"
+                                        data-search="N260728003 E 集團 原廠業務"
+                                    >
+                                        <div class="w-36 text-eb2 text-gray5 uppercase">N260728003</div>
+                                        <div class="flex-1 text-cb3 text-gray5" data-opp-customer>E 集團</div>
+                                        <div class="w-32 shrink-0 text-cb3 text-gray5" data-opp-dealer>原廠業務</div>
+
+                                        
+                                        <div class="w-40 shrink-0 flex items-center">
+                                            <div class="status-select" data-status-select>
+                                                <button type="button" class="status-trigger status-expired" data-status-trigger aria-haspopup="listbox" aria-expanded="false">
+                                                    <span class="status-trigger-main">
+                                                        <i data-lucide="circle-x" class="status-trigger-icon" data-status-icon></i>
+                                                        <span class="truncate" data-status-label>已到期</span>
+                                                    </span>
+                                                    <i data-lucide="chevron-down" class="status-trigger-caret"></i>
+                                                </button>
+
+                                                <div class="status-menu" data-status-menu hidden role="listbox">
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-draft "
+                                                            data-status-option
+                                                            data-value="draft"
+                                                            data-label="暫存"
+                                                            data-icon="file-pen-line"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="file-pen-line" class="status-option-icon"></i>
+                                                                <span>暫存</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-approved "
+                                                            data-status-option
+                                                            data-value="approved"
+                                                            data-label="已核准"
+                                                            data-icon="check-circle"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="check-circle" class="status-option-icon"></i>
+                                                                <span>已核准</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-reviewing "
+                                                            data-status-option
+                                                            data-value="reviewing"
+                                                            data-label="審核中"
+                                                            data-icon="clock"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="clock" class="status-option-icon"></i>
+                                                                <span>審核中</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-rejected "
+                                                            data-status-option
+                                                            data-value="rejected"
+                                                            data-label="退回補件"
+                                                            data-icon="file-warning"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="file-warning" class="status-option-icon"></i>
+                                                                <span>退回補件</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-expiring "
+                                                            data-status-option
+                                                            data-value="expiring"
+                                                            data-label="即將到期"
+                                                            data-icon="alert-circle"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="alert-circle" class="status-option-icon"></i>
+                                                                <span>即將到期</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-expired is-selected"
+                                                            data-status-option
+                                                            data-value="expired"
+                                                            data-label="已到期"
+                                                            data-icon="circle-x"
+                                                            aria-selected="true"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="circle-x" class="status-option-icon"></i>
+                                                                <span>已到期</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-cancelled "
+                                                            data-status-option
+                                                            data-value="cancelled"
+                                                            data-label="已取消"
+                                                            data-icon="ban"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="ban" class="status-option-icon"></i>
+                                                                <span>已取消</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-completed "
+                                                            data-status-option
+                                                            data-value="completed"
+                                                            data-label="已結案"
+                                                            data-icon="circle-check"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="circle-check" class="status-option-icon"></i>
+                                                                <span>已結案</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-invalid "
+                                                            data-status-option
+                                                            data-value="invalid"
+                                                            data-label="已失效"
+                                                            data-icon="circle-off"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="circle-off" class="status-option-icon"></i>
+                                                                <span>已失效</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                    </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="w-28 shrink-0 text-eb2 text-gray5 uppercase" data-opp-protection>2026-07-15</div>
+
+                                        
+                                        <div class="w-32 shrink-0 inline-flex items-center justify-end gap-1" data-opp-actions>
+                                            <a
+                                                href="/opportunities/review/?id=N260728003"
+                                                class="icon-action"
+                                                data-opp-edit-action
+                                                                                                aria-label="編輯 N260728003"
+                                                title="編輯商機"
+                                            >
+                                                <i data-lucide="square-pen" class="w-4 h-4"></i>
+                                            </a>
+
+                                            <div class="row-more" data-row-more>
+                                                <button
+                                                    type="button"
+                                                    class="icon-action"
+                                                    data-row-more-trigger
+                                                    aria-haspopup="menu"
+                                                    aria-expanded="false"
+                                                    aria-label="更多 N260728003"
+                                                >
+                                                    <i data-lucide="more-vertical" class="w-4 h-4"></i>
+                                                </button>
+                                                <div class="row-more-menu" data-row-more-menu hidden role="menu">
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                                                                                        <div
+                                        class="list-row py-2"
+                                        data-opp-row
+                                        data-opp-id="N260728006"
+                                        data-dealer="tw"
+                                        data-amount="420000"
+                                        data-status="cancelled"
+                                        data-created-by="P260312001"
+                                        data-oem-sales-id="P260101001"
+                                        data-search="N260728006 F 製造 台灣經銷商"
+                                    >
+                                        <div class="w-36 text-eb2 text-gray5 uppercase">N260728006</div>
+                                        <div class="flex-1 text-cb3 text-gray5" data-opp-customer>F 製造</div>
+                                        <div class="w-32 shrink-0 text-cb3 text-gray5" data-opp-dealer>台灣經銷商</div>
+
+                                        
+                                        <div class="w-40 shrink-0 flex items-center">
+                                            <div class="status-select" data-status-select>
+                                                <button type="button" class="status-trigger status-cancelled" data-status-trigger aria-haspopup="listbox" aria-expanded="false">
+                                                    <span class="status-trigger-main">
+                                                        <i data-lucide="ban" class="status-trigger-icon" data-status-icon></i>
+                                                        <span class="truncate" data-status-label>已取消</span>
+                                                    </span>
+                                                    <i data-lucide="chevron-down" class="status-trigger-caret"></i>
+                                                </button>
+
+                                                <div class="status-menu" data-status-menu hidden role="listbox">
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-draft "
+                                                            data-status-option
+                                                            data-value="draft"
+                                                            data-label="暫存"
+                                                            data-icon="file-pen-line"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="file-pen-line" class="status-option-icon"></i>
+                                                                <span>暫存</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-approved "
+                                                            data-status-option
+                                                            data-value="approved"
+                                                            data-label="已核准"
+                                                            data-icon="check-circle"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="check-circle" class="status-option-icon"></i>
+                                                                <span>已核准</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-reviewing "
+                                                            data-status-option
+                                                            data-value="reviewing"
+                                                            data-label="審核中"
+                                                            data-icon="clock"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="clock" class="status-option-icon"></i>
+                                                                <span>審核中</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-rejected "
+                                                            data-status-option
+                                                            data-value="rejected"
+                                                            data-label="退回補件"
+                                                            data-icon="file-warning"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="file-warning" class="status-option-icon"></i>
+                                                                <span>退回補件</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-expiring "
+                                                            data-status-option
+                                                            data-value="expiring"
+                                                            data-label="即將到期"
+                                                            data-icon="alert-circle"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="alert-circle" class="status-option-icon"></i>
+                                                                <span>即將到期</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-expired "
+                                                            data-status-option
+                                                            data-value="expired"
+                                                            data-label="已到期"
+                                                            data-icon="circle-x"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="circle-x" class="status-option-icon"></i>
+                                                                <span>已到期</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-cancelled is-selected"
+                                                            data-status-option
+                                                            data-value="cancelled"
+                                                            data-label="已取消"
+                                                            data-icon="ban"
+                                                            aria-selected="true"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="ban" class="status-option-icon"></i>
+                                                                <span>已取消</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-completed "
+                                                            data-status-option
+                                                            data-value="completed"
+                                                            data-label="已結案"
+                                                            data-icon="circle-check"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="circle-check" class="status-option-icon"></i>
+                                                                <span>已結案</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-invalid "
+                                                            data-status-option
+                                                            data-value="invalid"
+                                                            data-label="已失效"
+                                                            data-icon="circle-off"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="circle-off" class="status-option-icon"></i>
+                                                                <span>已失效</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                    </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="w-28 shrink-0 text-eb2 text-gray5 uppercase" data-opp-protection>-</div>
+
+                                        
+                                        <div class="w-32 shrink-0 inline-flex items-center justify-end gap-1" data-opp-actions>
+                                            <a
+                                                href="/opportunities/review/?id=N260728006"
+                                                class="icon-action"
+                                                data-opp-edit-action
+                                                                                                aria-label="編輯 N260728006"
+                                                title="編輯商機"
+                                            >
+                                                <i data-lucide="square-pen" class="w-4 h-4"></i>
+                                            </a>
+
+                                            <div class="row-more" data-row-more>
+                                                <button
+                                                    type="button"
+                                                    class="icon-action"
+                                                    data-row-more-trigger
+                                                    aria-haspopup="menu"
+                                                    aria-expanded="false"
+                                                    aria-label="更多 N260728006"
+                                                >
+                                                    <i data-lucide="more-vertical" class="w-4 h-4"></i>
+                                                </button>
+                                                <div class="row-more-menu" data-row-more-menu hidden role="menu">
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                                                                                        <div
+                                        class="list-row py-2"
+                                        data-opp-row
+                                        data-opp-id="N260728007"
+                                        data-dealer="oem"
+                                        data-amount="980000"
+                                        data-status="completed"
+                                        data-created-by="P260101001"
+                                        data-oem-sales-id="P260101001"
+                                        data-search="N260728007 G 醫院 原廠業務"
+                                    >
+                                        <div class="w-36 text-eb2 text-gray5 uppercase">N260728007</div>
+                                        <div class="flex-1 text-cb3 text-gray5" data-opp-customer>G 醫院</div>
+                                        <div class="w-32 shrink-0 text-cb3 text-gray5" data-opp-dealer>原廠業務</div>
+
+                                        
+                                        <div class="w-40 shrink-0 flex items-center">
+                                            <div class="status-select" data-status-select>
+                                                <button type="button" class="status-trigger status-completed" data-status-trigger aria-haspopup="listbox" aria-expanded="false">
+                                                    <span class="status-trigger-main">
+                                                        <i data-lucide="circle-check" class="status-trigger-icon" data-status-icon></i>
+                                                        <span class="truncate" data-status-label>已結案</span>
+                                                    </span>
+                                                    <i data-lucide="chevron-down" class="status-trigger-caret"></i>
+                                                </button>
+
+                                                <div class="status-menu" data-status-menu hidden role="listbox">
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-draft "
+                                                            data-status-option
+                                                            data-value="draft"
+                                                            data-label="暫存"
+                                                            data-icon="file-pen-line"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="file-pen-line" class="status-option-icon"></i>
+                                                                <span>暫存</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-approved "
+                                                            data-status-option
+                                                            data-value="approved"
+                                                            data-label="已核准"
+                                                            data-icon="check-circle"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="check-circle" class="status-option-icon"></i>
+                                                                <span>已核准</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-reviewing "
+                                                            data-status-option
+                                                            data-value="reviewing"
+                                                            data-label="審核中"
+                                                            data-icon="clock"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="clock" class="status-option-icon"></i>
+                                                                <span>審核中</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-rejected "
+                                                            data-status-option
+                                                            data-value="rejected"
+                                                            data-label="退回補件"
+                                                            data-icon="file-warning"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="file-warning" class="status-option-icon"></i>
+                                                                <span>退回補件</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-expiring "
+                                                            data-status-option
+                                                            data-value="expiring"
+                                                            data-label="即將到期"
+                                                            data-icon="alert-circle"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="alert-circle" class="status-option-icon"></i>
+                                                                <span>即將到期</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-expired "
+                                                            data-status-option
+                                                            data-value="expired"
+                                                            data-label="已到期"
+                                                            data-icon="circle-x"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="circle-x" class="status-option-icon"></i>
+                                                                <span>已到期</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-cancelled "
+                                                            data-status-option
+                                                            data-value="cancelled"
+                                                            data-label="已取消"
+                                                            data-icon="ban"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="ban" class="status-option-icon"></i>
+                                                                <span>已取消</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-completed is-selected"
+                                                            data-status-option
+                                                            data-value="completed"
+                                                            data-label="已結案"
+                                                            data-icon="circle-check"
+                                                            aria-selected="true"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="circle-check" class="status-option-icon"></i>
+                                                                <span>已結案</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-invalid "
+                                                            data-status-option
+                                                            data-value="invalid"
+                                                            data-label="已失效"
+                                                            data-icon="circle-off"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="circle-off" class="status-option-icon"></i>
+                                                                <span>已失效</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                    </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="w-28 shrink-0 text-eb2 text-gray5 uppercase" data-opp-protection>-</div>
+
+                                        
+                                        <div class="w-32 shrink-0 inline-flex items-center justify-end gap-1" data-opp-actions>
+                                            <a
+                                                href="/opportunities/review/?id=N260728007"
+                                                class="icon-action"
+                                                data-opp-edit-action
+                                                                                                aria-label="編輯 N260728007"
+                                                title="編輯商機"
+                                            >
+                                                <i data-lucide="square-pen" class="w-4 h-4"></i>
+                                            </a>
+
+                                            <div class="row-more" data-row-more>
+                                                <button
+                                                    type="button"
+                                                    class="icon-action"
+                                                    data-row-more-trigger
+                                                    aria-haspopup="menu"
+                                                    aria-expanded="false"
+                                                    aria-label="更多 N260728007"
+                                                >
+                                                    <i data-lucide="more-vertical" class="w-4 h-4"></i>
+                                                </button>
+                                                <div class="row-more-menu" data-row-more-menu hidden role="menu">
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                                                                                        <div
+                                        class="list-row py-2"
+                                        data-opp-row
+                                        data-opp-id="N260728008"
+                                        data-dealer="overseas"
+                                        data-amount="260000"
+                                        data-status="invalid"
+                                        data-created-by="P250920001"
+                                        data-oem-sales-id="P260104001"
+                                        data-search="N260728008 H 零售 海外經銷商"
+                                    >
+                                        <div class="w-36 text-eb2 text-gray5 uppercase">N260728008</div>
+                                        <div class="flex-1 text-cb3 text-gray5" data-opp-customer>H 零售</div>
+                                        <div class="w-32 shrink-0 text-cb3 text-gray5" data-opp-dealer>海外經銷商</div>
+
+                                        
+                                        <div class="w-40 shrink-0 flex items-center">
+                                            <div class="status-select" data-status-select>
+                                                <button type="button" class="status-trigger status-invalid" data-status-trigger aria-haspopup="listbox" aria-expanded="false">
+                                                    <span class="status-trigger-main">
+                                                        <i data-lucide="circle-off" class="status-trigger-icon" data-status-icon></i>
+                                                        <span class="truncate" data-status-label>已失效</span>
+                                                    </span>
+                                                    <i data-lucide="chevron-down" class="status-trigger-caret"></i>
+                                                </button>
+
+                                                <div class="status-menu" data-status-menu hidden role="listbox">
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-draft "
+                                                            data-status-option
+                                                            data-value="draft"
+                                                            data-label="暫存"
+                                                            data-icon="file-pen-line"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="file-pen-line" class="status-option-icon"></i>
+                                                                <span>暫存</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-approved "
+                                                            data-status-option
+                                                            data-value="approved"
+                                                            data-label="已核准"
+                                                            data-icon="check-circle"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="check-circle" class="status-option-icon"></i>
+                                                                <span>已核准</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-reviewing "
+                                                            data-status-option
+                                                            data-value="reviewing"
+                                                            data-label="審核中"
+                                                            data-icon="clock"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="clock" class="status-option-icon"></i>
+                                                                <span>審核中</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-rejected "
+                                                            data-status-option
+                                                            data-value="rejected"
+                                                            data-label="退回補件"
+                                                            data-icon="file-warning"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="file-warning" class="status-option-icon"></i>
+                                                                <span>退回補件</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-expiring "
+                                                            data-status-option
+                                                            data-value="expiring"
+                                                            data-label="即將到期"
+                                                            data-icon="alert-circle"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="alert-circle" class="status-option-icon"></i>
+                                                                <span>即將到期</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-expired "
+                                                            data-status-option
+                                                            data-value="expired"
+                                                            data-label="已到期"
+                                                            data-icon="circle-x"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="circle-x" class="status-option-icon"></i>
+                                                                <span>已到期</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-cancelled "
+                                                            data-status-option
+                                                            data-value="cancelled"
+                                                            data-label="已取消"
+                                                            data-icon="ban"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="ban" class="status-option-icon"></i>
+                                                                <span>已取消</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-completed "
+                                                            data-status-option
+                                                            data-value="completed"
+                                                            data-label="已結案"
+                                                            data-icon="circle-check"
+                                                            aria-selected="false"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="circle-check" class="status-option-icon"></i>
+                                                                <span>已結案</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                            <button
+                                                            type="button"
+                                                            role="option"
+                                                            class="status-option status-invalid is-selected"
+                                                            data-status-option
+                                                            data-value="invalid"
+                                                            data-label="已失效"
+                                                            data-icon="circle-off"
+                                                            aria-selected="true"
+                                                        >
+                                                            <span class="status-option-main">
+                                                                <i data-lucide="circle-off" class="status-option-icon"></i>
+                                                                <span>已失效</span>
+                                                            </span>
+                                                            <i data-lucide="check" class="status-option-check"></i>
+                                                        </button>
+                                                                                                    </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="w-28 shrink-0 text-eb2 text-gray5 uppercase" data-opp-protection>-</div>
+
+                                        
+                                        <div class="w-32 shrink-0 inline-flex items-center justify-end gap-1" data-opp-actions>
+                                            <a
+                                                href="/opportunities/review/?id=N260728008"
+                                                class="icon-action"
+                                                data-opp-edit-action
+                                                                                                aria-label="編輯 N260728008"
+                                                title="編輯商機"
+                                            >
+                                                <i data-lucide="square-pen" class="w-4 h-4"></i>
+                                            </a>
+
+                                            <div class="row-more" data-row-more>
+                                                <button
+                                                    type="button"
+                                                    class="icon-action"
+                                                    data-row-more-trigger
+                                                    aria-haspopup="menu"
+                                                    aria-expanded="false"
+                                                    aria-label="更多 N260728008"
+                                                >
+                                                    <i data-lucide="more-vertical" class="w-4 h-4"></i>
+                                                </button>
+                                                <div class="row-more-menu" data-row-more-menu hidden role="menu">
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                                                <div class="list-empty" data-filter-empty hidden>
+                                    沒有符合條件的商機
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                    <div class="pagination-bar">
+                        <p class="text-eb3 text-gray3 uppercase">Showing 1-9 of 9 results</p>
+
+                        <nav class="pagination-nav self-start md:self-auto" aria-label="分頁">
+                            <button type="button" class="pagination-btn" aria-label="上一頁">
+                                <i data-lucide="chevron-left" class="w-4 h-4 text-gray4"></i>
+                            </button>
+                                                                                                <button type="button" class="pagination-btn is-active">1</button>
+                                                                                        <button type="button" class="pagination-btn border-r-0" aria-label="下一頁">
+                                <i data-lucide="chevron-right" class="w-4 h-4 text-gray4"></i>
+                            </button>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script type="application/json" id="opportunity-catalog-data">
+        {"N260728005":{"id":"N260728005","status":"approved","statusLabel":"已核准","title":"A 公司 | 資安基礎建設升級案","dealerName":"台灣 XX 科技","submittedAt":"2026/07/18 14:20","customer_company":"A 公司","tax_id":"24567890","amount":"NT$ 500,000","amountValue":500000,"close_date":"2026 / 10 / 15","product_line":"IPLocator、MACManager","requirement":"客戶規劃全公司 IP／MAC 資產盤點，並評估導入位址管理方案。","attachment":{"name":"需求說明.pdf","url":"#"},"booking_code":"N260728005","dealer":"tw","protection":"2026-09-30","created_by":"P260312001","oem_sales_id":"P260101001","review":{"result":"approved","resultLabel":"審核通過","sales":"wang","salesLabel":"王小華","bookingCode":"N260728005","note":"資料齊全，已核准並指派原廠業務。","reviewedAt":"2026/07/19 10:05"},"form":{"source":"self","oem_sales":"王小華","customer_relation":"first","competitors":"","products":["IPLocator IP位址解析模組","MACManager MAC位址管理系統"],"units":["1000-1999","500-999"],"fields":{"oem_sales":"王小華","customer_company":"A 公司","customer_address":"台北市內湖區","contact_name":"林經理","contact_title":"資訊部經理","contact_phone":"02-2658-1234","contact_email":"lin@a-corp.com","keyman_name":"黃副總","keyman_phone":"02-2658-1000","keyman_email":"huang@a-corp.com","poc_date":"2026-08-01","decision_date":"2026-10-15","delivery_date":"2026-11-01","complete_date":"2026-12-01"}}},"N260728004":{"id":"N260728004","status":"reviewing","statusLabel":"審核中","title":"B 科技 | 網路設備盤點與存取控管案","dealerName":"台灣 XX 科技","submittedAt":"2026/07/22 09:40","customer_company":"B 科技","tax_id":"12345678","amount":"NT$ 350,000","amountValue":350000,"close_date":"2026 / 09 / 30","product_line":"IP/MAC、GAM 訪客管理","requirement":"客戶希望盤點跨據點設備，並評估導入網路存取控管；目前已完成初步需求訪談。","attachment":{"name":"客戶需求規格書.pdf","url":"#"},"booking_code":"N260728004","dealer":"oem","protection":"-","created_by":"P260101001","oem_sales_id":"P260101001","review":null,"form":{"source":"oem","oem_sales":"王小華","customer_relation":"repeat","competitors":"客戶同時評估其他網路存取控管方案","products":["IPLocator IP位址解析模組","MACManager MAC位址管理系統"],"units":["500-999","0-499"],"fields":{"oem_sales":"王小華","customer_company":"B 科技","customer_address":"新北市板橋區","contact_name":"李承辦","contact_title":"資訊處／專案經理","contact_phone":"02-8765-4321","contact_email":"lee@b-tech.com","keyman_name":"陳總監","keyman_phone":"02-8765-4000","keyman_email":"chen@b-tech.com","poc_date":"2026-08-15","decision_date":"2026-09-30","delivery_date":"2026-10-31","complete_date":"2026-11-30"},"attachment":{"name":"客戶需求規格書.pdf","size":245760,"sizeLabel":"240.0 KB","type":"application/pdf","url":"#"}}},"N260728001":{"id":"N260728001","status":"expiring","statusLabel":"即將到期","title":"C 集團 | 跨國據點存取控管案","dealerName":"海外 Partner HK","submittedAt":"2026/05/02 11:15","customer_company":"C 集團","tax_id":"87654321","amount":"NT$ 1,200,000","amountValue":1200000,"close_date":"2026 / 08 / 30","product_line":"ARPScanner、DHCPManager","requirement":"海外據點需統一 IP 管理政策，保護期即將到期。","attachment":{"name":"專案簡報.pdf","url":"#"},"booking_code":"N260728001","dealer":"overseas","protection":"2026-07-15","created_by":"P251106001","oem_sales_id":"P260102001","review":{"result":"approved","resultLabel":"審核通過","sales":"chen","salesLabel":"陳志明","bookingCode":"N260728001","note":"","reviewedAt":"2026/05/03 09:30"},"form":{"source":"self","oem_sales":"陳志明","customer_relation":"repeat","competitors":"海外據點同時評估其他 IP 管理方案","products":["ARPScanner IP管理系統","DHCPManager DHCP管理系統"],"units":["2000-4999","1000-1999"],"fields":{"oem_sales":"陳志明","customer_company":"C 集團","customer_address":"香港九龍觀塘區","contact_name":"周經理","contact_title":"資訊長室／專案經理","contact_phone":"+852-2345-6789","contact_email":"chow@c-group.com","keyman_name":"吳執行長","keyman_phone":"+852-2345-6000","keyman_email":"wu@c-group.com","poc_date":"2026-06-01","decision_date":"2026-08-30","delivery_date":"2026-09-30","complete_date":"2026-10-31"},"attachment":{"name":"專案簡報.pdf","size":512000,"sizeLabel":"500.0 KB","type":"application/pdf","url":"#"}}},"N260728002":{"id":"N260728002","status":"rejected","statusLabel":"退回補件","title":"D 數位 | 訪客管理評估案","dealerName":"台灣 XX 科技","submittedAt":"2026/07/10 16:05","customer_company":"D 數位","tax_id":"55667788","amount":"NT$ 350,000","amountValue":350000,"close_date":"2026 / 11 / 01","product_line":"GAM 訪客管理","requirement":"客戶評估訪客管理方案，目前需求說明較簡略。","attachment":{"name":"初步需求.docx","url":"#"},"booking_code":"N260728002","dealer":"tw","protection":"-","created_by":"P260118001","oem_sales_id":"P260101001","review":{"result":"insufficient","resultLabel":"資料不足，請補充","sales":"lin","salesLabel":"林佳穎","bookingCode":"N260728002","note":"請補充 Key Man 聯絡資訊與預計 POC 時程。","reviewedAt":"2026/07/11 09:20"},"form":{"source":"self","oem_sales":"林佳穎","customer_relation":"first","competitors":"","products":["MACManager MAC位址管理系統"],"units":["0-499"],"fields":{"oem_sales":"林佳穎","customer_company":"D 數位","customer_address":"台北市信義區","contact_name":"張經理","contact_title":"資訊部","contact_phone":"02-2345-6789","contact_email":"contact@d-digital.com","keyman_name":"","keyman_phone":"","keyman_email":"","poc_date":"","decision_date":"2026-11-01","delivery_date":"2026-12-01","complete_date":"2026-12-15"}}},"N260728003":{"id":"N260728003","status":"expired","statusLabel":"已到期","title":"E 集團 | 舊案保護期結束","dealerName":"原廠業務窗口","submittedAt":"2026/03/01 10:00","customer_company":"E 集團","tax_id":"11223344","amount":"NT$ 750,000","amountValue":750000,"close_date":"2026 / 06 / 30","product_line":"IPLocator、ARPScanner","requirement":"保護期已結束，客戶暫無後續採購時程。","attachment":null,"booking_code":"N260728003","dealer":"oem","protection":"2026-07-15","created_by":"P260102001","oem_sales_id":"P260102001","review":{"result":"approved","resultLabel":"審核通過","sales":"huang","salesLabel":"黃建宏","bookingCode":"N260728003","note":"","reviewedAt":"2026/03/02 14:00"},"form":{"source":"oem","oem_sales":"黃建宏","customer_relation":"repeat","competitors":"","products":["IPLocator IP位址解析模組","ARPScanner IP管理系統"],"units":["1000-1999","500-999"],"fields":{"oem_sales":"黃建宏","customer_company":"E 集團","customer_address":"台中市西屯區","contact_name":"許經理","contact_title":"資訊部經理","contact_phone":"04-2358-1234","contact_email":"hsu@e-group.com","keyman_name":"鄭副總","keyman_phone":"04-2358-1000","keyman_email":"cheng@e-group.com","poc_date":"2026-04-01","decision_date":"2026-06-30","delivery_date":"2026-07-31","complete_date":"2026-08-31"}}},"N260728006":{"id":"N260728006","status":"cancelled","statusLabel":"已取消","title":"F 製造 | 廠區網路盤點案","dealerName":"台灣 XX 科技","submittedAt":"2026/06/12 13:40","customer_company":"F 製造","tax_id":"33445566","amount":"NT$ 420,000","amountValue":420000,"close_date":"2026 / 09 / 01","product_line":"ARPScanner、MACManager","requirement":"客戶內部組織調整，經銷商已取消此商機報備。","attachment":{"name":"取消說明.pdf","url":"#"},"booking_code":"N260728006","dealer":"tw","protection":"-","created_by":"P260312001","oem_sales_id":"P260101001","review":{"result":"approved","resultLabel":"審核通過","sales":"wu","salesLabel":"吳佩珊","bookingCode":"N260728006","note":"原已核准；後由夥伴取消報備。","reviewedAt":"2026/06/13 09:10"},"form":{"source":"self","oem_sales":"吳佩珊","customer_relation":"first","competitors":"","products":["ARPScanner IP管理系統","MACManager MAC位址管理系統"],"units":["500-999","0-499"],"fields":{"oem_sales":"吳佩珊","customer_company":"F 製造","customer_address":"桃園市龜山區","contact_name":"蔡課長","contact_title":"廠務／資訊課","contact_phone":"03-327-8899","contact_email":"tsai@f-mfg.com","keyman_name":"葉廠長","keyman_phone":"03-327-8800","keyman_email":"yeh@f-mfg.com","poc_date":"2026-07-01","decision_date":"2026-09-01","delivery_date":"2026-10-01","complete_date":"2026-10-31"},"attachment":{"name":"取消說明.pdf","size":81920,"sizeLabel":"80.0 KB","type":"application/pdf","url":"#"}}},"N260728007":{"id":"N260728007","status":"completed","statusLabel":"已結案","title":"G 醫院 | 醫療網段 IP 管理導入案","dealerName":"原廠業務窗口","submittedAt":"2025/11/08 10:25","customer_company":"G 醫院","tax_id":"99887766","amount":"NT$ 980,000","amountValue":980000,"close_date":"2026 / 02 / 28","product_line":"IPLocator、DHCPManager","requirement":"保護期已到期，無需再延長保護，本案結案。","attachment":{"name":"驗收報告.pdf","url":"#"},"booking_code":"N260728007","dealer":"oem","protection":"-","created_by":"P260101001","oem_sales_id":"P260101001","review":{"result":"approved","resultLabel":"審核通過","sales":"lin","salesLabel":"林佳穎","bookingCode":"N260728007","note":"保護期已結束，無需再保護，已結案。","reviewedAt":"2025/11/09 11:00"},"form":{"source":"oem","oem_sales":"林佳穎","customer_relation":"repeat","competitors":"","products":["IPLocator IP位址解析模組","DHCPManager DHCP管理系統"],"units":["2000-4999","1000-1999"],"fields":{"oem_sales":"林佳穎","customer_company":"G 醫院","customer_address":"高雄市苓雅區","contact_name":"方主任","contact_title":"資訊室主任","contact_phone":"07-312-3456","contact_email":"fang@g-hospital.org","keyman_name":"沈副院長","keyman_phone":"07-312-3000","keyman_email":"shen@g-hospital.org","poc_date":"2025-12-01","decision_date":"2026-02-28","delivery_date":"2026-03-15","complete_date":"2026-03-31"},"attachment":{"name":"驗收報告.pdf","size":307200,"sizeLabel":"300.0 KB","type":"application/pdf","url":"#"}}},"N260728008":{"id":"N260728008","status":"invalid","statusLabel":"已失效","title":"H 零售 | 門市訪客管理評估案","dealerName":"海外 Partner SG","submittedAt":"2026/07/05 15:10","customer_company":"H 零售","tax_id":"66778899","amount":"NT$ 260,000","amountValue":260000,"close_date":"2026 / 10 / 01","product_line":"MACManager","requirement":"審核判定已有相同／重複商機，本案失效。","attachment":{"name":"報備資料.pdf","url":"#"},"booking_code":"N260728008","dealer":"overseas","protection":"-","created_by":"P250920001","oem_sales_id":"P260104001","review":{"result":"duplicate","resultLabel":"已有相同／重複商機","sales":"wang","salesLabel":"王小華","bookingCode":"N260728008","note":"與既有報備案件重複，本案改為已失效。","reviewedAt":"2026/07/06 09:45"},"form":{"source":"self","oem_sales":"王小華","customer_relation":"first","competitors":"","products":["MACManager MAC位址管理系統"],"units":["0-499"],"fields":{"oem_sales":"王小華","customer_company":"H 零售","customer_address":"新加坡市中心","contact_name":"Tan 經理","contact_title":"IT Manager","contact_phone":"+65-6123-4567","contact_email":"tan@h-retail.sg","keyman_name":"Lim 總監","keyman_phone":"+65-6123-4000","keyman_email":"lim@h-retail.sg","poc_date":"2026-08-01","decision_date":"2026-10-01","delivery_date":"2026-11-01","complete_date":"2026-11-30"},"attachment":{"name":"報備資料.pdf","size":163840,"sizeLabel":"160.0 KB","type":"application/pdf","url":"#"}}}}
+    </script>
+    <script type="application/json" id="opportunity-list-meta">
+        {"reviewUrl":"/opportunities/review/","createUrl":"/opportunities/create/","renewUrl":"/opportunities/renew/","partner":{"company":"經銷商公司名稱","role":"總管理者","contact":"王小明","phone":"02-1234-5678","email":"ming.wang@partner.com","job_title":"業務經理 / 通路部"},"statusLabels":{"draft":"暫存","approved":"已核准","reviewing":"審核中","rejected":"退回補件","expiring":"即將到期","expired":"已到期","cancelled":"已取消","completed":"已結案","invalid":"已失效"},"statusIcons":{"draft":"file-pen-line","approved":"check-circle","reviewing":"clock","rejected":"file-warning","expiring":"alert-circle","expired":"circle-x","cancelled":"ban","completed":"circle-check","invalid":"circle-off"},"dealerLabels":{"oem":"原廠業務","tw":"台灣經銷商","overseas":"海外經銷商"}}
+    </script>
+            </main>
+        </div>
+    </div>
+
+    
+    <script type="application/json" id="app-roles-config">
+        {"defaultRole":"admin","roles":{"admin":{"label":"總管理者","identity":"admin","partnerId":"","nav":["/","/opportunities","/products","/training","/marketing","/support","/profile"],"can":["opportunity.view","opportunity.create","opportunity.export","opportunity.status.edit","opportunity.actions","opportunity.review","product.manage","marketing.manage","training.manage","support.create","support.manage","profile.manage"]},"oem_manager":{"label":"原廠主管","identity":"oem_manager","partnerId":"P260100001","nav":["/","/opportunities","/products","/training","/marketing","/support"],"can":["opportunity.view","opportunity.create","opportunity.export","opportunity.actions","support.create"]},"oem_sales":{"label":"原廠業務","identity":"oem_sales","partnerId":"P260101001","nav":["/","/opportunities","/products","/training","/marketing","/support"],"can":["opportunity.view","opportunity.create","opportunity.export","opportunity.actions","support.create"]},"dealer_tw":{"label":"國內經銷商","identity":"dealer_tw","partnerId":"P260312001","nav":["/","/opportunities","/products","/training","/marketing","/support"],"can":["opportunity.view","opportunity.create","opportunity.export","opportunity.actions","support.create"]},"dealer_overseas":{"label":"海外經銷商","identity":"dealer_overseas","partnerId":"P251106001","nav":["/","/opportunities","/products","/training","/marketing","/support"],"can":["opportunity.view","opportunity.create","opportunity.export","opportunity.actions","support.create"]}}}
+    </script>
+    <script type="application/json" id="partners-seed-data">
+        [{"id":"P260312001","identity":"dealer_tw","level":"gold","oem_sales":"林佳穎","oem_sales_id":"P260101001","manager_id":"","company":"數位聯防科技股份有限公司","tax_id":"24567890","country":"tw","name":"王小明","email":"ming.wang@digidefend.com.tw","phone":"02-1234-5678","job_title":"業務經理 / 通路部","status":"approved","applied_at":"2026-03-12"},{"id":"P260821001","identity":"","level":"","oem_sales":"陳志偉","oem_sales_id":"","manager_id":"","company":"雲端資安股份有限公司","tax_id":"53881234","country":"tw","name":"張雅婷","email":"yating.chang@cloudsec.com.tw","phone":"02-8765-4321","job_title":"協理 / 業務處","status":"reviewing","applied_at":"2026-08-21"},{"id":"P260118001","identity":"dealer_tw","level":"platinum","oem_sales":"林佳穎","oem_sales_id":"P260101001","manager_id":"","company":"高雄網通系統有限公司","tax_id":"16774521","country":"tw","name":"黃建宏","email":"chienhung@khnetsys.com.tw","phone":"07-336-8800","job_title":"業務主任 / 南區","status":"approved","applied_at":"2026-01-18"},{"id":"P251106001","identity":"dealer_overseas","level":"gold","oem_sales":"吳佩珊","oem_sales_id":"P260102001","manager_id":"","company":"香港網絡防護有限公司","tax_id":"68901234","country":"hk","name":"李浩然","email":"horan.lee@netguard.hk","phone":"+852-2123-7788","job_title":"Sales Manager / Channel","status":"approved","applied_at":"2025-11-06"},{"id":"P260704001","identity":"dealer_overseas","level":"standard","oem_sales":"佐藤 健","oem_sales_id":"P260103001","manager_id":"","company":"東京セキュア株式会社","tax_id":"T8010001123456","country":"jp","name":"田中 美咲","email":"misaki.tanaka@tokyosecure.jp","phone":"+81-3-1234-5678","job_title":"営業部 / マネージャー","status":"approved","applied_at":"2026-07-04"},{"id":"P260902001","identity":"","level":"","oem_sales":"陳志偉","oem_sales_id":"","manager_id":"","company":"新加坡網安方案 Pte. Ltd.","tax_id":"202412345K","country":"sg","name":"Aisha Rahman","email":"aisha.rahman@sgcyber.sg","phone":"+65-6789-1200","job_title":"Channel Specialist / Sales","status":"reviewing","applied_at":"2026-09-02"},{"id":"P260615001","identity":"dealer_overseas","level":"","oem_sales":"吳佩珊","oem_sales_id":"P260102001","manager_id":"","company":"澳門資訊服務有限公司","tax_id":"MO-88321","country":"mo","name":"周曉琳","email":"xiaolin.chou@macauits.com","phone":"+853-2871-6655","job_title":"客戶經理 / 商務部","status":"rejected","applied_at":"2026-06-15"},{"id":"P260828001","identity":"","level":"","oem_sales":"林佳穎","oem_sales_id":"","manager_id":"","company":"華南網絡科技有限公司","tax_id":"91440101MA5DXXXXX","country":"cn","name":"劉振宇","email":"zhenyu.liu@hnnetsec.cn","phone":"+86-20-3888-1200","job_title":"區域經理 / 渠道部","status":"reviewing","applied_at":"2026-08-28"},{"id":"P250920001","identity":"dealer_overseas","level":"diamond","oem_sales":"James Cole","oem_sales_id":"P260104001","manager_id":"","company":"Pacific Secure Partners LLC","tax_id":"98-7654321","country":"us","name":"Emily Chen","email":"emily.chen@pacificsecure.com","phone":"+1-415-555-0188","job_title":"Account Director / APAC Desk","status":"approved","applied_at":"2025-09-20"},{"id":"P260510001","identity":"dealer_overseas","level":"","oem_sales":"佐藤 健","oem_sales_id":"P260103001","manager_id":"","company":"서울인포섹 주식회사","tax_id":"110-81-12345","country":"kr","name":"박지훈","email":"jihoon.park@seoulinfosec.kr","phone":"+82-2-555-0199","job_title":"과장 / 영업팀","status":"rejected","applied_at":"2026-05-10"},{"id":"P260903001","identity":"","level":"","oem_sales":"陳志偉","oem_sales_id":"","manager_id":"","company":"馬來西亞資安通路 Sdn. Bhd.","tax_id":"202301234567","country":"my","name":"Daniel Lim","email":"daniel.lim@mysecure.my","phone":"+60-3-2166-8800","job_title":"Sales Executive / Channel","status":"reviewing","applied_at":"2026-09-03"},{"id":"P260101001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"林佳穎","email":"chiaying.lin@upas.com.tw","phone":"02-2658-1001","job_title":"原廠業務 / 通路部","status":"approved","applied_at":"2026-01-01"},{"id":"P260102001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"吳佩珊","email":"peishan.wu@upas.com.tw","phone":"02-2658-1002","job_title":"原廠業務 / 海外組","status":"approved","applied_at":"2026-01-02"},{"id":"P260103001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"佐藤 健","email":"ken.sato@upas.com.tw","phone":"02-2658-1003","job_title":"原廠業務 / 亞太組","status":"approved","applied_at":"2026-01-03"},{"id":"P260104001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"James Cole","email":"james.cole@upas.com.tw","phone":"02-2658-1004","job_title":"OEM Sales / APAC","status":"approved","applied_at":"2026-01-04"},{"id":"P260100001","identity":"oem_manager","level":"","oem_sales":"","oem_sales_id":"","manager_id":"","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"王經理","email":"manager.wang@upas.com.tw","phone":"02-2658-1000","job_title":"原廠業務主管","status":"approved","applied_at":"2026-01-01"},{"id":"P260105001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"陳志偉","email":"chihwei.chen@upas.com.tw","phone":"02-2658-1005","job_title":"原廠業務 / 通路部","status":"approved","applied_at":"2026-01-05"}]
+    </script>
+</body>
+</html>

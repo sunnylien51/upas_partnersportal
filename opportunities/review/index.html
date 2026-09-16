@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="canonical" href="/opportunities/review">
+<title>商機審核 | Partners Portal</title>
+<meta name="description" content="合作夥伴入口網站">
+
+<link rel="icon" href="/images/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32.png">
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Rajdhani:wght@600&display=swap" rel="stylesheet">
+
+<script type="module" src="http://localhost:5173/@vite/client"></script>
+<link rel="stylesheet" href="http://localhost:5173/source/_assets/css/main.css">
+<script defer type="module" src="http://localhost:5173/source/_assets/js/main.js"></script>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+    </head>
+<body class="bg-bg text-gray5 font-sans antialiased selection:bg-brand2/60 selection:text-gray5 min-h-screen overflow-x-hidden">
+    <div class="flex min-h-screen">
+        <div id="sidebar-overlay" class="fixed inset-0 z-40 bg-gray5/40 hidden md:hidden"></div>
+
+<aside id="app-sidebar" class="fixed md:sticky top-0 left-0 z-50 md:z-10 flex h-screen w-60 shrink-0 flex-col justify-between overflow-hidden bg-white border-r border-gray1 shadow-[0px_0px_60px_0px_rgba(0,0,0,0.02)] -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
+    <div class="flex-1 self-stretch px-4 py-10 flex flex-col items-center gap-10 min-h-0">
+        <a href="/" class="flex justify-center items-center">
+            <img src="/images/logo.svg" alt="Partners Portal" width="116" height="44" class="w-[116px] h-11">
+        </a>
+
+        <nav class="self-stretch flex-1 flex flex-col items-start gap-1 overflow-y-auto" aria-label="主要選單">
+                            <a
+                    href="/"
+                    class="sidebar-link "
+                    data-nav-path="/"
+                >
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                    <span>概覽</span>
+                </a>
+                            <a
+                    href="/opportunities/"
+                    class="sidebar-link active"
+                    data-nav-path="/opportunities"
+                >
+                    <i data-lucide="briefcase" class="w-4 h-4"></i>
+                    <span>商機中心</span>
+                </a>
+                            <a
+                    href="/products/"
+                    class="sidebar-link "
+                    data-nav-path="/products"
+                >
+                    <i data-lucide="package" class="w-4 h-4"></i>
+                    <span>產品資訊中心</span>
+                </a>
+                            <a
+                    href="/training/"
+                    class="sidebar-link "
+                    data-nav-path="/training"
+                >
+                    <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                    <span>教育訓練中心</span>
+                </a>
+                            <a
+                    href="/marketing/"
+                    class="sidebar-link "
+                    data-nav-path="/marketing"
+                >
+                    <i data-lucide="megaphone" class="w-4 h-4"></i>
+                    <span>行銷資源中心</span>
+                </a>
+                            <a
+                    href="/support/"
+                    class="sidebar-link "
+                    data-nav-path="/support"
+                >
+                    <i data-lucide="headset" class="w-4 h-4"></i>
+                    <span>技術支援中心</span>
+                </a>
+                            <a
+                    href="/profile/"
+                    class="sidebar-link "
+                    data-nav-path="/profile"
+                >
+                    <i data-lucide="id-card" class="w-4 h-4"></i>
+                    <span>夥伴管理</span>
+                </a>
+                    </nav>
+    </div>
+
+    <div class="self-stretch flex flex-col items-stretch">
+        
+        <div class="role-preview role-preview--sidebar self-stretch px-6 pb-4 text-left" data-role-preview>
+            <div class="flex items-center justify-start gap-2 mb-2">
+                <span class="text-[12px] font-medium tracking-[0.06em] text-gray4">預覽身分權限</span>
+                <span class="role-preview-badge">演示用</span>
+            </div>
+            <div class="role-preview-switch role-preview-switch--sidebar justify-start" role="group" aria-label="預覽身分權限">
+                <button type="button" class="role-preview-btn is-active" data-role-switch="admin" aria-pressed="true">總管</button>
+                <button type="button" class="role-preview-btn" data-role-switch="oem_manager" aria-pressed="false">主管</button>
+                <button type="button" class="role-preview-btn" data-role-switch="oem_sales" aria-pressed="false">業務</button>
+                <button type="button" class="role-preview-btn" data-role-switch="dealer_tw" aria-pressed="false">國內</button>
+                <button type="button" class="role-preview-btn" data-role-switch="dealer_overseas" aria-pressed="false">海外</button>
+            </div>
+        </div>
+
+        <div class="self-stretch px-6 py-5 border-t border-gray1 inline-flex items-center justify-start gap-2">
+            <i data-lucide="globe" class="w-4 h-4 text-gray4 shrink-0"></i>
+            <div class="locale-switch text-eb3 uppercase" role="group" aria-label="語言">
+                                                        <button type="button" data-locale="TW" class="locale-btn is-active">TW</button>
+                                                            <span class="text-gray3"> / </span>
+                                        <button type="button" data-locale="EN" class="locale-btn ">EN</button>
+                                                            <span class="text-gray3"> / </span>
+                                        <button type="button" data-locale="JP" class="locale-btn ">JP</button>
+                            </div>
+        </div>
+    </div>
+</aside>
+
+        <div class="flex-1 min-w-0 flex flex-col">
+            <header class="relative z-20 px-4 md:px-12 pt-8 pb-5">
+    <div class="flex items-center gap-2 min-w-0 pr-[11.5rem] md:pr-[18.5rem]">
+        <button id="sidebar-toggle" type="button" class="md:hidden p-2 -ml-1 text-gray5 shrink-0" aria-label="開啟選單" aria-controls="app-sidebar">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+        <img src="/images/yellow-slash-motif.svg" alt="" class="w-3 h-6 shrink-0" aria-hidden="true" />
+        <h1 class="text-ch5 text-gray5 truncate">商機審核</h1>
+    </div>
+
+            <nav class="breadcrumb mt-8 pr-[11.5rem] md:pr-[18.5rem]" aria-label="麵包屑">
+            <i data-lucide="home" class="breadcrumb-home"></i>
+            <a href="/" class="breadcrumb-link">首頁</a>
+                            <span class="breadcrumb-sep">/</span>
+                                    <a
+                        href="/opportunities/"
+                        class="breadcrumb-link"
+                    >商機中心</a>
+                                            <span class="breadcrumb-sep">/</span>
+                                    <span
+                        class="breadcrumb-text"
+                         data-review-crumb-kind                     >商機審核</span>
+                                            <span class="breadcrumb-sep">/</span>
+                                    <span
+                        class="breadcrumb-text is-uppercase"
+                         data-review-id-crumb                     ></span>
+                                    </nav>
+    </header>
+
+<div class="app-user-fixed">
+    <button type="button" class="size-12 bg-white rounded-2xl shadow-card border border-gray1 inline-flex items-center justify-center text-gray3 hover:text-gray5 transition-colors" aria-label="通知">
+        <i data-lucide="bell" class="w-4 h-4"></i>
+    </button>
+
+    <div class="app-user-menu" data-user-menu>
+        <button
+            type="button"
+            class="app-user-trigger w-auto max-w-[14rem] md:w-56 pl-1.5 pr-3 py-1.5 bg-white rounded-2xl shadow-card border border-gray1 flex items-center gap-3 text-left"
+            data-user-menu-trigger
+            aria-haspopup="menu"
+            aria-expanded="false"
+            aria-controls="app-user-dropdown"
+        >
+            <span class="size-10 shrink-0 bg-brand2 rounded-xl flex items-center justify-center">
+                <i data-lucide="user" class="w-4 h-4 text-white"></i>
+            </span>
+            <span class="flex-1 min-w-0 flex flex-col items-start gap-0.5">
+                <span class="self-stretch text-[14px] font-medium text-gray5 line-clamp-1">經銷商公司名稱</span>
+                <span class="text-[10px] font-medium tracking-[0.06em] text-gray3" data-role-label>總管理者</span>
+            </span>
+            <i data-lucide="more-vertical" class="w-4 h-4 text-gray3 shrink-0"></i>
+        </button>
+        <div id="app-user-dropdown" class="app-user-dropdown" role="menu">
+            <a href="/account/" class="app-user-menu-item" role="menuitem">
+                <i data-lucide="circle-user" class="w-4 h-4"></i>
+                <span>用戶資料</span>
+            </a>
+            <a href="/login/" class="app-user-menu-item is-brand" role="menuitem">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <span>登出</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+            <main class="flex-1 flex flex-col min-h-0">
+                    <div
+        class="page-body"
+        data-review-page
+        data-list-url="/opportunities/"
+        data-create-url="/opportunities/create/"
+        data-renew-url="/opportunities/renew/"
+        data-partner-company="經銷商公司名稱"
+        data-partner-contact="王小明"
+        data-partner-phone="02-1234-5678"
+    >
+        <div class="content-wrapper">
+
+            <div class="page-toolbar">
+                <div class="inline-flex items-center gap-3 min-w-0">
+                    <h1 class="text-ch4 text-gray5 truncate">
+                        <span data-review-id>N260728004</span>
+                        <span class="text-gray3 font-normal">·</span>
+                        <span data-review-title>B 科技</span>
+                    </h1>
+                    <span class="status-pill status-reviewing" data-review-status-pill>審核中</span>
+                </div>
+                <a href="/opportunities/" class="btn-secondary">返回列表</a>
+            </div>
+
+            <div class="review-layout">
+
+                
+                <div class="review-main" data-review-detail>
+
+                    <section class="card-panel gap-4" data-review-renewal hidden>
+                        <div class="self-stretch inline-flex items-center gap-3">
+                            <span class="section-accent" aria-hidden="true"></span>
+                            <h2 class="text-ch5 text-gray5">續期申請內容</h2>
+                        </div>
+                        <div class="review-result-card">
+                            <div class="review-result-row">
+                                <span class="text-cb3 text-gray3 shrink-0">延長期限</span>
+                                <span class="text-cb3 text-gray5 min-w-0 flex-1" data-review-renewal-days>—</span>
+                            </div>
+                            <div class="review-result-row">
+                                <span class="text-cb3 text-gray3 shrink-0">原保護期限</span>
+                                <span class="text-cb3 text-gray5 min-w-0 flex-1" data-review-renewal-old>—</span>
+                            </div>
+                            <div class="review-result-row">
+                                <span class="text-cb3 text-gray3 shrink-0">申請後新保護期</span>
+                                <span class="text-cb3 text-gray5 min-w-0 flex-1" data-review-renewal-new>—</span>
+                            </div>
+                            <div class="review-result-row">
+                                <span class="text-cb3 text-gray3 shrink-0">續期原因</span>
+                                <span class="text-cb3 text-gray5 min-w-0 flex-1 whitespace-pre-wrap" data-review-renewal-reason>—</span>
+                            </div>
+                            <div class="review-result-row">
+                                <span class="text-cb3 text-gray3 shrink-0">上傳附件</span>
+                                <span class="text-cb3 text-gray5 min-w-0 flex-1" data-review-renewal-file>—</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="self-stretch flex flex-col md:flex-row items-stretch gap-5">
+                        <section class="card-panel flex-1 gap-4">
+                            <div class="self-stretch inline-flex items-center gap-3">
+                                <span class="section-accent" aria-hidden="true"></span>
+                                <h2 class="text-ch5 text-gray5">商機來源</h2>
+                            </div>
+                            <div class="form-field">
+                                <span class="form-label"><span>商機來源</span></span>
+                                <input
+                                    type="text"
+                                    class="form-input is-readonly"
+                                    data-review-field="source"
+                                    value="原廠派發"
+                                    readonly
+                                    tabindex="-1"
+                                >
+                            </div>
+                        </section>
+
+                        <section class="card-panel flex-1 gap-4">
+                            <div class="self-stretch inline-flex items-center gap-3">
+                                <span class="section-accent" aria-hidden="true"></span>
+                                <h2 class="text-ch5 text-gray5">原廠負責資訊</h2>
+                            </div>
+                            <div class="form-field">
+                                <span class="form-label"><span>原廠所屬業務</span></span>
+                                <input
+                                    type="text"
+                                    class="form-input is-readonly"
+                                    data-review-field="oem_sales"
+                                    value="王小華"
+                                    readonly
+                                    tabindex="-1"
+                                >
+                            </div>
+                        </section>
+                    </div>
+
+                    <section class="card-panel gap-5">
+                        <div class="self-stretch inline-flex justify-between items-center gap-3">
+                            <div class="inline-flex items-center gap-3">
+                                <span class="section-accent" aria-hidden="true"></span>
+                                <h2 class="text-ch5 text-gray5">報備者資料</h2>
+                            </div>
+                            <p class="text-cb3 text-gray3">登入後由會員資料自動帶入</p>
+                        </div>
+                        <div class="self-stretch grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="form-field">
+                                <span class="form-label"><span>報備者經銷商／業務</span></span>
+                                <input
+                                    type="text"
+                                    class="form-input is-readonly"
+                                    data-review-field="reporter_dealer"
+                                    value="經銷商公司名稱／王小明"
+                                    readonly
+                                    tabindex="-1"
+                                >
+                            </div>
+                            <div class="form-field">
+                                <span class="form-label"><span>報備者聯絡電話</span></span>
+                                <input
+                                    type="text"
+                                    class="form-input is-readonly"
+                                    data-review-field="reporter_phone"
+                                    value="02-1234-5678"
+                                    readonly
+                                    tabindex="-1"
+                                >
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="card-panel gap-5">
+                        <div class="self-stretch inline-flex items-center gap-3">
+                            <span class="section-accent" aria-hidden="true"></span>
+                            <h2 class="text-ch5 text-gray5">客戶資料</h2>
+                        </div>
+                        <div class="self-stretch grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                            <div class="form-field">
+                                    <span class="form-label"><span>客戶公司名稱</span></span>
+                                    <input
+                                        type="text"
+                                        class="form-input is-readonly"
+                                        data-review-field="customer_company"
+                                        value="B 科技"
+                                        readonly
+                                        tabindex="-1"
+                                    >
+                                </div>
+                                                            <div class="form-field">
+                                    <span class="form-label"><span>客戶公司地址</span></span>
+                                    <input
+                                        type="text"
+                                        class="form-input is-readonly"
+                                        data-review-field="customer_address"
+                                        value="新北市板橋區"
+                                        readonly
+                                        tabindex="-1"
+                                    >
+                                </div>
+                                                            <div class="form-field">
+                                    <span class="form-label"><span>客戶主要聯絡人／承辦人</span></span>
+                                    <input
+                                        type="text"
+                                        class="form-input is-readonly"
+                                        data-review-field="contact_name"
+                                        value="李承辦"
+                                        readonly
+                                        tabindex="-1"
+                                    >
+                                </div>
+                                                            <div class="form-field">
+                                    <span class="form-label"><span>客戶主要聯絡人 職稱／部門</span></span>
+                                    <input
+                                        type="text"
+                                        class="form-input is-readonly"
+                                        data-review-field="contact_title"
+                                        value="資訊處／專案經理"
+                                        readonly
+                                        tabindex="-1"
+                                    >
+                                </div>
+                                                            <div class="form-field">
+                                    <span class="form-label"><span>客戶主要聯絡人電話</span></span>
+                                    <input
+                                        type="text"
+                                        class="form-input is-readonly"
+                                        data-review-field="contact_phone"
+                                        value="02-8765-4321"
+                                        readonly
+                                        tabindex="-1"
+                                    >
+                                </div>
+                                                            <div class="form-field">
+                                    <span class="form-label"><span>客戶主要聯絡人信箱</span></span>
+                                    <input
+                                        type="text"
+                                        class="form-input is-readonly"
+                                        data-review-field="contact_email"
+                                        value="lee@b-tech.com"
+                                        readonly
+                                        tabindex="-1"
+                                    >
+                                </div>
+                            
+                            <div class="form-field md:col-span-2">
+                                <span class="form-label"><span>客戶關係</span></span>
+                                <input
+                                    type="text"
+                                    class="form-input is-readonly"
+                                    data-review-field="customer_relation"
+                                    value="多次接洽(未成交)"
+                                    readonly
+                                    tabindex="-1"
+                                >
+                            </div>
+
+                                                            <div class="form-field ">
+                                    <span class="form-label"><span>Key Man</span></span>
+                                    <input
+                                        type="text"
+                                        class="form-input is-readonly"
+                                        data-review-field="keyman_name"
+                                        value="陳總監"
+                                        readonly
+                                        tabindex="-1"
+                                    >
+                                </div>
+                                                            <div class="form-field ">
+                                    <span class="form-label"><span>Key Man 聯絡電話</span></span>
+                                    <input
+                                        type="text"
+                                        class="form-input is-readonly"
+                                        data-review-field="keyman_phone"
+                                        value="02-8765-4000"
+                                        readonly
+                                        tabindex="-1"
+                                    >
+                                </div>
+                                                            <div class="form-field md:col-span-2">
+                                    <span class="form-label"><span>Key Man 聯絡 Email</span></span>
+                                    <input
+                                        type="text"
+                                        class="form-input is-readonly"
+                                        data-review-field="keyman_email"
+                                        value="chen@b-tech.com"
+                                        readonly
+                                        tabindex="-1"
+                                    >
+                                </div>
+                                                    </div>
+                    </section>
+
+                    <div class="self-stretch flex flex-col items-start gap-4">
+                        <section class="card-panel gap-4">
+                            <div class="self-stretch inline-flex items-center gap-3">
+                                <span class="section-accent" aria-hidden="true"></span>
+                                <h2 class="text-ch5 text-gray5">專案細節</h2>
+                            </div>
+
+                            <span class="text-cb2 text-gray5">專案產品／U數</span>
+                            <div class="self-stretch flex flex-col items-start gap-3" data-review-product-rows>
+                                                                                                    <div class="self-stretch inline-flex items-center gap-3" data-review-product-row>
+                                        <input type="text" class="form-input flex-1 min-w-0 is-readonly" data-review-product value="IPLocator IP位址解析模組" readonly tabindex="-1">
+                                        <input type="text" class="form-input w-48 shrink-0 is-readonly" data-review-units value="500-999" readonly tabindex="-1">
+                                    </div>
+                                                                    <div class="self-stretch inline-flex items-center gap-3" data-review-product-row>
+                                        <input type="text" class="form-input flex-1 min-w-0 is-readonly" data-review-product value="MACManager MAC位址管理系統" readonly tabindex="-1">
+                                        <input type="text" class="form-input w-48 shrink-0 is-readonly" data-review-units value="0-499" readonly tabindex="-1">
+                                    </div>
+                                                            </div>
+                        </section>
+
+                        <section class="card-panel gap-5">
+                            <div class="self-stretch flex flex-col md:flex-row items-stretch gap-6">
+                                <div class="flex-1 flex flex-col items-start gap-4">
+                                                                            <div class="form-field">
+                                            <span class="form-label"><span>預計 POC 日</span></span>
+                                            <input
+                                                type="text"
+                                                class="form-input is-readonly"
+                                                data-review-field="poc_date"
+                                                value="2026-08-15"
+                                                readonly
+                                                tabindex="-1"
+                                            >
+                                        </div>
+                                                                            <div class="form-field">
+                                            <span class="form-label"><span>預計決策日</span></span>
+                                            <input
+                                                type="text"
+                                                class="form-input is-readonly"
+                                                data-review-field="decision_date"
+                                                value="2026-09-30"
+                                                readonly
+                                                tabindex="-1"
+                                            >
+                                        </div>
+                                                                            <div class="form-field">
+                                            <span class="form-label"><span>預計交貨日</span></span>
+                                            <input
+                                                type="text"
+                                                class="form-input is-readonly"
+                                                data-review-field="delivery_date"
+                                                value="2026-10-31"
+                                                readonly
+                                                tabindex="-1"
+                                            >
+                                        </div>
+                                                                            <div class="form-field">
+                                            <span class="form-label"><span>預計完成日</span></span>
+                                            <input
+                                                type="text"
+                                                class="form-input is-readonly"
+                                                data-review-field="complete_date"
+                                                value="2026-11-30"
+                                                readonly
+                                                tabindex="-1"
+                                            >
+                                        </div>
+                                                                    </div>
+
+                                <div class="flex-1 self-stretch flex flex-col items-start gap-1">
+                                    <span class="form-label"><span>競爭品牌／方案</span></span>
+                                    <textarea
+                                        class="form-input form-textarea is-readonly"
+                                        data-review-field="competitors"
+                                        readonly
+                                        tabindex="-1"
+                                    >客戶同時評估其他網路存取控管方案</textarea>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="card-panel gap-4">
+                            <div class="self-stretch inline-flex items-center gap-3">
+                                <span class="section-accent" aria-hidden="true"></span>
+                                <h2 class="text-ch5 text-gray5">檔案上傳</h2>
+                            </div>
+
+                            
+                            <div class="file-upload-item" data-review-attachment >
+                                <div class="inline-flex items-center gap-3 min-w-0">
+                                    <span class="file-icon">
+                                        <i data-lucide="file-text" class="w-4 h-4 text-gray4"></i>
+                                    </span>
+                                    <span class="min-w-0 flex flex-col items-start gap-0.5">
+                                        <span class="text-cb3 text-gray5 truncate max-w-full" data-review-attachment-name>
+                                            客戶需求規格書.pdf
+                                        </span>
+                                        <span class="text-[11px] font-medium text-gray3" data-review-attachment-meta>
+                                            已上傳檔案
+                                        </span>
+                                    </span>
+                                </div>
+                                <a
+                                    href="#"
+                                    class="px-3 py-2 text-[12px] btn-secondary"
+                                    data-review-attachment-link
+                                >
+                                    查看／下載
+                                </a>
+                            </div>
+                            <p class="text-cb3 text-gray3" data-review-attachment-empty hidden>
+                                未上傳檔案
+                            </p>
+                        </section>
+                    </div>
+                </div>
+
+                
+                <aside class="review-aside">
+                    <form class="review-panel" data-review-form novalidate>
+                        <div class="self-stretch inline-flex items-center gap-3">
+                            <span class="section-accent" aria-hidden="true"></span>
+                            <h2 class="text-ch5 text-gray5" data-review-aside-title>審核處理</h2>
+                        </div>
+
+                        <div class="self-stretch flex flex-col gap-3" data-review-summary hidden>
+                            <div class="self-stretch h-px bg-gray1" aria-hidden="true"></div>
+                            <p class="text-cb2 text-gray5"  data-review-summary-title >審核中</p>
+<div class="review-result-card">
+    <div class="review-result-row">
+        <span class="text-cb3 text-gray3 shrink-0">審核結果</span>
+        <span class="text-cb3 text-gray5 min-w-0 flex-1" data-review-done-result>-</span>
+    </div>
+    <div class="review-result-row">
+        <span class="text-cb3 text-gray3 shrink-0">案件狀態</span>
+        <span class="text-cb3 text-gray5 min-w-0 flex-1" data-review-done-status>-</span>
+    </div>
+    <div class="review-result-row">
+        <span class="text-cb3 text-gray3 shrink-0">原廠業務</span>
+        <span class="text-cb3 text-gray5 min-w-0 flex-1" data-review-done-sales>-</span>
+    </div>
+    <div class="review-result-row">
+        <span class="text-cb3 text-gray3 shrink-0">審核備註</span>
+        <span class="text-cb3 text-gray5 min-w-0 flex-1 whitespace-pre-wrap" data-review-done-note>-</span>
+    </div>
+</div>
+                        </div>
+
+                        <p class="text-cb3 text-gray3" data-review-hint hidden>
+                            僅總管理者可操作。選擇審核結果後會更新商機狀態；指派原廠業務後，該筆會出現在對應業務帳號。
+                        </p>
+
+                        <div class="form-field" data-review-result-field hidden>
+                            <span class="form-label">
+                                <span class="text-red">*</span>
+                                <span>審核結果</span>
+                            </span>
+                            <div class="form-select" data-form-select data-required>
+                                <input type="hidden" name="review_result" value="" data-form-select-value>
+                                <button type="button" class="form-select-trigger" data-form-select-trigger aria-haspopup="listbox" aria-expanded="false">
+                                    <span class="is-placeholder" data-form-select-label>請選擇審核結果</span>
+                                    <i data-lucide="chevron-down" class="w-4 h-4 text-gray4 shrink-0"></i>
+                                </button>
+                                <div class="form-select-menu" data-form-select-menu hidden role="listbox">
+                                                                            <button
+                                            type="button"
+                                            class="form-select-option"
+                                            role="option"
+                                            data-form-select-option
+                                            data-value="approved"
+                                            data-label="審核通過"
+                                            data-status="approved"
+                                            data-status-label="已核准"
+                                            data-allow-resubmit="0"
+                                        >
+                                            <span class="inline-flex flex-col items-start gap-0.5 min-w-0">
+                                                <span>審核通過</span>
+                                                                                                    <span class="text-[11px] font-normal text-gray3 tracking-normal">
+                                                        → 狀態：已核准
+                                                    </span>
+                                                                                            </span>
+                                        </button>
+                                                                            <button
+                                            type="button"
+                                            class="form-select-option"
+                                            role="option"
+                                            data-form-select-option
+                                            data-value="insufficient"
+                                            data-label="資料不足，請補充"
+                                            data-status="rejected"
+                                            data-status-label="退回補件"
+                                            data-allow-resubmit="1"
+                                        >
+                                            <span class="inline-flex flex-col items-start gap-0.5 min-w-0">
+                                                <span>資料不足，請補充</span>
+                                                                                                    <span class="text-[11px] font-normal text-gray3 tracking-normal">
+                                                        → 狀態：退回補件
+                                                    </span>
+                                                                                            </span>
+                                        </button>
+                                                                            <button
+                                            type="button"
+                                            class="form-select-option"
+                                            role="option"
+                                            data-form-select-option
+                                            data-value="need_confirm"
+                                            data-label="商機資訊需確認"
+                                            data-status="rejected"
+                                            data-status-label="退回補件"
+                                            data-allow-resubmit="1"
+                                        >
+                                            <span class="inline-flex flex-col items-start gap-0.5 min-w-0">
+                                                <span>商機資訊需確認</span>
+                                                                                                    <span class="text-[11px] font-normal text-gray3 tracking-normal">
+                                                        → 狀態：退回補件
+                                                    </span>
+                                                                                            </span>
+                                        </button>
+                                                                            <button
+                                            type="button"
+                                            class="form-select-option"
+                                            role="option"
+                                            data-form-select-option
+                                            data-value="duplicate"
+                                            data-label="已有相同／重複商機"
+                                            data-status="invalid"
+                                            data-status-label="已失效"
+                                            data-allow-resubmit="0"
+                                        >
+                                            <span class="inline-flex flex-col items-start gap-0.5 min-w-0">
+                                                <span>已有相同／重複商機</span>
+                                                                                                    <span class="text-[11px] font-normal text-gray3 tracking-normal">
+                                                        → 狀態：已失效
+                                                    </span>
+                                                                                            </span>
+                                        </button>
+                                                                            <button
+                                            type="button"
+                                            class="form-select-option"
+                                            role="option"
+                                            data-form-select-option
+                                            data-value="not_eligible"
+                                            data-label="不符合商機報備條件"
+                                            data-status="invalid"
+                                            data-status-label="已失效"
+                                            data-allow-resubmit="0"
+                                        >
+                                            <span class="inline-flex flex-col items-start gap-0.5 min-w-0">
+                                                <span>不符合商機報備條件</span>
+                                                                                                    <span class="text-[11px] font-normal text-gray3 tracking-normal">
+                                                        → 狀態：已失效
+                                                    </span>
+                                                                                            </span>
+                                        </button>
+                                                                            <button
+                                            type="button"
+                                            class="form-select-option"
+                                            role="option"
+                                            data-form-select-option
+                                            data-value="no_demand"
+                                            data-label="商機已失效／暫無需求"
+                                            data-status="invalid"
+                                            data-status-label="已失效"
+                                            data-allow-resubmit="0"
+                                        >
+                                            <span class="inline-flex flex-col items-start gap-0.5 min-w-0">
+                                                <span>商機已失效／暫無需求</span>
+                                                                                                    <span class="text-[11px] font-normal text-gray3 tracking-normal">
+                                                        → 狀態：已失效
+                                                    </span>
+                                                                                            </span>
+                                        </button>
+                                                                            <button
+                                            type="button"
+                                            class="form-select-option"
+                                            role="option"
+                                            data-form-select-option
+                                            data-value="rejected"
+                                            data-label="審核不通過"
+                                            data-status="invalid"
+                                            data-status-label="已失效"
+                                            data-allow-resubmit="0"
+                                        >
+                                            <span class="inline-flex flex-col items-start gap-0.5 min-w-0">
+                                                <span>審核不通過</span>
+                                                                                                    <span class="text-[11px] font-normal text-gray3 tracking-normal">
+                                                        → 狀態：已失效
+                                                    </span>
+                                                                                            </span>
+                                        </button>
+                                                                            <button
+                                            type="button"
+                                            class="form-select-option"
+                                            role="option"
+                                            data-form-select-option
+                                            data-value="other"
+                                            data-label="其他"
+                                            data-status="rejected"
+                                            data-status-label="退回補件"
+                                            data-allow-resubmit="1"
+                                        >
+                                            <span class="inline-flex flex-col items-start gap-0.5 min-w-0">
+                                                <span>其他</span>
+                                                                                                    <span class="text-[11px] font-normal text-gray3 tracking-normal">
+                                                        → 狀態：退回補件
+                                                    </span>
+                                                                                            </span>
+                                        </button>
+                                                                    </div>
+                            </div>
+                        </div>
+
+                        <div class="form-field" data-review-sales-field hidden>
+                            <span class="form-label">
+                                <span class="text-red">*</span>
+                                <span>原廠業務</span>
+                            </span>
+                            <div class="form-select" data-form-select data-required>
+                                <input type="hidden" name="assigned_sales" value="" data-form-select-value>
+                                <button type="button" class="form-select-trigger" data-form-select-trigger aria-haspopup="listbox" aria-expanded="false">
+                                    <span class="is-placeholder" data-form-select-label>請選擇派發業務</span>
+                                    <i data-lucide="chevron-down" class="w-4 h-4 text-gray4 shrink-0"></i>
+                                </button>
+                                <div class="form-select-menu" data-form-select-menu hidden role="listbox">
+                                                                            <button
+                                            type="button"
+                                            class="form-select-option"
+                                            role="option"
+                                            data-form-select-option
+                                            data-value="wang"
+                                            data-label="王小華"
+                                        >
+                                            王小華
+                                        </button>
+                                                                            <button
+                                            type="button"
+                                            class="form-select-option"
+                                            role="option"
+                                            data-form-select-option
+                                            data-value="chen"
+                                            data-label="陳志明"
+                                        >
+                                            陳志明
+                                        </button>
+                                                                            <button
+                                            type="button"
+                                            class="form-select-option"
+                                            role="option"
+                                            data-form-select-option
+                                            data-value="lin"
+                                            data-label="林佳穎"
+                                        >
+                                            林佳穎
+                                        </button>
+                                                                            <button
+                                            type="button"
+                                            class="form-select-option"
+                                            role="option"
+                                            data-form-select-option
+                                            data-value="huang"
+                                            data-label="黃建宏"
+                                        >
+                                            黃建宏
+                                        </button>
+                                                                            <button
+                                            type="button"
+                                            class="form-select-option"
+                                            role="option"
+                                            data-form-select-option
+                                            data-value="wu"
+                                            data-label="吳佩珊"
+                                        >
+                                            吳佩珊
+                                        </button>
+                                                                    </div>
+                            </div>
+                        </div>
+
+                        <label class="form-field" data-review-note-field hidden>
+                            <span class="form-label"><span>審核備註</span></span>
+                            <textarea
+                                name="review_note"
+                                class="form-input form-textarea"
+                                placeholder="選填，例如選擇「其他」時補充說明"
+                                data-review-note
+                            ></textarea>
+                        </label>
+
+                        <div class="self-stretch flex flex-col gap-3 pt-1" data-review-actions>
+                            <button type="submit" class="btn-primary w-full h-11" data-review-submit hidden>送出審核結果</button>
+                            <button type="button" class="btn-primary w-full h-11" data-review-edit-btn hidden>修改審核</button>
+                            <button type="button" class="btn-secondary w-full h-11" data-review-cancel-edit hidden>取消修改</button>
+                            <a href="/opportunities/" class="btn-secondary w-full h-11" data-review-cancel>取消</a>
+                            <a
+                                href="#"
+                                class="btn-secondary w-full h-11"
+                                data-review-resubmit-link
+                                hidden
+                            >
+                                前往補件編輯
+                            </a>
+                        </div>
+                    </form>
+                </aside>
+            </div>
+        </div>
+    </div>
+
+    <script type="application/json" id="opportunity-catalog-data">
+        {"N260728005":{"id":"N260728005","status":"approved","statusLabel":"已核准","title":"A 公司 | 資安基礎建設升級案","dealerName":"台灣 XX 科技","submittedAt":"2026/07/18 14:20","customer_company":"A 公司","tax_id":"24567890","amount":"NT$ 500,000","amountValue":500000,"close_date":"2026 / 10 / 15","product_line":"IPLocator、MACManager","requirement":"客戶規劃全公司 IP／MAC 資產盤點，並評估導入位址管理方案。","attachment":{"name":"需求說明.pdf","url":"#"},"booking_code":"N260728005","dealer":"tw","protection":"2026-09-30","created_by":"P260312001","oem_sales_id":"P260101001","review":{"result":"approved","resultLabel":"審核通過","sales":"wang","salesLabel":"王小華","bookingCode":"N260728005","note":"資料齊全，已核准並指派原廠業務。","reviewedAt":"2026/07/19 10:05"},"form":{"source":"self","oem_sales":"王小華","customer_relation":"first","competitors":"","products":["IPLocator IP位址解析模組","MACManager MAC位址管理系統"],"units":["1000-1999","500-999"],"fields":{"oem_sales":"王小華","customer_company":"A 公司","customer_address":"台北市內湖區","contact_name":"林經理","contact_title":"資訊部經理","contact_phone":"02-2658-1234","contact_email":"lin@a-corp.com","keyman_name":"黃副總","keyman_phone":"02-2658-1000","keyman_email":"huang@a-corp.com","poc_date":"2026-08-01","decision_date":"2026-10-15","delivery_date":"2026-11-01","complete_date":"2026-12-01"}}},"N260728004":{"id":"N260728004","status":"reviewing","statusLabel":"審核中","title":"B 科技 | 網路設備盤點與存取控管案","dealerName":"台灣 XX 科技","submittedAt":"2026/07/22 09:40","customer_company":"B 科技","tax_id":"12345678","amount":"NT$ 350,000","amountValue":350000,"close_date":"2026 / 09 / 30","product_line":"IP/MAC、GAM 訪客管理","requirement":"客戶希望盤點跨據點設備，並評估導入網路存取控管；目前已完成初步需求訪談。","attachment":{"name":"客戶需求規格書.pdf","url":"#"},"booking_code":"N260728004","dealer":"oem","protection":"-","created_by":"P260101001","oem_sales_id":"P260101001","review":null,"form":{"source":"oem","oem_sales":"王小華","customer_relation":"repeat","competitors":"客戶同時評估其他網路存取控管方案","products":["IPLocator IP位址解析模組","MACManager MAC位址管理系統"],"units":["500-999","0-499"],"fields":{"oem_sales":"王小華","customer_company":"B 科技","customer_address":"新北市板橋區","contact_name":"李承辦","contact_title":"資訊處／專案經理","contact_phone":"02-8765-4321","contact_email":"lee@b-tech.com","keyman_name":"陳總監","keyman_phone":"02-8765-4000","keyman_email":"chen@b-tech.com","poc_date":"2026-08-15","decision_date":"2026-09-30","delivery_date":"2026-10-31","complete_date":"2026-11-30"},"attachment":{"name":"客戶需求規格書.pdf","size":245760,"sizeLabel":"240.0 KB","type":"application/pdf","url":"#"}}},"N260728001":{"id":"N260728001","status":"expiring","statusLabel":"即將到期","title":"C 集團 | 跨國據點存取控管案","dealerName":"海外 Partner HK","submittedAt":"2026/05/02 11:15","customer_company":"C 集團","tax_id":"87654321","amount":"NT$ 1,200,000","amountValue":1200000,"close_date":"2026 / 08 / 30","product_line":"ARPScanner、DHCPManager","requirement":"海外據點需統一 IP 管理政策，保護期即將到期。","attachment":{"name":"專案簡報.pdf","url":"#"},"booking_code":"N260728001","dealer":"overseas","protection":"2026-07-15","created_by":"P251106001","oem_sales_id":"P260102001","review":{"result":"approved","resultLabel":"審核通過","sales":"chen","salesLabel":"陳志明","bookingCode":"N260728001","note":"","reviewedAt":"2026/05/03 09:30"},"form":{"source":"self","oem_sales":"陳志明","customer_relation":"repeat","competitors":"海外據點同時評估其他 IP 管理方案","products":["ARPScanner IP管理系統","DHCPManager DHCP管理系統"],"units":["2000-4999","1000-1999"],"fields":{"oem_sales":"陳志明","customer_company":"C 集團","customer_address":"香港九龍觀塘區","contact_name":"周經理","contact_title":"資訊長室／專案經理","contact_phone":"+852-2345-6789","contact_email":"chow@c-group.com","keyman_name":"吳執行長","keyman_phone":"+852-2345-6000","keyman_email":"wu@c-group.com","poc_date":"2026-06-01","decision_date":"2026-08-30","delivery_date":"2026-09-30","complete_date":"2026-10-31"},"attachment":{"name":"專案簡報.pdf","size":512000,"sizeLabel":"500.0 KB","type":"application/pdf","url":"#"}}},"N260728002":{"id":"N260728002","status":"rejected","statusLabel":"退回補件","title":"D 數位 | 訪客管理評估案","dealerName":"台灣 XX 科技","submittedAt":"2026/07/10 16:05","customer_company":"D 數位","tax_id":"55667788","amount":"NT$ 350,000","amountValue":350000,"close_date":"2026 / 11 / 01","product_line":"GAM 訪客管理","requirement":"客戶評估訪客管理方案，目前需求說明較簡略。","attachment":{"name":"初步需求.docx","url":"#"},"booking_code":"N260728002","dealer":"tw","protection":"-","created_by":"P260118001","oem_sales_id":"P260101001","review":{"result":"insufficient","resultLabel":"資料不足，請補充","sales":"lin","salesLabel":"林佳穎","bookingCode":"N260728002","note":"請補充 Key Man 聯絡資訊與預計 POC 時程。","reviewedAt":"2026/07/11 09:20"},"form":{"source":"self","oem_sales":"林佳穎","customer_relation":"first","competitors":"","products":["MACManager MAC位址管理系統"],"units":["0-499"],"fields":{"oem_sales":"林佳穎","customer_company":"D 數位","customer_address":"台北市信義區","contact_name":"張經理","contact_title":"資訊部","contact_phone":"02-2345-6789","contact_email":"contact@d-digital.com","keyman_name":"","keyman_phone":"","keyman_email":"","poc_date":"","decision_date":"2026-11-01","delivery_date":"2026-12-01","complete_date":"2026-12-15"}}},"N260728003":{"id":"N260728003","status":"expired","statusLabel":"已到期","title":"E 集團 | 舊案保護期結束","dealerName":"原廠業務窗口","submittedAt":"2026/03/01 10:00","customer_company":"E 集團","tax_id":"11223344","amount":"NT$ 750,000","amountValue":750000,"close_date":"2026 / 06 / 30","product_line":"IPLocator、ARPScanner","requirement":"保護期已結束，客戶暫無後續採購時程。","attachment":null,"booking_code":"N260728003","dealer":"oem","protection":"2026-07-15","created_by":"P260102001","oem_sales_id":"P260102001","review":{"result":"approved","resultLabel":"審核通過","sales":"huang","salesLabel":"黃建宏","bookingCode":"N260728003","note":"","reviewedAt":"2026/03/02 14:00"},"form":{"source":"oem","oem_sales":"黃建宏","customer_relation":"repeat","competitors":"","products":["IPLocator IP位址解析模組","ARPScanner IP管理系統"],"units":["1000-1999","500-999"],"fields":{"oem_sales":"黃建宏","customer_company":"E 集團","customer_address":"台中市西屯區","contact_name":"許經理","contact_title":"資訊部經理","contact_phone":"04-2358-1234","contact_email":"hsu@e-group.com","keyman_name":"鄭副總","keyman_phone":"04-2358-1000","keyman_email":"cheng@e-group.com","poc_date":"2026-04-01","decision_date":"2026-06-30","delivery_date":"2026-07-31","complete_date":"2026-08-31"}}},"N260728006":{"id":"N260728006","status":"cancelled","statusLabel":"已取消","title":"F 製造 | 廠區網路盤點案","dealerName":"台灣 XX 科技","submittedAt":"2026/06/12 13:40","customer_company":"F 製造","tax_id":"33445566","amount":"NT$ 420,000","amountValue":420000,"close_date":"2026 / 09 / 01","product_line":"ARPScanner、MACManager","requirement":"客戶內部組織調整，經銷商已取消此商機報備。","attachment":{"name":"取消說明.pdf","url":"#"},"booking_code":"N260728006","dealer":"tw","protection":"-","created_by":"P260312001","oem_sales_id":"P260101001","review":{"result":"approved","resultLabel":"審核通過","sales":"wu","salesLabel":"吳佩珊","bookingCode":"N260728006","note":"原已核准；後由夥伴取消報備。","reviewedAt":"2026/06/13 09:10"},"form":{"source":"self","oem_sales":"吳佩珊","customer_relation":"first","competitors":"","products":["ARPScanner IP管理系統","MACManager MAC位址管理系統"],"units":["500-999","0-499"],"fields":{"oem_sales":"吳佩珊","customer_company":"F 製造","customer_address":"桃園市龜山區","contact_name":"蔡課長","contact_title":"廠務／資訊課","contact_phone":"03-327-8899","contact_email":"tsai@f-mfg.com","keyman_name":"葉廠長","keyman_phone":"03-327-8800","keyman_email":"yeh@f-mfg.com","poc_date":"2026-07-01","decision_date":"2026-09-01","delivery_date":"2026-10-01","complete_date":"2026-10-31"},"attachment":{"name":"取消說明.pdf","size":81920,"sizeLabel":"80.0 KB","type":"application/pdf","url":"#"}}},"N260728007":{"id":"N260728007","status":"completed","statusLabel":"已結案","title":"G 醫院 | 醫療網段 IP 管理導入案","dealerName":"原廠業務窗口","submittedAt":"2025/11/08 10:25","customer_company":"G 醫院","tax_id":"99887766","amount":"NT$ 980,000","amountValue":980000,"close_date":"2026 / 02 / 28","product_line":"IPLocator、DHCPManager","requirement":"保護期已到期，無需再延長保護，本案結案。","attachment":{"name":"驗收報告.pdf","url":"#"},"booking_code":"N260728007","dealer":"oem","protection":"-","created_by":"P260101001","oem_sales_id":"P260101001","review":{"result":"approved","resultLabel":"審核通過","sales":"lin","salesLabel":"林佳穎","bookingCode":"N260728007","note":"保護期已結束，無需再保護，已結案。","reviewedAt":"2025/11/09 11:00"},"form":{"source":"oem","oem_sales":"林佳穎","customer_relation":"repeat","competitors":"","products":["IPLocator IP位址解析模組","DHCPManager DHCP管理系統"],"units":["2000-4999","1000-1999"],"fields":{"oem_sales":"林佳穎","customer_company":"G 醫院","customer_address":"高雄市苓雅區","contact_name":"方主任","contact_title":"資訊室主任","contact_phone":"07-312-3456","contact_email":"fang@g-hospital.org","keyman_name":"沈副院長","keyman_phone":"07-312-3000","keyman_email":"shen@g-hospital.org","poc_date":"2025-12-01","decision_date":"2026-02-28","delivery_date":"2026-03-15","complete_date":"2026-03-31"},"attachment":{"name":"驗收報告.pdf","size":307200,"sizeLabel":"300.0 KB","type":"application/pdf","url":"#"}}},"N260728008":{"id":"N260728008","status":"invalid","statusLabel":"已失效","title":"H 零售 | 門市訪客管理評估案","dealerName":"海外 Partner SG","submittedAt":"2026/07/05 15:10","customer_company":"H 零售","tax_id":"66778899","amount":"NT$ 260,000","amountValue":260000,"close_date":"2026 / 10 / 01","product_line":"MACManager","requirement":"審核判定已有相同／重複商機，本案失效。","attachment":{"name":"報備資料.pdf","url":"#"},"booking_code":"N260728008","dealer":"overseas","protection":"-","created_by":"P250920001","oem_sales_id":"P260104001","review":{"result":"duplicate","resultLabel":"已有相同／重複商機","sales":"wang","salesLabel":"王小華","bookingCode":"N260728008","note":"與既有報備案件重複，本案改為已失效。","reviewedAt":"2026/07/06 09:45"},"form":{"source":"self","oem_sales":"王小華","customer_relation":"first","competitors":"","products":["MACManager MAC位址管理系統"],"units":["0-499"],"fields":{"oem_sales":"王小華","customer_company":"H 零售","customer_address":"新加坡市中心","contact_name":"Tan 經理","contact_title":"IT Manager","contact_phone":"+65-6123-4567","contact_email":"tan@h-retail.sg","keyman_name":"Lim 總監","keyman_phone":"+65-6123-4000","keyman_email":"lim@h-retail.sg","poc_date":"2026-08-01","decision_date":"2026-10-01","delivery_date":"2026-11-01","complete_date":"2026-11-30"},"attachment":{"name":"報備資料.pdf","size":163840,"sizeLabel":"160.0 KB","type":"application/pdf","url":"#"}}}}
+    </script>
+    <script type="application/json" id="opportunity-status-labels">
+        {"draft":"暫存","approved":"已核准","reviewing":"審核中","rejected":"退回補件","expiring":"即將到期","expired":"已到期","cancelled":"已取消","completed":"已結案","invalid":"已失效"}
+    </script>
+    <script type="application/json" id="opportunity-source-labels">
+        {"self":"自行開發","oem":"原廠派發"}
+    </script>
+    <script type="application/json" id="opportunity-relation-labels">
+        {"first":"第一次接洽","repeat":"多次接洽(未成交)","other":"其他"}
+    </script>
+            </main>
+        </div>
+    </div>
+
+    
+    <script type="application/json" id="app-roles-config">
+        {"defaultRole":"admin","roles":{"admin":{"label":"總管理者","identity":"admin","partnerId":"","nav":["/","/opportunities","/products","/training","/marketing","/support","/profile"],"can":["opportunity.view","opportunity.create","opportunity.export","opportunity.status.edit","opportunity.actions","opportunity.review","product.manage","marketing.manage","training.manage","support.create","support.manage","profile.manage"]},"oem_manager":{"label":"原廠主管","identity":"oem_manager","partnerId":"P260100001","nav":["/","/opportunities","/products","/training","/marketing","/support"],"can":["opportunity.view","opportunity.create","opportunity.export","opportunity.actions","support.create"]},"oem_sales":{"label":"原廠業務","identity":"oem_sales","partnerId":"P260101001","nav":["/","/opportunities","/products","/training","/marketing","/support"],"can":["opportunity.view","opportunity.create","opportunity.export","opportunity.actions","support.create"]},"dealer_tw":{"label":"國內經銷商","identity":"dealer_tw","partnerId":"P260312001","nav":["/","/opportunities","/products","/training","/marketing","/support"],"can":["opportunity.view","opportunity.create","opportunity.export","opportunity.actions","support.create"]},"dealer_overseas":{"label":"海外經銷商","identity":"dealer_overseas","partnerId":"P251106001","nav":["/","/opportunities","/products","/training","/marketing","/support"],"can":["opportunity.view","opportunity.create","opportunity.export","opportunity.actions","support.create"]}}}
+    </script>
+    <script type="application/json" id="partners-seed-data">
+        [{"id":"P260312001","identity":"dealer_tw","level":"gold","oem_sales":"林佳穎","oem_sales_id":"P260101001","manager_id":"","company":"數位聯防科技股份有限公司","tax_id":"24567890","country":"tw","name":"王小明","email":"ming.wang@digidefend.com.tw","phone":"02-1234-5678","job_title":"業務經理 / 通路部","status":"approved","applied_at":"2026-03-12"},{"id":"P260821001","identity":"","level":"","oem_sales":"陳志偉","oem_sales_id":"","manager_id":"","company":"雲端資安股份有限公司","tax_id":"53881234","country":"tw","name":"張雅婷","email":"yating.chang@cloudsec.com.tw","phone":"02-8765-4321","job_title":"協理 / 業務處","status":"reviewing","applied_at":"2026-08-21"},{"id":"P260118001","identity":"dealer_tw","level":"platinum","oem_sales":"林佳穎","oem_sales_id":"P260101001","manager_id":"","company":"高雄網通系統有限公司","tax_id":"16774521","country":"tw","name":"黃建宏","email":"chienhung@khnetsys.com.tw","phone":"07-336-8800","job_title":"業務主任 / 南區","status":"approved","applied_at":"2026-01-18"},{"id":"P251106001","identity":"dealer_overseas","level":"gold","oem_sales":"吳佩珊","oem_sales_id":"P260102001","manager_id":"","company":"香港網絡防護有限公司","tax_id":"68901234","country":"hk","name":"李浩然","email":"horan.lee@netguard.hk","phone":"+852-2123-7788","job_title":"Sales Manager / Channel","status":"approved","applied_at":"2025-11-06"},{"id":"P260704001","identity":"dealer_overseas","level":"standard","oem_sales":"佐藤 健","oem_sales_id":"P260103001","manager_id":"","company":"東京セキュア株式会社","tax_id":"T8010001123456","country":"jp","name":"田中 美咲","email":"misaki.tanaka@tokyosecure.jp","phone":"+81-3-1234-5678","job_title":"営業部 / マネージャー","status":"approved","applied_at":"2026-07-04"},{"id":"P260902001","identity":"","level":"","oem_sales":"陳志偉","oem_sales_id":"","manager_id":"","company":"新加坡網安方案 Pte. Ltd.","tax_id":"202412345K","country":"sg","name":"Aisha Rahman","email":"aisha.rahman@sgcyber.sg","phone":"+65-6789-1200","job_title":"Channel Specialist / Sales","status":"reviewing","applied_at":"2026-09-02"},{"id":"P260615001","identity":"dealer_overseas","level":"","oem_sales":"吳佩珊","oem_sales_id":"P260102001","manager_id":"","company":"澳門資訊服務有限公司","tax_id":"MO-88321","country":"mo","name":"周曉琳","email":"xiaolin.chou@macauits.com","phone":"+853-2871-6655","job_title":"客戶經理 / 商務部","status":"rejected","applied_at":"2026-06-15"},{"id":"P260828001","identity":"","level":"","oem_sales":"林佳穎","oem_sales_id":"","manager_id":"","company":"華南網絡科技有限公司","tax_id":"91440101MA5DXXXXX","country":"cn","name":"劉振宇","email":"zhenyu.liu@hnnetsec.cn","phone":"+86-20-3888-1200","job_title":"區域經理 / 渠道部","status":"reviewing","applied_at":"2026-08-28"},{"id":"P250920001","identity":"dealer_overseas","level":"diamond","oem_sales":"James Cole","oem_sales_id":"P260104001","manager_id":"","company":"Pacific Secure Partners LLC","tax_id":"98-7654321","country":"us","name":"Emily Chen","email":"emily.chen@pacificsecure.com","phone":"+1-415-555-0188","job_title":"Account Director / APAC Desk","status":"approved","applied_at":"2025-09-20"},{"id":"P260510001","identity":"dealer_overseas","level":"","oem_sales":"佐藤 健","oem_sales_id":"P260103001","manager_id":"","company":"서울인포섹 주식회사","tax_id":"110-81-12345","country":"kr","name":"박지훈","email":"jihoon.park@seoulinfosec.kr","phone":"+82-2-555-0199","job_title":"과장 / 영업팀","status":"rejected","applied_at":"2026-05-10"},{"id":"P260903001","identity":"","level":"","oem_sales":"陳志偉","oem_sales_id":"","manager_id":"","company":"馬來西亞資安通路 Sdn. Bhd.","tax_id":"202301234567","country":"my","name":"Daniel Lim","email":"daniel.lim@mysecure.my","phone":"+60-3-2166-8800","job_title":"Sales Executive / Channel","status":"reviewing","applied_at":"2026-09-03"},{"id":"P260101001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"林佳穎","email":"chiaying.lin@upas.com.tw","phone":"02-2658-1001","job_title":"原廠業務 / 通路部","status":"approved","applied_at":"2026-01-01"},{"id":"P260102001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"吳佩珊","email":"peishan.wu@upas.com.tw","phone":"02-2658-1002","job_title":"原廠業務 / 海外組","status":"approved","applied_at":"2026-01-02"},{"id":"P260103001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"佐藤 健","email":"ken.sato@upas.com.tw","phone":"02-2658-1003","job_title":"原廠業務 / 亞太組","status":"approved","applied_at":"2026-01-03"},{"id":"P260104001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"James Cole","email":"james.cole@upas.com.tw","phone":"02-2658-1004","job_title":"OEM Sales / APAC","status":"approved","applied_at":"2026-01-04"},{"id":"P260100001","identity":"oem_manager","level":"","oem_sales":"","oem_sales_id":"","manager_id":"","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"王經理","email":"manager.wang@upas.com.tw","phone":"02-2658-1000","job_title":"原廠業務主管","status":"approved","applied_at":"2026-01-01"},{"id":"P260105001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"陳志偉","email":"chihwei.chen@upas.com.tw","phone":"02-2658-1005","job_title":"原廠業務 / 通路部","status":"approved","applied_at":"2026-01-05"}]
+    </script>
+</body>
+</html>

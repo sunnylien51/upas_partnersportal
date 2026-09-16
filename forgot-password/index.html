@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="canonical" href="/forgot-password">
+<title>忘記密碼 | Partners Portal</title>
+<meta name="description" content="合作夥伴入口網站">
+
+<link rel="icon" href="/images/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32.png">
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Rajdhani:wght@600&display=swap" rel="stylesheet">
+
+<script type="module" src="http://localhost:5173/@vite/client"></script>
+<link rel="stylesheet" href="http://localhost:5173/source/_assets/css/main.css">
+<script defer type="module" src="http://localhost:5173/source/_assets/js/main.js"></script>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+    </head>
+<body class="bg-bg text-gray5 font-sans antialiased selection:bg-brand2/60 selection:text-gray5 min-h-screen overflow-x-hidden">
+    <div class="auth-page">
+    <div class="auth-brand">
+        <a href="/login/" class="inline-flex">
+            <img
+                src="/images/logo.svg"
+                alt="Partners Portal"
+                width="116"
+                height="44"
+                class="w-[116px] h-11"
+            >
+        </a>
+    </div>
+
+    <div
+        class="w-full p-6 md:p-10 bg-white rounded-[8px] shadow-card flex flex-col justify-start items-start gap-8"
+        style="max-width: 500px"
+    >
+        <div class="self-stretch flex flex-col items-start gap-1">
+        <h1 class="text-ch4 text-gray5">忘記密碼</h1>
+        <p class="text-cb3 text-gray4">輸入帳號 Email，我們將寄送重設密碼連結至您的信箱</p>
+    </div>
+
+    <form
+        class="self-stretch flex flex-col items-start gap-8"
+        action="/forgot-password/sent/"
+        method="get"
+    >
+        <div class="self-stretch flex flex-col items-start gap-3">
+            <div class="form-field">
+                <label for="forgot-email" class="form-label">
+                    <span class="text-red">*</span>
+                    <span>帳號 Email</span>
+                </label>
+                <input
+                    id="forgot-email"
+                    type="email"
+                    name="email"
+                    class="form-input"
+                    placeholder="請輸入 Email"
+                    autocomplete="email"
+                    required
+                >
+            </div>
+        </div>
+
+        <div class="self-stretch flex flex-col items-start gap-5">
+            <button type="submit" class="btn-primary w-full h-11">寄送重設連結</button>
+
+            <a href="/login/" class="btn-secondary w-full">返回登入</a>
+
+            <p class="text-cb3 text-gray4">若收不到信件，請檢查垃圾郵件匣，或聯絡 UPAS 系統管理者。</p>
+        </div>
+    </form>
+    </div>
+
+    <footer class="auth-footer">
+        <p class="text-[12px] text-gray3">© 2026 UPAS 商案管理系統 版權所有</p>
+    </footer>
+</div>
+
+    </body>
+</html>

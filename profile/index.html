@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="canonical" href="/profile">
+<title>夥伴管理 | Partners Portal</title>
+<meta name="description" content="合作夥伴入口網站">
+
+<link rel="icon" href="/images/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32.png">
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Rajdhani:wght@600&display=swap" rel="stylesheet">
+
+<script type="module" src="http://localhost:5173/@vite/client"></script>
+<link rel="stylesheet" href="http://localhost:5173/source/_assets/css/main.css">
+<script defer type="module" src="http://localhost:5173/source/_assets/js/main.js"></script>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+    </head>
+<body class="bg-bg text-gray5 font-sans antialiased selection:bg-brand2/60 selection:text-gray5 min-h-screen overflow-x-hidden">
+    <div class="flex min-h-screen">
+        <div id="sidebar-overlay" class="fixed inset-0 z-40 bg-gray5/40 hidden md:hidden"></div>
+
+<aside id="app-sidebar" class="fixed md:sticky top-0 left-0 z-50 md:z-10 flex h-screen w-60 shrink-0 flex-col justify-between overflow-hidden bg-white border-r border-gray1 shadow-[0px_0px_60px_0px_rgba(0,0,0,0.02)] -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
+    <div class="flex-1 self-stretch px-4 py-10 flex flex-col items-center gap-10 min-h-0">
+        <a href="/" class="flex justify-center items-center">
+            <img src="/images/logo.svg" alt="Partners Portal" width="116" height="44" class="w-[116px] h-11">
+        </a>
+
+        <nav class="self-stretch flex-1 flex flex-col items-start gap-1 overflow-y-auto" aria-label="主要選單">
+                            <a
+                    href="/"
+                    class="sidebar-link "
+                    data-nav-path="/"
+                >
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                    <span>概覽</span>
+                </a>
+                            <a
+                    href="/opportunities/"
+                    class="sidebar-link "
+                    data-nav-path="/opportunities"
+                >
+                    <i data-lucide="briefcase" class="w-4 h-4"></i>
+                    <span>商機中心</span>
+                </a>
+                            <a
+                    href="/products/"
+                    class="sidebar-link "
+                    data-nav-path="/products"
+                >
+                    <i data-lucide="package" class="w-4 h-4"></i>
+                    <span>產品資訊中心</span>
+                </a>
+                            <a
+                    href="/training/"
+                    class="sidebar-link "
+                    data-nav-path="/training"
+                >
+                    <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+                    <span>教育訓練中心</span>
+                </a>
+                            <a
+                    href="/marketing/"
+                    class="sidebar-link "
+                    data-nav-path="/marketing"
+                >
+                    <i data-lucide="megaphone" class="w-4 h-4"></i>
+                    <span>行銷資源中心</span>
+                </a>
+                            <a
+                    href="/support/"
+                    class="sidebar-link "
+                    data-nav-path="/support"
+                >
+                    <i data-lucide="headset" class="w-4 h-4"></i>
+                    <span>技術支援中心</span>
+                </a>
+                            <a
+                    href="/profile/"
+                    class="sidebar-link active"
+                    data-nav-path="/profile"
+                >
+                    <i data-lucide="id-card" class="w-4 h-4"></i>
+                    <span>夥伴管理</span>
+                </a>
+                    </nav>
+    </div>
+
+    <div class="self-stretch flex flex-col items-stretch">
+        
+        <div class="role-preview role-preview--sidebar self-stretch px-6 pb-4 text-left" data-role-preview>
+            <div class="flex items-center justify-start gap-2 mb-2">
+                <span class="text-[12px] font-medium tracking-[0.06em] text-gray4">預覽身分權限</span>
+                <span class="role-preview-badge">演示用</span>
+            </div>
+            <div class="role-preview-switch role-preview-switch--sidebar justify-start" role="group" aria-label="預覽身分權限">
+                <button type="button" class="role-preview-btn is-active" data-role-switch="admin" aria-pressed="true">總管</button>
+                <button type="button" class="role-preview-btn" data-role-switch="oem_manager" aria-pressed="false">主管</button>
+                <button type="button" class="role-preview-btn" data-role-switch="oem_sales" aria-pressed="false">業務</button>
+                <button type="button" class="role-preview-btn" data-role-switch="dealer_tw" aria-pressed="false">國內</button>
+                <button type="button" class="role-preview-btn" data-role-switch="dealer_overseas" aria-pressed="false">海外</button>
+            </div>
+        </div>
+
+        <div class="self-stretch px-6 py-5 border-t border-gray1 inline-flex items-center justify-start gap-2">
+            <i data-lucide="globe" class="w-4 h-4 text-gray4 shrink-0"></i>
+            <div class="locale-switch text-eb3 uppercase" role="group" aria-label="語言">
+                                                        <button type="button" data-locale="TW" class="locale-btn is-active">TW</button>
+                                                            <span class="text-gray3"> / </span>
+                                        <button type="button" data-locale="EN" class="locale-btn ">EN</button>
+                                                            <span class="text-gray3"> / </span>
+                                        <button type="button" data-locale="JP" class="locale-btn ">JP</button>
+                            </div>
+        </div>
+    </div>
+</aside>
+
+        <div class="flex-1 min-w-0 flex flex-col">
+            <header class="relative z-20 px-4 md:px-12 pt-8 pb-5">
+    <div class="flex items-center gap-2 min-w-0 pr-[11.5rem] md:pr-[18.5rem]">
+        <button id="sidebar-toggle" type="button" class="md:hidden p-2 -ml-1 text-gray5 shrink-0" aria-label="開啟選單" aria-controls="app-sidebar">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+        <img src="/images/yellow-slash-motif.svg" alt="" class="w-3 h-6 shrink-0" aria-hidden="true" />
+        <h1 class="text-ch5 text-gray5 truncate">夥伴管理</h1>
+    </div>
+
+            <nav class="breadcrumb mt-8 pr-[11.5rem] md:pr-[18.5rem]" aria-label="麵包屑">
+            <i data-lucide="home" class="breadcrumb-home"></i>
+            <a href="/" class="breadcrumb-link">首頁</a>
+                            <span class="breadcrumb-sep">/</span>
+                                    <span
+                        class="breadcrumb-text"
+                                            >夥伴管理</span>
+                                    </nav>
+    </header>
+
+<div class="app-user-fixed">
+    <button type="button" class="size-12 bg-white rounded-2xl shadow-card border border-gray1 inline-flex items-center justify-center text-gray3 hover:text-gray5 transition-colors" aria-label="通知">
+        <i data-lucide="bell" class="w-4 h-4"></i>
+    </button>
+
+    <div class="app-user-menu" data-user-menu>
+        <button
+            type="button"
+            class="app-user-trigger w-auto max-w-[14rem] md:w-56 pl-1.5 pr-3 py-1.5 bg-white rounded-2xl shadow-card border border-gray1 flex items-center gap-3 text-left"
+            data-user-menu-trigger
+            aria-haspopup="menu"
+            aria-expanded="false"
+            aria-controls="app-user-dropdown"
+        >
+            <span class="size-10 shrink-0 bg-brand2 rounded-xl flex items-center justify-center">
+                <i data-lucide="user" class="w-4 h-4 text-white"></i>
+            </span>
+            <span class="flex-1 min-w-0 flex flex-col items-start gap-0.5">
+                <span class="self-stretch text-[14px] font-medium text-gray5 line-clamp-1">經銷商公司名稱</span>
+                <span class="text-[10px] font-medium tracking-[0.06em] text-gray3" data-role-label>總管理者</span>
+            </span>
+            <i data-lucide="more-vertical" class="w-4 h-4 text-gray3 shrink-0"></i>
+        </button>
+        <div id="app-user-dropdown" class="app-user-dropdown" role="menu">
+            <a href="/account/" class="app-user-menu-item" role="menuitem">
+                <i data-lucide="circle-user" class="w-4 h-4"></i>
+                <span>用戶資料</span>
+            </a>
+            <a href="/login/" class="app-user-menu-item is-brand" role="menuitem">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <span>登出</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+            <main class="flex-1 flex flex-col min-h-0">
+                    <div class="page-body">
+        <div
+            class="content-wrapper"
+            data-partner-list
+            data-page-size="8"
+            data-edit-url="/profile/edit/"
+        >
+
+            <div class="self-stretch flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                <div class="flex flex-col md:flex-row md:items-center gap-2 min-w-0">
+                    <label class="search-field search-bar w-full md:w-56">
+                        <i data-lucide="search" class="w-3.5 h-3.5 text-gray3 shrink-0"></i>
+                        <span class="sr-only">搜尋編號、公司或聯絡人</span>
+                        <input type="search" name="q" placeholder="搜尋編號、公司或聯絡人" class="w-full min-w-0 bg-transparent text-cb3 text-gray5 placeholder:text-gray3 outline-none" data-partner-search>
+                        <button type="button" class="search-clear" data-search-clear hidden aria-label="清除搜尋">
+                            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </label>
+
+                    <div class="form-select w-full md:w-44" data-form-select data-partner-filter="status">
+                        <input type="hidden" value="" data-form-select-value>
+                        <button type="button" class="form-select-trigger" data-form-select-trigger aria-haspopup="listbox" aria-expanded="false">
+                            <span class="is-placeholder" data-form-select-label>申請狀態</span>
+                            <i data-lucide="chevron-down" class="w-4 h-4 text-gray4"></i>
+                        </button>
+                        <div class="form-select-menu" data-form-select-menu hidden role="listbox">
+                            <button type="button" class="form-select-option is-selected" role="option" data-form-select-option data-value="" data-label="申請狀態">全部</button>
+                                                            <button type="button" class="form-select-option" role="option" data-form-select-option data-value="reviewing" data-label="審核中">審核中</button>
+                                                            <button type="button" class="form-select-option" role="option" data-form-select-option data-value="approved" data-label="已核准">已核准</button>
+                                                            <button type="button" class="form-select-option" role="option" data-form-select-option data-value="rejected" data-label="已退回">已退回</button>
+                                                    </div>
+                    </div>
+
+                    <div class="form-select w-full md:w-44" data-form-select data-partner-filter="identity">
+                        <input type="hidden" value="" data-form-select-value>
+                        <button type="button" class="form-select-trigger" data-form-select-trigger aria-haspopup="listbox" aria-expanded="false">
+                            <span class="is-placeholder" data-form-select-label>身分權限</span>
+                            <i data-lucide="chevron-down" class="w-4 h-4 text-gray4"></i>
+                        </button>
+                        <div class="form-select-menu" data-form-select-menu hidden role="listbox">
+                            <button type="button" class="form-select-option is-selected" role="option" data-form-select-option data-value="" data-label="身分權限">全部</button>
+                                                            <button type="button" class="form-select-option" role="option" data-form-select-option data-value="oem" data-label="原廠業務">原廠業務</button>
+                                                            <button type="button" class="form-select-option" role="option" data-form-select-option data-value="dealer_overseas" data-label="海外經銷商">海外經銷商</button>
+                                                            <button type="button" class="form-select-option" role="option" data-form-select-option data-value="dealer_tw" data-label="國內經銷商">國內經銷商</button>
+                                                    </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2">
+                    <a href="/profile/create/" class="btn-primary" data-requires="profile.manage">新增帳號</a>
+                    <button type="button" class="btn-secondary" data-requires="profile.manage" data-partner-export>匯出 Excel</button>
+                </div>
+            </div>
+
+            <div class="self-stretch px-6 py-4 bg-white rounded-2xl shadow-card flex flex-col md:flex-row md:items-stretch gap-4 md:gap-7">
+                                                        <div class="flex-1 flex flex-col items-start gap-2" data-partner-stat="all">
+                        <p class="text-cb3 text-gray4">全部夥伴</p>
+                        <div class="self-stretch inline-flex justify-end items-baseline gap-1">
+                            <span class="font-en font-semibold text-[48px] leading-none tracking-[3px]  text-gray5 " data-partner-stat-count>17</span>
+                            <span class="text-cb3  text-gray5 ">家</span>
+                        </div>
+                    </div>
+                                                            <div class="hidden md:block w-px self-stretch bg-gray1 shrink-0" aria-hidden="true"></div>
+                        <div class="md:hidden h-px w-full bg-gray1" aria-hidden="true"></div>
+                                        <div class="flex-1 flex flex-col items-start gap-2" data-partner-stat="reviewing">
+                        <p class="text-cb3 text-gray4">審核中</p>
+                        <div class="self-stretch inline-flex justify-end items-baseline gap-1">
+                            <span class="font-en font-semibold text-[48px] leading-none tracking-[3px]  text-brand2 " data-partner-stat-count>4</span>
+                            <span class="text-cb3  text-brand2 ">家</span>
+                        </div>
+                    </div>
+                                                            <div class="hidden md:block w-px self-stretch bg-gray1 shrink-0" aria-hidden="true"></div>
+                        <div class="md:hidden h-px w-full bg-gray1" aria-hidden="true"></div>
+                                        <div class="flex-1 flex flex-col items-start gap-2" data-partner-stat="approved">
+                        <p class="text-cb3 text-gray4">已核准</p>
+                        <div class="self-stretch inline-flex justify-end items-baseline gap-1">
+                            <span class="font-en font-semibold text-[48px] leading-none tracking-[3px]  text-gray5 " data-partner-stat-count>11</span>
+                            <span class="text-cb3  text-gray5 ">家</span>
+                        </div>
+                    </div>
+                                                            <div class="hidden md:block w-px self-stretch bg-gray1 shrink-0" aria-hidden="true"></div>
+                        <div class="md:hidden h-px w-full bg-gray1" aria-hidden="true"></div>
+                                        <div class="flex-1 flex flex-col items-start gap-2" data-partner-stat="rejected">
+                        <p class="text-cb3 text-gray4">已退回</p>
+                        <div class="self-stretch inline-flex justify-end items-baseline gap-1">
+                            <span class="font-en font-semibold text-[48px] leading-none tracking-[3px]  text-red " data-partner-stat-count>2</span>
+                            <span class="text-cb3  text-red ">家</span>
+                        </div>
+                    </div>
+                            </div>
+
+            <div class="list-card">
+                <div class="list-card-body">
+                    <div class="self-stretch overflow-x-auto">
+                        <div class="min-w-[980px]">
+                            <div class="list-head">
+                                <div class="flex-[1.3] min-w-[12rem] text-cb3 text-gray4">公司資料</div>
+                                <div class="w-36 text-cb3 text-gray4">身分權限</div>
+                                <div class="w-28 text-cb3 text-gray4">原廠業務</div>
+                                <div class="flex-1 min-w-[10rem] text-cb3 text-gray4">申請人</div>
+                                <div class="flex-[1.2] min-w-[12rem] text-cb3 text-gray4">聯絡方式</div>
+                                <div class="w-20 text-cb3 text-gray4">狀態</div>
+                                <div class="w-20 shrink-0"></div>
+                            </div>
+
+                            <div class="flex flex-col">
+                                                                                                        <div
+                                        class="list-row list-row-link py-3"
+                                        data-partner-row
+                                        data-partner-id="P260312001"
+                                        data-edit-href="/profile/edit/?id=P260312001"
+                                        data-status="approved"
+                                        data-country="tw"
+                                        data-identity="dealer_tw"
+                                        data-level="gold"
+                                        data-applied-at="2026-03-12"
+                                        data-search="P260312001 數位聯防科技股份有限公司 24567890 台灣 林佳穎 王小明 ming.wang@digidefend.com.tw 02-1234-5678 業務經理 / 通路部 國內經銷商/黃金"
+                                    >
+                                        <div class="flex-[1.3] min-w-[12rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-company>數位聯防科技股份有限公司</p>
+                                            <p class="text-[12px] font-en font-medium uppercase tracking-[0.06em] text-gray3" data-partner-member-id>P260312001</p>
+                                        </div>
+                                        <div class="w-36 shrink-0 text-cb3 text-gray5" data-partner-identity>國內經銷商/黃金</div>
+                                        <div class="w-28 shrink-0 text-cb3 text-gray5" data-partner-oem-sales>林佳穎</div>
+                                        <div class="flex-1 min-w-[10rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-name>王小明</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-title>業務經理 / 通路部</p>
+                                        </div>
+                                        <div class="flex-[1.2] min-w-[12rem] pr-4">
+                                            <p class="text-eb2 text-gray5 break-all" data-partner-email>ming.wang@digidefend.com.tw</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-phone>02-1234-5678</p>
+                                        </div>
+                                        <div class="w-20 shrink-0">
+                                            <span class="status-pill status-approved" data-partner-status>已核准</span>
+                                        </div>
+                                        <div class="w-20 shrink-0 inline-flex items-center justify-end" data-partner-actions>
+                                            <a
+                                                href="/profile/edit/?id=P260312001"
+                                                class="icon-action"
+                                                data-requires="profile.manage"
+                                                aria-label="編輯 數位聯防科技股份有限公司"
+                                                title="編輯"
+                                            >
+                                                <i data-lucide="square-pen" class="w-4 h-4"></i>
+                                            </a>
+                                            <button
+                                                type="button"
+                                                class="icon-action"
+                                                data-partner-delete
+                                                data-requires="profile.manage"
+                                                aria-label="刪除 數位聯防科技股份有限公司"
+                                                title="刪除"
+                                            >
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                                                                                        <div
+                                        class="list-row list-row-link py-3"
+                                        data-partner-row
+                                        data-partner-id="P260821001"
+                                        data-edit-href="/profile/edit/?id=P260821001"
+                                        data-status="reviewing"
+                                        data-country="tw"
+                                        data-identity=""
+                                        data-level=""
+                                        data-applied-at="2026-08-21"
+                                        data-search="P260821001 雲端資安股份有限公司 53881234 台灣 陳志偉 張雅婷 yating.chang@cloudsec.com.tw 02-8765-4321 協理 / 業務處 —"
+                                    >
+                                        <div class="flex-[1.3] min-w-[12rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-company>雲端資安股份有限公司</p>
+                                            <p class="text-[12px] font-en font-medium uppercase tracking-[0.06em] text-gray3" data-partner-member-id>P260821001</p>
+                                        </div>
+                                        <div class="w-36 shrink-0 text-cb3 text-gray5" data-partner-identity>—</div>
+                                        <div class="w-28 shrink-0 text-cb3 text-gray5" data-partner-oem-sales>申請：陳志偉</div>
+                                        <div class="flex-1 min-w-[10rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-name>張雅婷</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-title>協理 / 業務處</p>
+                                        </div>
+                                        <div class="flex-[1.2] min-w-[12rem] pr-4">
+                                            <p class="text-eb2 text-gray5 break-all" data-partner-email>yating.chang@cloudsec.com.tw</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-phone>02-8765-4321</p>
+                                        </div>
+                                        <div class="w-20 shrink-0">
+                                            <span class="status-pill status-reviewing" data-partner-status>審核中</span>
+                                        </div>
+                                        <div class="w-20 shrink-0 inline-flex items-center justify-end" data-partner-actions>
+                                            <a
+                                                href="/profile/edit/?id=P260821001"
+                                                class="icon-action"
+                                                data-requires="profile.manage"
+                                                aria-label="編輯 雲端資安股份有限公司"
+                                                title="編輯"
+                                            >
+                                                <i data-lucide="square-pen" class="w-4 h-4"></i>
+                                            </a>
+                                            <button
+                                                type="button"
+                                                class="icon-action"
+                                                data-partner-delete
+                                                data-requires="profile.manage"
+                                                aria-label="刪除 雲端資安股份有限公司"
+                                                title="刪除"
+                                            >
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                                                                                        <div
+                                        class="list-row list-row-link py-3"
+                                        data-partner-row
+                                        data-partner-id="P260118001"
+                                        data-edit-href="/profile/edit/?id=P260118001"
+                                        data-status="approved"
+                                        data-country="tw"
+                                        data-identity="dealer_tw"
+                                        data-level="platinum"
+                                        data-applied-at="2026-01-18"
+                                        data-search="P260118001 高雄網通系統有限公司 16774521 台灣 林佳穎 黃建宏 chienhung@khnetsys.com.tw 07-336-8800 業務主任 / 南區 國內經銷商/白金"
+                                    >
+                                        <div class="flex-[1.3] min-w-[12rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-company>高雄網通系統有限公司</p>
+                                            <p class="text-[12px] font-en font-medium uppercase tracking-[0.06em] text-gray3" data-partner-member-id>P260118001</p>
+                                        </div>
+                                        <div class="w-36 shrink-0 text-cb3 text-gray5" data-partner-identity>國內經銷商/白金</div>
+                                        <div class="w-28 shrink-0 text-cb3 text-gray5" data-partner-oem-sales>林佳穎</div>
+                                        <div class="flex-1 min-w-[10rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-name>黃建宏</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-title>業務主任 / 南區</p>
+                                        </div>
+                                        <div class="flex-[1.2] min-w-[12rem] pr-4">
+                                            <p class="text-eb2 text-gray5 break-all" data-partner-email>chienhung@khnetsys.com.tw</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-phone>07-336-8800</p>
+                                        </div>
+                                        <div class="w-20 shrink-0">
+                                            <span class="status-pill status-approved" data-partner-status>已核准</span>
+                                        </div>
+                                        <div class="w-20 shrink-0 inline-flex items-center justify-end" data-partner-actions>
+                                            <a
+                                                href="/profile/edit/?id=P260118001"
+                                                class="icon-action"
+                                                data-requires="profile.manage"
+                                                aria-label="編輯 高雄網通系統有限公司"
+                                                title="編輯"
+                                            >
+                                                <i data-lucide="square-pen" class="w-4 h-4"></i>
+                                            </a>
+                                            <button
+                                                type="button"
+                                                class="icon-action"
+                                                data-partner-delete
+                                                data-requires="profile.manage"
+                                                aria-label="刪除 高雄網通系統有限公司"
+                                                title="刪除"
+                                            >
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                                                                                        <div
+                                        class="list-row list-row-link py-3"
+                                        data-partner-row
+                                        data-partner-id="P251106001"
+                                        data-edit-href="/profile/edit/?id=P251106001"
+                                        data-status="approved"
+                                        data-country="hk"
+                                        data-identity="dealer_overseas"
+                                        data-level="gold"
+                                        data-applied-at="2025-11-06"
+                                        data-search="P251106001 香港網絡防護有限公司 68901234 香港 吳佩珊 李浩然 horan.lee@netguard.hk +852-2123-7788 Sales Manager / Channel 海外經銷商/黃金"
+                                    >
+                                        <div class="flex-[1.3] min-w-[12rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-company>香港網絡防護有限公司</p>
+                                            <p class="text-[12px] font-en font-medium uppercase tracking-[0.06em] text-gray3" data-partner-member-id>P251106001</p>
+                                        </div>
+                                        <div class="w-36 shrink-0 text-cb3 text-gray5" data-partner-identity>海外經銷商/黃金</div>
+                                        <div class="w-28 shrink-0 text-cb3 text-gray5" data-partner-oem-sales>吳佩珊</div>
+                                        <div class="flex-1 min-w-[10rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-name>李浩然</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-title>Sales Manager / Channel</p>
+                                        </div>
+                                        <div class="flex-[1.2] min-w-[12rem] pr-4">
+                                            <p class="text-eb2 text-gray5 break-all" data-partner-email>horan.lee@netguard.hk</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-phone>+852-2123-7788</p>
+                                        </div>
+                                        <div class="w-20 shrink-0">
+                                            <span class="status-pill status-approved" data-partner-status>已核准</span>
+                                        </div>
+                                        <div class="w-20 shrink-0 inline-flex items-center justify-end" data-partner-actions>
+                                            <a
+                                                href="/profile/edit/?id=P251106001"
+                                                class="icon-action"
+                                                data-requires="profile.manage"
+                                                aria-label="編輯 香港網絡防護有限公司"
+                                                title="編輯"
+                                            >
+                                                <i data-lucide="square-pen" class="w-4 h-4"></i>
+                                            </a>
+                                            <button
+                                                type="button"
+                                                class="icon-action"
+                                                data-partner-delete
+                                                data-requires="profile.manage"
+                                                aria-label="刪除 香港網絡防護有限公司"
+                                                title="刪除"
+                                            >
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                                                                                        <div
+                                        class="list-row list-row-link py-3"
+                                        data-partner-row
+                                        data-partner-id="P260704001"
+                                        data-edit-href="/profile/edit/?id=P260704001"
+                                        data-status="approved"
+                                        data-country="jp"
+                                        data-identity="dealer_overseas"
+                                        data-level="standard"
+                                        data-applied-at="2026-07-04"
+                                        data-search="P260704001 東京セキュア株式会社 T8010001123456 日本 佐藤 健 田中 美咲 misaki.tanaka@tokyosecure.jp +81-3-1234-5678 営業部 / マネージャー 海外經銷商/一般"
+                                    >
+                                        <div class="flex-[1.3] min-w-[12rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-company>東京セキュア株式会社</p>
+                                            <p class="text-[12px] font-en font-medium uppercase tracking-[0.06em] text-gray3" data-partner-member-id>P260704001</p>
+                                        </div>
+                                        <div class="w-36 shrink-0 text-cb3 text-gray5" data-partner-identity>海外經銷商/一般</div>
+                                        <div class="w-28 shrink-0 text-cb3 text-gray5" data-partner-oem-sales>佐藤 健</div>
+                                        <div class="flex-1 min-w-[10rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-name>田中 美咲</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-title>営業部 / マネージャー</p>
+                                        </div>
+                                        <div class="flex-[1.2] min-w-[12rem] pr-4">
+                                            <p class="text-eb2 text-gray5 break-all" data-partner-email>misaki.tanaka@tokyosecure.jp</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-phone>+81-3-1234-5678</p>
+                                        </div>
+                                        <div class="w-20 shrink-0">
+                                            <span class="status-pill status-approved" data-partner-status>已核准</span>
+                                        </div>
+                                        <div class="w-20 shrink-0 inline-flex items-center justify-end" data-partner-actions>
+                                            <a
+                                                href="/profile/edit/?id=P260704001"
+                                                class="icon-action"
+                                                data-requires="profile.manage"
+                                                aria-label="編輯 東京セキュア株式会社"
+                                                title="編輯"
+                                            >
+                                                <i data-lucide="square-pen" class="w-4 h-4"></i>
+                                            </a>
+                                            <button
+                                                type="button"
+                                                class="icon-action"
+                                                data-partner-delete
+                                                data-requires="profile.manage"
+                                                aria-label="刪除 東京セキュア株式会社"
+                                                title="刪除"
+                                            >
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                                                                                        <div
+                                        class="list-row list-row-link py-3"
+                                        data-partner-row
+                                        data-partner-id="P260902001"
+                                        data-edit-href="/profile/edit/?id=P260902001"
+                                        data-status="reviewing"
+                                        data-country="sg"
+                                        data-identity=""
+                                        data-level=""
+                                        data-applied-at="2026-09-02"
+                                        data-search="P260902001 新加坡網安方案 Pte. Ltd. 202412345K 新加坡 陳志偉 Aisha Rahman aisha.rahman@sgcyber.sg +65-6789-1200 Channel Specialist / Sales —"
+                                    >
+                                        <div class="flex-[1.3] min-w-[12rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-company>新加坡網安方案 Pte. Ltd.</p>
+                                            <p class="text-[12px] font-en font-medium uppercase tracking-[0.06em] text-gray3" data-partner-member-id>P260902001</p>
+                                        </div>
+                                        <div class="w-36 shrink-0 text-cb3 text-gray5" data-partner-identity>—</div>
+                                        <div class="w-28 shrink-0 text-cb3 text-gray5" data-partner-oem-sales>申請：陳志偉</div>
+                                        <div class="flex-1 min-w-[10rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-name>Aisha Rahman</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-title>Channel Specialist / Sales</p>
+                                        </div>
+                                        <div class="flex-[1.2] min-w-[12rem] pr-4">
+                                            <p class="text-eb2 text-gray5 break-all" data-partner-email>aisha.rahman@sgcyber.sg</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-phone>+65-6789-1200</p>
+                                        </div>
+                                        <div class="w-20 shrink-0">
+                                            <span class="status-pill status-reviewing" data-partner-status>審核中</span>
+                                        </div>
+                                        <div class="w-20 shrink-0 inline-flex items-center justify-end" data-partner-actions>
+                                            <a
+                                                href="/profile/edit/?id=P260902001"
+                                                class="icon-action"
+                                                data-requires="profile.manage"
+                                                aria-label="編輯 新加坡網安方案 Pte. Ltd."
+                                                title="編輯"
+                                            >
+                                                <i data-lucide="square-pen" class="w-4 h-4"></i>
+                                            </a>
+                                            <button
+                                                type="button"
+                                                class="icon-action"
+                                                data-partner-delete
+                                                data-requires="profile.manage"
+                                                aria-label="刪除 新加坡網安方案 Pte. Ltd."
+                                                title="刪除"
+                                            >
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                                                                                        <div
+                                        class="list-row list-row-link py-3"
+                                        data-partner-row
+                                        data-partner-id="P260615001"
+                                        data-edit-href="/profile/edit/?id=P260615001"
+                                        data-status="rejected"
+                                        data-country="mo"
+                                        data-identity="dealer_overseas"
+                                        data-level=""
+                                        data-applied-at="2026-06-15"
+                                        data-search="P260615001 澳門資訊服務有限公司 MO-88321 澳門 吳佩珊 周曉琳 xiaolin.chou@macauits.com +853-2871-6655 客戶經理 / 商務部 海外經銷商"
+                                    >
+                                        <div class="flex-[1.3] min-w-[12rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-company>澳門資訊服務有限公司</p>
+                                            <p class="text-[12px] font-en font-medium uppercase tracking-[0.06em] text-gray3" data-partner-member-id>P260615001</p>
+                                        </div>
+                                        <div class="w-36 shrink-0 text-cb3 text-gray5" data-partner-identity>海外經銷商</div>
+                                        <div class="w-28 shrink-0 text-cb3 text-gray5" data-partner-oem-sales>申請：吳佩珊</div>
+                                        <div class="flex-1 min-w-[10rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-name>周曉琳</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-title>客戶經理 / 商務部</p>
+                                        </div>
+                                        <div class="flex-[1.2] min-w-[12rem] pr-4">
+                                            <p class="text-eb2 text-gray5 break-all" data-partner-email>xiaolin.chou@macauits.com</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-phone>+853-2871-6655</p>
+                                        </div>
+                                        <div class="w-20 shrink-0">
+                                            <span class="status-pill status-rejected" data-partner-status>已退回</span>
+                                        </div>
+                                        <div class="w-20 shrink-0 inline-flex items-center justify-end" data-partner-actions>
+                                            <a
+                                                href="/profile/edit/?id=P260615001"
+                                                class="icon-action"
+                                                data-requires="profile.manage"
+                                                aria-label="編輯 澳門資訊服務有限公司"
+                                                title="編輯"
+                                            >
+                                                <i data-lucide="square-pen" class="w-4 h-4"></i>
+                                            </a>
+                                            <button
+                                                type="button"
+                                                class="icon-action"
+                                                data-partner-delete
+                                                data-requires="profile.manage"
+                                                aria-label="刪除 澳門資訊服務有限公司"
+                                                title="刪除"
+                                            >
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                                                                                        <div
+                                        class="list-row list-row-link py-3"
+                                        data-partner-row
+                                        data-partner-id="P260828001"
+                                        data-edit-href="/profile/edit/?id=P260828001"
+                                        data-status="reviewing"
+                                        data-country="cn"
+                                        data-identity=""
+                                        data-level=""
+                                        data-applied-at="2026-08-28"
+                                        data-search="P260828001 華南網絡科技有限公司 91440101MA5DXXXXX 中國 林佳穎 劉振宇 zhenyu.liu@hnnetsec.cn +86-20-3888-1200 區域經理 / 渠道部 —"
+                                    >
+                                        <div class="flex-[1.3] min-w-[12rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-company>華南網絡科技有限公司</p>
+                                            <p class="text-[12px] font-en font-medium uppercase tracking-[0.06em] text-gray3" data-partner-member-id>P260828001</p>
+                                        </div>
+                                        <div class="w-36 shrink-0 text-cb3 text-gray5" data-partner-identity>—</div>
+                                        <div class="w-28 shrink-0 text-cb3 text-gray5" data-partner-oem-sales>申請：林佳穎</div>
+                                        <div class="flex-1 min-w-[10rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-name>劉振宇</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-title>區域經理 / 渠道部</p>
+                                        </div>
+                                        <div class="flex-[1.2] min-w-[12rem] pr-4">
+                                            <p class="text-eb2 text-gray5 break-all" data-partner-email>zhenyu.liu@hnnetsec.cn</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-phone>+86-20-3888-1200</p>
+                                        </div>
+                                        <div class="w-20 shrink-0">
+                                            <span class="status-pill status-reviewing" data-partner-status>審核中</span>
+                                        </div>
+                                        <div class="w-20 shrink-0 inline-flex items-center justify-end" data-partner-actions>
+                                            <a
+                                                href="/profile/edit/?id=P260828001"
+                                                class="icon-action"
+                                                data-requires="profile.manage"
+                                                aria-label="編輯 華南網絡科技有限公司"
+                                                title="編輯"
+                                            >
+                                                <i data-lucide="square-pen" class="w-4 h-4"></i>
+                                            </a>
+                                            <button
+                                                type="button"
+                                                class="icon-action"
+                                                data-partner-delete
+                                                data-requires="profile.manage"
+                                                aria-label="刪除 華南網絡科技有限公司"
+                                                title="刪除"
+                                            >
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                                                                                        <div
+                                        class="list-row list-row-link py-3"
+                                        data-partner-row
+                                        data-partner-id="P250920001"
+                                        data-edit-href="/profile/edit/?id=P250920001"
+                                        data-status="approved"
+                                        data-country="us"
+                                        data-identity="dealer_overseas"
+                                        data-level="diamond"
+                                        data-applied-at="2025-09-20"
+                                        data-search="P250920001 Pacific Secure Partners LLC 98-7654321 美國 James Cole Emily Chen emily.chen@pacificsecure.com +1-415-555-0188 Account Director / APAC Desk 海外經銷商/鑽石"
+                                    >
+                                        <div class="flex-[1.3] min-w-[12rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-company>Pacific Secure Partners LLC</p>
+                                            <p class="text-[12px] font-en font-medium uppercase tracking-[0.06em] text-gray3" data-partner-member-id>P250920001</p>
+                                        </div>
+                                        <div class="w-36 shrink-0 text-cb3 text-gray5" data-partner-identity>海外經銷商/鑽石</div>
+                                        <div class="w-28 shrink-0 text-cb3 text-gray5" data-partner-oem-sales>James Cole</div>
+                                        <div class="flex-1 min-w-[10rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-name>Emily Chen</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-title>Account Director / APAC Desk</p>
+                                        </div>
+                                        <div class="flex-[1.2] min-w-[12rem] pr-4">
+                                            <p class="text-eb2 text-gray5 break-all" data-partner-email>emily.chen@pacificsecure.com</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-phone>+1-415-555-0188</p>
+                                        </div>
+                                        <div class="w-20 shrink-0">
+                                            <span class="status-pill status-approved" data-partner-status>已核准</span>
+                                        </div>
+                                        <div class="w-20 shrink-0 inline-flex items-center justify-end" data-partner-actions>
+                                            <a
+                                                href="/profile/edit/?id=P250920001"
+                                                class="icon-action"
+                                                data-requires="profile.manage"
+                                                aria-label="編輯 Pacific Secure Partners LLC"
+                                                title="編輯"
+                                            >
+                                                <i data-lucide="square-pen" class="w-4 h-4"></i>
+                                            </a>
+                                            <button
+                                                type="button"
+                                                class="icon-action"
+                                                data-partner-delete
+                                                data-requires="profile.manage"
+                                                aria-label="刪除 Pacific Secure Partners LLC"
+                                                title="刪除"
+                                            >
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                                                                                        <div
+                                        class="list-row list-row-link py-3"
+                                        data-partner-row
+                                        data-partner-id="P260510001"
+                                        data-edit-href="/profile/edit/?id=P260510001"
+                                        data-status="rejected"
+                                        data-country="kr"
+                                        data-identity="dealer_overseas"
+                                        data-level=""
+                                        data-applied-at="2026-05-10"
+                                        data-search="P260510001 서울인포섹 주식회사 110-81-12345 南韓 佐藤 健 박지훈 jihoon.park@seoulinfosec.kr +82-2-555-0199 과장 / 영업팀 海外經銷商"
+                                    >
+                                        <div class="flex-[1.3] min-w-[12rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-company>서울인포섹 주식회사</p>
+                                            <p class="text-[12px] font-en font-medium uppercase tracking-[0.06em] text-gray3" data-partner-member-id>P260510001</p>
+                                        </div>
+                                        <div class="w-36 shrink-0 text-cb3 text-gray5" data-partner-identity>海外經銷商</div>
+                                        <div class="w-28 shrink-0 text-cb3 text-gray5" data-partner-oem-sales>申請：佐藤 健</div>
+                                        <div class="flex-1 min-w-[10rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-name>박지훈</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-title>과장 / 영업팀</p>
+                                        </div>
+                                        <div class="flex-[1.2] min-w-[12rem] pr-4">
+                                            <p class="text-eb2 text-gray5 break-all" data-partner-email>jihoon.park@seoulinfosec.kr</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-phone>+82-2-555-0199</p>
+                                        </div>
+                                        <div class="w-20 shrink-0">
+                                            <span class="status-pill status-rejected" data-partner-status>已退回</span>
+                                        </div>
+                                        <div class="w-20 shrink-0 inline-flex items-center justify-end" data-partner-actions>
+                                            <a
+                                                href="/profile/edit/?id=P260510001"
+                                                class="icon-action"
+                                                data-requires="profile.manage"
+                                                aria-label="編輯 서울인포섹 주식회사"
+                                                title="編輯"
+                                            >
+                                                <i data-lucide="square-pen" class="w-4 h-4"></i>
+                                            </a>
+                                            <button
+                                                type="button"
+                                                class="icon-action"
+                                                data-partner-delete
+                                                data-requires="profile.manage"
+                                                aria-label="刪除 서울인포섹 주식회사"
+                                                title="刪除"
+                                            >
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                                                                                        <div
+                                        class="list-row list-row-link py-3"
+                                        data-partner-row
+                                        data-partner-id="P260903001"
+                                        data-edit-href="/profile/edit/?id=P260903001"
+                                        data-status="reviewing"
+                                        data-country="my"
+                                        data-identity=""
+                                        data-level=""
+                                        data-applied-at="2026-09-03"
+                                        data-search="P260903001 馬來西亞資安通路 Sdn. Bhd. 202301234567 馬來西亞 陳志偉 Daniel Lim daniel.lim@mysecure.my +60-3-2166-8800 Sales Executive / Channel —"
+                                    >
+                                        <div class="flex-[1.3] min-w-[12rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-company>馬來西亞資安通路 Sdn. Bhd.</p>
+                                            <p class="text-[12px] font-en font-medium uppercase tracking-[0.06em] text-gray3" data-partner-member-id>P260903001</p>
+                                        </div>
+                                        <div class="w-36 shrink-0 text-cb3 text-gray5" data-partner-identity>—</div>
+                                        <div class="w-28 shrink-0 text-cb3 text-gray5" data-partner-oem-sales>申請：陳志偉</div>
+                                        <div class="flex-1 min-w-[10rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-name>Daniel Lim</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-title>Sales Executive / Channel</p>
+                                        </div>
+                                        <div class="flex-[1.2] min-w-[12rem] pr-4">
+                                            <p class="text-eb2 text-gray5 break-all" data-partner-email>daniel.lim@mysecure.my</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-phone>+60-3-2166-8800</p>
+                                        </div>
+                                        <div class="w-20 shrink-0">
+                                            <span class="status-pill status-reviewing" data-partner-status>審核中</span>
+                                        </div>
+                                        <div class="w-20 shrink-0 inline-flex items-center justify-end" data-partner-actions>
+                                            <a
+                                                href="/profile/edit/?id=P260903001"
+                                                class="icon-action"
+                                                data-requires="profile.manage"
+                                                aria-label="編輯 馬來西亞資安通路 Sdn. Bhd."
+                                                title="編輯"
+                                            >
+                                                <i data-lucide="square-pen" class="w-4 h-4"></i>
+                                            </a>
+                                            <button
+                                                type="button"
+                                                class="icon-action"
+                                                data-partner-delete
+                                                data-requires="profile.manage"
+                                                aria-label="刪除 馬來西亞資安通路 Sdn. Bhd."
+                                                title="刪除"
+                                            >
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                                                                                        <div
+                                        class="list-row list-row-link py-3"
+                                        data-partner-row
+                                        data-partner-id="P260101001"
+                                        data-edit-href="/profile/edit/?id=P260101001"
+                                        data-status="approved"
+                                        data-country="tw"
+                                        data-identity="oem_sales"
+                                        data-level=""
+                                        data-applied-at="2026-01-01"
+                                        data-search="P260101001 UPAS 原廠 12345678 台灣  林佳穎 chiaying.lin@upas.com.tw 02-2658-1001 原廠業務 / 通路部 原廠業務"
+                                    >
+                                        <div class="flex-[1.3] min-w-[12rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-company>UPAS 原廠</p>
+                                            <p class="text-[12px] font-en font-medium uppercase tracking-[0.06em] text-gray3" data-partner-member-id>P260101001</p>
+                                        </div>
+                                        <div class="w-36 shrink-0 text-cb3 text-gray5" data-partner-identity>原廠業務</div>
+                                        <div class="w-28 shrink-0 text-cb3 text-gray5" data-partner-oem-sales>—</div>
+                                        <div class="flex-1 min-w-[10rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-name>林佳穎</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-title>原廠業務 / 通路部</p>
+                                        </div>
+                                        <div class="flex-[1.2] min-w-[12rem] pr-4">
+                                            <p class="text-eb2 text-gray5 break-all" data-partner-email>chiaying.lin@upas.com.tw</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-phone>02-2658-1001</p>
+                                        </div>
+                                        <div class="w-20 shrink-0">
+                                            <span class="status-pill status-approved" data-partner-status>已核准</span>
+                                        </div>
+                                        <div class="w-20 shrink-0 inline-flex items-center justify-end" data-partner-actions>
+                                            <a
+                                                href="/profile/edit/?id=P260101001"
+                                                class="icon-action"
+                                                data-requires="profile.manage"
+                                                aria-label="編輯 UPAS 原廠"
+                                                title="編輯"
+                                            >
+                                                <i data-lucide="square-pen" class="w-4 h-4"></i>
+                                            </a>
+                                            <button
+                                                type="button"
+                                                class="icon-action"
+                                                data-partner-delete
+                                                data-requires="profile.manage"
+                                                aria-label="刪除 UPAS 原廠"
+                                                title="刪除"
+                                            >
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                                                                                        <div
+                                        class="list-row list-row-link py-3"
+                                        data-partner-row
+                                        data-partner-id="P260102001"
+                                        data-edit-href="/profile/edit/?id=P260102001"
+                                        data-status="approved"
+                                        data-country="tw"
+                                        data-identity="oem_sales"
+                                        data-level=""
+                                        data-applied-at="2026-01-02"
+                                        data-search="P260102001 UPAS 原廠 12345678 台灣  吳佩珊 peishan.wu@upas.com.tw 02-2658-1002 原廠業務 / 海外組 原廠業務"
+                                    >
+                                        <div class="flex-[1.3] min-w-[12rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-company>UPAS 原廠</p>
+                                            <p class="text-[12px] font-en font-medium uppercase tracking-[0.06em] text-gray3" data-partner-member-id>P260102001</p>
+                                        </div>
+                                        <div class="w-36 shrink-0 text-cb3 text-gray5" data-partner-identity>原廠業務</div>
+                                        <div class="w-28 shrink-0 text-cb3 text-gray5" data-partner-oem-sales>—</div>
+                                        <div class="flex-1 min-w-[10rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-name>吳佩珊</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-title>原廠業務 / 海外組</p>
+                                        </div>
+                                        <div class="flex-[1.2] min-w-[12rem] pr-4">
+                                            <p class="text-eb2 text-gray5 break-all" data-partner-email>peishan.wu@upas.com.tw</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-phone>02-2658-1002</p>
+                                        </div>
+                                        <div class="w-20 shrink-0">
+                                            <span class="status-pill status-approved" data-partner-status>已核准</span>
+                                        </div>
+                                        <div class="w-20 shrink-0 inline-flex items-center justify-end" data-partner-actions>
+                                            <a
+                                                href="/profile/edit/?id=P260102001"
+                                                class="icon-action"
+                                                data-requires="profile.manage"
+                                                aria-label="編輯 UPAS 原廠"
+                                                title="編輯"
+                                            >
+                                                <i data-lucide="square-pen" class="w-4 h-4"></i>
+                                            </a>
+                                            <button
+                                                type="button"
+                                                class="icon-action"
+                                                data-partner-delete
+                                                data-requires="profile.manage"
+                                                aria-label="刪除 UPAS 原廠"
+                                                title="刪除"
+                                            >
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                                                                                        <div
+                                        class="list-row list-row-link py-3"
+                                        data-partner-row
+                                        data-partner-id="P260103001"
+                                        data-edit-href="/profile/edit/?id=P260103001"
+                                        data-status="approved"
+                                        data-country="tw"
+                                        data-identity="oem_sales"
+                                        data-level=""
+                                        data-applied-at="2026-01-03"
+                                        data-search="P260103001 UPAS 原廠 12345678 台灣  佐藤 健 ken.sato@upas.com.tw 02-2658-1003 原廠業務 / 亞太組 原廠業務"
+                                    >
+                                        <div class="flex-[1.3] min-w-[12rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-company>UPAS 原廠</p>
+                                            <p class="text-[12px] font-en font-medium uppercase tracking-[0.06em] text-gray3" data-partner-member-id>P260103001</p>
+                                        </div>
+                                        <div class="w-36 shrink-0 text-cb3 text-gray5" data-partner-identity>原廠業務</div>
+                                        <div class="w-28 shrink-0 text-cb3 text-gray5" data-partner-oem-sales>—</div>
+                                        <div class="flex-1 min-w-[10rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-name>佐藤 健</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-title>原廠業務 / 亞太組</p>
+                                        </div>
+                                        <div class="flex-[1.2] min-w-[12rem] pr-4">
+                                            <p class="text-eb2 text-gray5 break-all" data-partner-email>ken.sato@upas.com.tw</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-phone>02-2658-1003</p>
+                                        </div>
+                                        <div class="w-20 shrink-0">
+                                            <span class="status-pill status-approved" data-partner-status>已核准</span>
+                                        </div>
+                                        <div class="w-20 shrink-0 inline-flex items-center justify-end" data-partner-actions>
+                                            <a
+                                                href="/profile/edit/?id=P260103001"
+                                                class="icon-action"
+                                                data-requires="profile.manage"
+                                                aria-label="編輯 UPAS 原廠"
+                                                title="編輯"
+                                            >
+                                                <i data-lucide="square-pen" class="w-4 h-4"></i>
+                                            </a>
+                                            <button
+                                                type="button"
+                                                class="icon-action"
+                                                data-partner-delete
+                                                data-requires="profile.manage"
+                                                aria-label="刪除 UPAS 原廠"
+                                                title="刪除"
+                                            >
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                                                                                        <div
+                                        class="list-row list-row-link py-3"
+                                        data-partner-row
+                                        data-partner-id="P260104001"
+                                        data-edit-href="/profile/edit/?id=P260104001"
+                                        data-status="approved"
+                                        data-country="tw"
+                                        data-identity="oem_sales"
+                                        data-level=""
+                                        data-applied-at="2026-01-04"
+                                        data-search="P260104001 UPAS 原廠 12345678 台灣  James Cole james.cole@upas.com.tw 02-2658-1004 OEM Sales / APAC 原廠業務"
+                                    >
+                                        <div class="flex-[1.3] min-w-[12rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-company>UPAS 原廠</p>
+                                            <p class="text-[12px] font-en font-medium uppercase tracking-[0.06em] text-gray3" data-partner-member-id>P260104001</p>
+                                        </div>
+                                        <div class="w-36 shrink-0 text-cb3 text-gray5" data-partner-identity>原廠業務</div>
+                                        <div class="w-28 shrink-0 text-cb3 text-gray5" data-partner-oem-sales>—</div>
+                                        <div class="flex-1 min-w-[10rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-name>James Cole</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-title>OEM Sales / APAC</p>
+                                        </div>
+                                        <div class="flex-[1.2] min-w-[12rem] pr-4">
+                                            <p class="text-eb2 text-gray5 break-all" data-partner-email>james.cole@upas.com.tw</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-phone>02-2658-1004</p>
+                                        </div>
+                                        <div class="w-20 shrink-0">
+                                            <span class="status-pill status-approved" data-partner-status>已核准</span>
+                                        </div>
+                                        <div class="w-20 shrink-0 inline-flex items-center justify-end" data-partner-actions>
+                                            <a
+                                                href="/profile/edit/?id=P260104001"
+                                                class="icon-action"
+                                                data-requires="profile.manage"
+                                                aria-label="編輯 UPAS 原廠"
+                                                title="編輯"
+                                            >
+                                                <i data-lucide="square-pen" class="w-4 h-4"></i>
+                                            </a>
+                                            <button
+                                                type="button"
+                                                class="icon-action"
+                                                data-partner-delete
+                                                data-requires="profile.manage"
+                                                aria-label="刪除 UPAS 原廠"
+                                                title="刪除"
+                                            >
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                                                                                        <div
+                                        class="list-row list-row-link py-3"
+                                        data-partner-row
+                                        data-partner-id="P260100001"
+                                        data-edit-href="/profile/edit/?id=P260100001"
+                                        data-status="approved"
+                                        data-country="tw"
+                                        data-identity="oem_manager"
+                                        data-level=""
+                                        data-applied-at="2026-01-01"
+                                        data-search="P260100001 UPAS 原廠 12345678 台灣  王經理 manager.wang@upas.com.tw 02-2658-1000 原廠業務主管 原廠業務主管"
+                                    >
+                                        <div class="flex-[1.3] min-w-[12rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-company>UPAS 原廠</p>
+                                            <p class="text-[12px] font-en font-medium uppercase tracking-[0.06em] text-gray3" data-partner-member-id>P260100001</p>
+                                        </div>
+                                        <div class="w-36 shrink-0 text-cb3 text-gray5" data-partner-identity>原廠業務主管</div>
+                                        <div class="w-28 shrink-0 text-cb3 text-gray5" data-partner-oem-sales>—</div>
+                                        <div class="flex-1 min-w-[10rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-name>王經理</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-title>原廠業務主管</p>
+                                        </div>
+                                        <div class="flex-[1.2] min-w-[12rem] pr-4">
+                                            <p class="text-eb2 text-gray5 break-all" data-partner-email>manager.wang@upas.com.tw</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-phone>02-2658-1000</p>
+                                        </div>
+                                        <div class="w-20 shrink-0">
+                                            <span class="status-pill status-approved" data-partner-status>已核准</span>
+                                        </div>
+                                        <div class="w-20 shrink-0 inline-flex items-center justify-end" data-partner-actions>
+                                            <a
+                                                href="/profile/edit/?id=P260100001"
+                                                class="icon-action"
+                                                data-requires="profile.manage"
+                                                aria-label="編輯 UPAS 原廠"
+                                                title="編輯"
+                                            >
+                                                <i data-lucide="square-pen" class="w-4 h-4"></i>
+                                            </a>
+                                            <button
+                                                type="button"
+                                                class="icon-action"
+                                                data-partner-delete
+                                                data-requires="profile.manage"
+                                                aria-label="刪除 UPAS 原廠"
+                                                title="刪除"
+                                            >
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                                                                                        <div
+                                        class="list-row list-row-link py-3"
+                                        data-partner-row
+                                        data-partner-id="P260105001"
+                                        data-edit-href="/profile/edit/?id=P260105001"
+                                        data-status="approved"
+                                        data-country="tw"
+                                        data-identity="oem_sales"
+                                        data-level=""
+                                        data-applied-at="2026-01-05"
+                                        data-search="P260105001 UPAS 原廠 12345678 台灣  陳志偉 chihwei.chen@upas.com.tw 02-2658-1005 原廠業務 / 通路部 原廠業務"
+                                    >
+                                        <div class="flex-[1.3] min-w-[12rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-company>UPAS 原廠</p>
+                                            <p class="text-[12px] font-en font-medium uppercase tracking-[0.06em] text-gray3" data-partner-member-id>P260105001</p>
+                                        </div>
+                                        <div class="w-36 shrink-0 text-cb3 text-gray5" data-partner-identity>原廠業務</div>
+                                        <div class="w-28 shrink-0 text-cb3 text-gray5" data-partner-oem-sales>—</div>
+                                        <div class="flex-1 min-w-[10rem] pr-4">
+                                            <p class="text-cb3 text-gray5" data-partner-name>陳志偉</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-title>原廠業務 / 通路部</p>
+                                        </div>
+                                        <div class="flex-[1.2] min-w-[12rem] pr-4">
+                                            <p class="text-eb2 text-gray5 break-all" data-partner-email>chihwei.chen@upas.com.tw</p>
+                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-phone>02-2658-1005</p>
+                                        </div>
+                                        <div class="w-20 shrink-0">
+                                            <span class="status-pill status-approved" data-partner-status>已核准</span>
+                                        </div>
+                                        <div class="w-20 shrink-0 inline-flex items-center justify-end" data-partner-actions>
+                                            <a
+                                                href="/profile/edit/?id=P260105001"
+                                                class="icon-action"
+                                                data-requires="profile.manage"
+                                                aria-label="編輯 UPAS 原廠"
+                                                title="編輯"
+                                            >
+                                                <i data-lucide="square-pen" class="w-4 h-4"></i>
+                                            </a>
+                                            <button
+                                                type="button"
+                                                class="icon-action"
+                                                data-partner-delete
+                                                data-requires="profile.manage"
+                                                aria-label="刪除 UPAS 原廠"
+                                                title="刪除"
+                                            >
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                                                <div
+                                    class="list-row list-row-link py-3"
+                                    data-partner-row-template
+                                    hidden
+                                    data-partner-id=""
+                                    data-edit-href=""
+                                    data-status=""
+                                    data-country=""
+                                    data-identity=""
+                                    data-level=""
+                                    data-search=""
+                                >
+                                    <div class="flex-[1.3] min-w-[12rem] pr-4">
+                                        <p class="text-cb3 text-gray5" data-partner-company>—</p>
+                                        <p class="text-[12px] font-en font-medium uppercase tracking-[0.06em] text-gray3" data-partner-member-id>—</p>
+                                    </div>
+                                    <div class="w-36 shrink-0 text-cb3 text-gray5" data-partner-identity>—</div>
+                                    <div class="w-28 shrink-0 text-cb3 text-gray5" data-partner-oem-sales>—</div>
+                                    <div class="flex-1 min-w-[10rem] pr-4">
+                                        <p class="text-cb3 text-gray5" data-partner-name>—</p>
+                                        <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-title>—</p>
+                                    </div>
+                                    <div class="flex-[1.2] min-w-[12rem] pr-4">
+                                        <p class="text-eb2 text-gray5 break-all" data-partner-email>—</p>
+                                        <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-phone>—</p>
+                                    </div>
+                                    <div class="w-20 shrink-0">
+                                        <span class="status-pill" data-partner-status>—</span>
+                                    </div>
+                                    <div class="w-20 shrink-0 inline-flex items-center justify-end" data-partner-actions>
+                                        <a href="#" class="icon-action" data-requires="profile.manage" data-partner-edit-link aria-label="編輯" title="編輯">
+                                            <i data-lucide="square-pen" class="w-4 h-4"></i>
+                                        </a>
+                                        <button type="button" class="icon-action" data-partner-delete data-requires="profile.manage" aria-label="刪除" title="刪除">
+                                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="list-empty" data-partner-empty hidden>
+                                    沒有符合條件的夥伴
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pagination-bar">
+                        <p class="text-eb3 text-gray3 uppercase" data-partner-summary>Showing 1-8 of 17 results</p>
+                        <nav class="pagination-nav self-start md:self-auto" aria-label="夥伴分頁" data-partner-pagination>
+                            <button type="button" class="pagination-btn" aria-label="上一頁" disabled>
+                                <i data-lucide="chevron-left" class="w-4 h-4 text-gray4"></i>
+                            </button>
+                            <button type="button" class="pagination-btn is-active">1</button>
+                            <button type="button" class="pagination-btn border-r-0" aria-label="下一頁">
+                                <i data-lucide="chevron-right" class="w-4 h-4 text-gray4"></i>
+                            </button>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div
+        class="app-modal-host"
+        data-partner-preview
+        hidden
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="partner-preview-title"
+    >
+        <div class="app-modal-backdrop" data-partner-preview-dismiss></div>
+        <div class="app-modal-panel ticket-modal-panel partner-preview-panel">
+            <div class="ticket-modal-header">
+                <div class="min-w-0 flex flex-col gap-1">
+                    <div class="inline-flex items-center gap-3 min-w-0">
+                        <h2 id="partner-preview-title" class="text-ch5 text-gray5 truncate min-w-0" data-partner-preview-company>—</h2>
+                        <span class="status-pill shrink-0" data-partner-preview-status>—</span>
+                    </div>
+                    <p class="text-[12px] font-en font-medium uppercase tracking-[0.06em] text-gray3" data-partner-preview-id>—</p>
+                </div>
+                <button type="button" class="icon-action shrink-0" data-partner-preview-dismiss aria-label="關閉預覽">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <div class="ticket-modal-body">
+                <div class="self-stretch grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="flex flex-col">
+                        <p class="text-cb4 text-brand2">身分權限</p>
+                        <p class="text-cb3 text-gray5" data-partner-preview-identity>—</p>
+                    </div>
+                    <div class="flex flex-col">
+                        <p class="text-cb4 text-brand2">申請日期</p>
+                        <p class="text-cb3 text-gray5" data-partner-preview-applied>—</p>
+                    </div>
+                    <div class="flex flex-col">
+                        <p class="text-cb4 text-brand2">統一編號</p>
+                        <p class="text-cb3 text-gray5" data-partner-preview-tax-id>—</p>
+                    </div>
+                    <div class="flex flex-col">
+                        <p class="text-cb4 text-brand2">國家 / 地區</p>
+                        <p class="text-cb3 text-gray5" data-partner-preview-country>—</p>
+                    </div>
+                    <div class="flex flex-col">
+                        <p class="text-cb4 text-brand2">原廠業務</p>
+                        <p class="text-cb3 text-gray5" data-partner-preview-oem-sales>—</p>
+                    </div>
+                    <div class="flex flex-col">
+                        <p class="text-cb4 text-brand2">申請人</p>
+                        <p class="text-cb3 text-gray5" data-partner-preview-name>—</p>
+                    </div>
+                    <div class="flex flex-col">
+                        <p class="text-cb4 text-brand2">職稱 / 部門</p>
+                        <p class="text-cb3 text-gray5" data-partner-preview-title>—</p>
+                    </div>
+                    <div class="flex flex-col">
+                        <p class="text-cb4 text-brand2">E-mail</p>
+                        <p class="text-eb2 text-gray5 break-all" data-partner-preview-email>—</p>
+                    </div>
+                    <div class="flex flex-col md:col-span-2">
+                        <p class="text-cb4 text-brand2">聯絡電話</p>
+                        <p class="text-cb3 text-gray5" data-partner-preview-phone>—</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ticket-modal-footer">
+                <button type="button" class="btn-secondary" data-partner-preview-dismiss>關閉</button>
+                <a href="#" class="btn-primary" data-partner-preview-edit data-requires="profile.manage">前往編輯</a>
+            </div>
+        </div>
+    </div>
+
+    <script type="application/json" id="partner-catalog-data">
+        {"partners":[{"id":"P260312001","identity":"dealer_tw","level":"gold","oem_sales":"林佳穎","oem_sales_id":"P260101001","manager_id":"","company":"數位聯防科技股份有限公司","tax_id":"24567890","country":"tw","name":"王小明","email":"ming.wang@digidefend.com.tw","phone":"02-1234-5678","job_title":"業務經理 / 通路部","status":"approved","applied_at":"2026-03-12"},{"id":"P260821001","identity":"","level":"","oem_sales":"陳志偉","oem_sales_id":"","manager_id":"","company":"雲端資安股份有限公司","tax_id":"53881234","country":"tw","name":"張雅婷","email":"yating.chang@cloudsec.com.tw","phone":"02-8765-4321","job_title":"協理 / 業務處","status":"reviewing","applied_at":"2026-08-21"},{"id":"P260118001","identity":"dealer_tw","level":"platinum","oem_sales":"林佳穎","oem_sales_id":"P260101001","manager_id":"","company":"高雄網通系統有限公司","tax_id":"16774521","country":"tw","name":"黃建宏","email":"chienhung@khnetsys.com.tw","phone":"07-336-8800","job_title":"業務主任 / 南區","status":"approved","applied_at":"2026-01-18"},{"id":"P251106001","identity":"dealer_overseas","level":"gold","oem_sales":"吳佩珊","oem_sales_id":"P260102001","manager_id":"","company":"香港網絡防護有限公司","tax_id":"68901234","country":"hk","name":"李浩然","email":"horan.lee@netguard.hk","phone":"+852-2123-7788","job_title":"Sales Manager / Channel","status":"approved","applied_at":"2025-11-06"},{"id":"P260704001","identity":"dealer_overseas","level":"standard","oem_sales":"佐藤 健","oem_sales_id":"P260103001","manager_id":"","company":"東京セキュア株式会社","tax_id":"T8010001123456","country":"jp","name":"田中 美咲","email":"misaki.tanaka@tokyosecure.jp","phone":"+81-3-1234-5678","job_title":"営業部 / マネージャー","status":"approved","applied_at":"2026-07-04"},{"id":"P260902001","identity":"","level":"","oem_sales":"陳志偉","oem_sales_id":"","manager_id":"","company":"新加坡網安方案 Pte. Ltd.","tax_id":"202412345K","country":"sg","name":"Aisha Rahman","email":"aisha.rahman@sgcyber.sg","phone":"+65-6789-1200","job_title":"Channel Specialist / Sales","status":"reviewing","applied_at":"2026-09-02"},{"id":"P260615001","identity":"dealer_overseas","level":"","oem_sales":"吳佩珊","oem_sales_id":"P260102001","manager_id":"","company":"澳門資訊服務有限公司","tax_id":"MO-88321","country":"mo","name":"周曉琳","email":"xiaolin.chou@macauits.com","phone":"+853-2871-6655","job_title":"客戶經理 / 商務部","status":"rejected","applied_at":"2026-06-15"},{"id":"P260828001","identity":"","level":"","oem_sales":"林佳穎","oem_sales_id":"","manager_id":"","company":"華南網絡科技有限公司","tax_id":"91440101MA5DXXXXX","country":"cn","name":"劉振宇","email":"zhenyu.liu@hnnetsec.cn","phone":"+86-20-3888-1200","job_title":"區域經理 / 渠道部","status":"reviewing","applied_at":"2026-08-28"},{"id":"P250920001","identity":"dealer_overseas","level":"diamond","oem_sales":"James Cole","oem_sales_id":"P260104001","manager_id":"","company":"Pacific Secure Partners LLC","tax_id":"98-7654321","country":"us","name":"Emily Chen","email":"emily.chen@pacificsecure.com","phone":"+1-415-555-0188","job_title":"Account Director / APAC Desk","status":"approved","applied_at":"2025-09-20"},{"id":"P260510001","identity":"dealer_overseas","level":"","oem_sales":"佐藤 健","oem_sales_id":"P260103001","manager_id":"","company":"서울인포섹 주식회사","tax_id":"110-81-12345","country":"kr","name":"박지훈","email":"jihoon.park@seoulinfosec.kr","phone":"+82-2-555-0199","job_title":"과장 / 영업팀","status":"rejected","applied_at":"2026-05-10"},{"id":"P260903001","identity":"","level":"","oem_sales":"陳志偉","oem_sales_id":"","manager_id":"","company":"馬來西亞資安通路 Sdn. Bhd.","tax_id":"202301234567","country":"my","name":"Daniel Lim","email":"daniel.lim@mysecure.my","phone":"+60-3-2166-8800","job_title":"Sales Executive / Channel","status":"reviewing","applied_at":"2026-09-03"},{"id":"P260101001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"林佳穎","email":"chiaying.lin@upas.com.tw","phone":"02-2658-1001","job_title":"原廠業務 / 通路部","status":"approved","applied_at":"2026-01-01"},{"id":"P260102001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"吳佩珊","email":"peishan.wu@upas.com.tw","phone":"02-2658-1002","job_title":"原廠業務 / 海外組","status":"approved","applied_at":"2026-01-02"},{"id":"P260103001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"佐藤 健","email":"ken.sato@upas.com.tw","phone":"02-2658-1003","job_title":"原廠業務 / 亞太組","status":"approved","applied_at":"2026-01-03"},{"id":"P260104001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"James Cole","email":"james.cole@upas.com.tw","phone":"02-2658-1004","job_title":"OEM Sales / APAC","status":"approved","applied_at":"2026-01-04"},{"id":"P260100001","identity":"oem_manager","level":"","oem_sales":"","oem_sales_id":"","manager_id":"","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"王經理","email":"manager.wang@upas.com.tw","phone":"02-2658-1000","job_title":"原廠業務主管","status":"approved","applied_at":"2026-01-01"},{"id":"P260105001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"陳志偉","email":"chihwei.chen@upas.com.tw","phone":"02-2658-1005","job_title":"原廠業務 / 通路部","status":"approved","applied_at":"2026-01-05"}],"countries":{"tw":"台灣","bt":"不丹","cn":"中國","mo":"澳門","hk":"香港","cf":"中非共和國","dk":"丹麥","az":"亞塞拜然","am":"亞美尼亞","il":"以色列","iq":"伊拉克","ir":"伊朗","ru":"俄羅斯","bg":"保加利亞","hr":"克羅埃西亞","is":"冰島","li":"列支敦斯登","ly":"利比亞","cg":"剛果（布拉薩）","cd":"剛果（金夏沙）","ga":"加彭","ca":"加拿大","hu":"匈牙利","kp":"北韓","mk":"北馬其頓","mp":"北馬利安納群島","tt":"千里達及托巴哥","gs":"南喬治亞與南三明治群島","aq":"南極洲","ss":"南蘇丹","za":"南非","kr":"南韓","qa":"卡達","id":"印尼","in":"印度","er":"厄利垂亞","ec":"厄瓜多","cu":"古巴","sz":"史瓦帝尼","dj":"吉布地","kg":"吉爾吉斯","ki":"吉里巴斯","tv":"吐瓦魯","kz":"哈薩克","co":"哥倫比亞","cr":"哥斯大黎加","cm":"喀麥隆","ge":"喬治亞","tc":"土克斯及開科斯群島","tm":"土庫曼","tr":"土耳其","tz":"坦尚尼亞","eg":"埃及","tj":"塔吉克","sn":"塞內加爾","sc":"塞席爾","rs":"塞爾維亞","mx":"墨西哥","tg":"多哥","do":"多明尼加共和國","dm":"多米尼克","ng":"奈及利亞","at":"奧地利","ax":"奧蘭群島","ve":"委內瑞拉","bd":"孟加拉","ao":"安哥拉","ag":"安地卡及巴布達","ai":"安奎拉","ad":"安道爾","hn":"宏都拉斯","fm":"密克羅尼西亞","la":"寮國","zm":"尚比亞","ni":"尼加拉瓜","ne":"尼日","np":"尼泊爾","ps":"巴勒斯坦自治區","bs":"巴哈馬","pk":"巴基斯坦","pg":"巴布亞紐幾內亞","py":"巴拉圭","pa":"巴拿馬","bh":"巴林","br":"巴西","bb":"巴貝多","bf":"布吉納法索","bv":"布威島","gr":"希臘","pw":"帛琉","gn":"幾內亞","gw":"幾內亞比索","ck":"庫克群島","cw":"庫拉索","de":"德國","ee":"愛沙尼亞","ie":"愛爾蘭","tk":"托克勞群島","lv":"拉脫維亞","no":"挪威","sj":"挪威屬斯瓦巴及尖棉","cz":"捷克","ma":"摩洛哥","md":"摩爾多瓦","mc":"摩納哥","sy":"敘利亞","fj":"斐濟","sk":"斯洛伐克","si":"斯洛維尼亞","lk":"斯里蘭卡","sg":"新加坡","nc":"新喀里多尼亞","jp":"日本","cl":"智利","im":"曼島","to":"東加","tl":"東帝汶","td":"查德","kh":"柬埔寨","gg":"根息","gd":"格瑞那達","gl":"格陵蘭","va":"梵蒂岡","mu":"模里西斯","be":"比利時","bn":"汶萊","sa":"沙烏地阿拉伯","fr":"法國","tf":"法屬南部屬地","gf":"法屬圭亞那","pf":"法屬玻里尼西亞","mf":"法屬聖馬丁","fo":"法羅群島","ba":"波士尼亞與赫塞哥維納","pr":"波多黎各","bw":"波札那","pl":"波蘭","th":"泰國","ht":"海地","je":"澤西島","au":"澳洲","ua":"烏克蘭","ug":"烏干達","uy":"烏拉圭","uz":"烏茲別克","jm":"牙買加","sl":"獅子山","bo":"玻利維亞","se":"瑞典","ch":"瑞士","gp":"瓜地洛普","gt":"瓜地馬拉","wf":"瓦利斯群島和富圖那群島","gm":"甘比亞","re":"留尼旺","by":"白俄羅斯","bm":"百慕達","pn":"皮特肯群島","rw":"盧安達","lu":"盧森堡","gi":"直布羅陀","fk":"福克蘭群島","cc":"科克斯（基靈）群島","kw":"科威特","pe":"秘魯","tn":"突尼西亞","lt":"立陶宛","jo":"約旦","na":"納米比亞","nu":"紐埃島","nz":"紐西蘭","sb":"索羅門群島","so":"索馬利亞","cv":"維德角","mm":"緬甸","ro":"羅馬尼亞","us":"美國","um":"美國本土外小島嶼","vi":"美屬維京群島","as":"美屬薩摩亞","it":"義大利","kn":"聖克里斯多福及尼維斯","st":"聖多美普林西比","bl":"聖巴瑟米","vc":"聖文森及格瑞那丁","pm":"聖皮埃與密克隆群島","cx":"聖誕島","sh":"聖赫勒拿島","lc":"聖露西亞","sm":"聖馬利諾","ke":"肯亞","fi":"芬蘭","gb":"英國","io":"英屬印度洋領地","vg":"英屬維京群島","mr":"茅利塔尼亞","sx":"荷屬聖馬丁","aw":"荷屬阿魯巴","nl":"荷蘭","bq":"荷蘭加勒比區","mz":"莫三比克","ph":"菲律賓","vu":"萬那杜","ye":"葉門","km":"葛摩","pt":"葡萄牙","mn":"蒙古","ms":"蒙哲臘","me":"蒙特內哥羅","bi":"蒲隆地","gy":"蓋亞那","ws":"薩摩亞","sv":"薩爾瓦多","sd":"蘇丹","sr":"蘇利南","et":"衣索比亞","eh":"西撒哈拉","es":"西班牙","nf":"諾福克島","nr":"諾魯","ci":"象牙海岸","bj":"貝南","bz":"貝里斯","lr":"賴比瑞亞","ls":"賴索托","cy":"賽普勒斯","gq":"赤道幾內亞","hm":"赫德島及麥唐納群島","vn":"越南","zw":"辛巴威","gh":"迦納","ky":"開曼群島","gu":"關島","af":"阿富汗","ae":"阿拉伯聯合大公國","om":"阿曼","ar":"阿根廷","dz":"阿爾及利亞","al":"阿爾巴尼亞","mq":"馬丁尼克","my":"馬來西亞","ml":"馬利","mw":"馬拉威","mt":"馬爾他","mv":"馬爾地夫","yt":"馬約特島","mh":"馬紹爾群島","mg":"馬達加斯加","lb":"黎巴嫩"},"statuses":{"reviewing":"審核中","approved":"已核准","rejected":"已退回"},"levels":{"standard":"一般","gold":"黃金","platinum":"白金","diamond":"鑽石"},"identities":{"oem_manager":"原廠業務主管","oem_sales":"原廠業務","dealer_tw":"國內經銷商","dealer_overseas":"海外經銷商"},"identityFilters":[{"value":"oem","label":"原廠業務","identities":["oem_manager","oem_sales"]},{"value":"dealer_overseas","label":"海外經銷商","identities":["dealer_overseas"]},{"value":"dealer_tw","label":"國內經銷商","identities":["dealer_tw"]}],"editUrl":"/profile/edit/"}
+    </script>
+            </main>
+        </div>
+    </div>
+
+    
+    <script type="application/json" id="app-roles-config">
+        {"defaultRole":"admin","roles":{"admin":{"label":"總管理者","identity":"admin","partnerId":"","nav":["/","/opportunities","/products","/training","/marketing","/support","/profile"],"can":["opportunity.view","opportunity.create","opportunity.export","opportunity.status.edit","opportunity.actions","opportunity.review","product.manage","marketing.manage","training.manage","support.create","support.manage","profile.manage"]},"oem_manager":{"label":"原廠主管","identity":"oem_manager","partnerId":"P260100001","nav":["/","/opportunities","/products","/training","/marketing","/support"],"can":["opportunity.view","opportunity.create","opportunity.export","opportunity.actions","support.create"]},"oem_sales":{"label":"原廠業務","identity":"oem_sales","partnerId":"P260101001","nav":["/","/opportunities","/products","/training","/marketing","/support"],"can":["opportunity.view","opportunity.create","opportunity.export","opportunity.actions","support.create"]},"dealer_tw":{"label":"國內經銷商","identity":"dealer_tw","partnerId":"P260312001","nav":["/","/opportunities","/products","/training","/marketing","/support"],"can":["opportunity.view","opportunity.create","opportunity.export","opportunity.actions","support.create"]},"dealer_overseas":{"label":"海外經銷商","identity":"dealer_overseas","partnerId":"P251106001","nav":["/","/opportunities","/products","/training","/marketing","/support"],"can":["opportunity.view","opportunity.create","opportunity.export","opportunity.actions","support.create"]}}}
+    </script>
+    <script type="application/json" id="partners-seed-data">
+        [{"id":"P260312001","identity":"dealer_tw","level":"gold","oem_sales":"林佳穎","oem_sales_id":"P260101001","manager_id":"","company":"數位聯防科技股份有限公司","tax_id":"24567890","country":"tw","name":"王小明","email":"ming.wang@digidefend.com.tw","phone":"02-1234-5678","job_title":"業務經理 / 通路部","status":"approved","applied_at":"2026-03-12"},{"id":"P260821001","identity":"","level":"","oem_sales":"陳志偉","oem_sales_id":"","manager_id":"","company":"雲端資安股份有限公司","tax_id":"53881234","country":"tw","name":"張雅婷","email":"yating.chang@cloudsec.com.tw","phone":"02-8765-4321","job_title":"協理 / 業務處","status":"reviewing","applied_at":"2026-08-21"},{"id":"P260118001","identity":"dealer_tw","level":"platinum","oem_sales":"林佳穎","oem_sales_id":"P260101001","manager_id":"","company":"高雄網通系統有限公司","tax_id":"16774521","country":"tw","name":"黃建宏","email":"chienhung@khnetsys.com.tw","phone":"07-336-8800","job_title":"業務主任 / 南區","status":"approved","applied_at":"2026-01-18"},{"id":"P251106001","identity":"dealer_overseas","level":"gold","oem_sales":"吳佩珊","oem_sales_id":"P260102001","manager_id":"","company":"香港網絡防護有限公司","tax_id":"68901234","country":"hk","name":"李浩然","email":"horan.lee@netguard.hk","phone":"+852-2123-7788","job_title":"Sales Manager / Channel","status":"approved","applied_at":"2025-11-06"},{"id":"P260704001","identity":"dealer_overseas","level":"standard","oem_sales":"佐藤 健","oem_sales_id":"P260103001","manager_id":"","company":"東京セキュア株式会社","tax_id":"T8010001123456","country":"jp","name":"田中 美咲","email":"misaki.tanaka@tokyosecure.jp","phone":"+81-3-1234-5678","job_title":"営業部 / マネージャー","status":"approved","applied_at":"2026-07-04"},{"id":"P260902001","identity":"","level":"","oem_sales":"陳志偉","oem_sales_id":"","manager_id":"","company":"新加坡網安方案 Pte. Ltd.","tax_id":"202412345K","country":"sg","name":"Aisha Rahman","email":"aisha.rahman@sgcyber.sg","phone":"+65-6789-1200","job_title":"Channel Specialist / Sales","status":"reviewing","applied_at":"2026-09-02"},{"id":"P260615001","identity":"dealer_overseas","level":"","oem_sales":"吳佩珊","oem_sales_id":"P260102001","manager_id":"","company":"澳門資訊服務有限公司","tax_id":"MO-88321","country":"mo","name":"周曉琳","email":"xiaolin.chou@macauits.com","phone":"+853-2871-6655","job_title":"客戶經理 / 商務部","status":"rejected","applied_at":"2026-06-15"},{"id":"P260828001","identity":"","level":"","oem_sales":"林佳穎","oem_sales_id":"","manager_id":"","company":"華南網絡科技有限公司","tax_id":"91440101MA5DXXXXX","country":"cn","name":"劉振宇","email":"zhenyu.liu@hnnetsec.cn","phone":"+86-20-3888-1200","job_title":"區域經理 / 渠道部","status":"reviewing","applied_at":"2026-08-28"},{"id":"P250920001","identity":"dealer_overseas","level":"diamond","oem_sales":"James Cole","oem_sales_id":"P260104001","manager_id":"","company":"Pacific Secure Partners LLC","tax_id":"98-7654321","country":"us","name":"Emily Chen","email":"emily.chen@pacificsecure.com","phone":"+1-415-555-0188","job_title":"Account Director / APAC Desk","status":"approved","applied_at":"2025-09-20"},{"id":"P260510001","identity":"dealer_overseas","level":"","oem_sales":"佐藤 健","oem_sales_id":"P260103001","manager_id":"","company":"서울인포섹 주식회사","tax_id":"110-81-12345","country":"kr","name":"박지훈","email":"jihoon.park@seoulinfosec.kr","phone":"+82-2-555-0199","job_title":"과장 / 영업팀","status":"rejected","applied_at":"2026-05-10"},{"id":"P260903001","identity":"","level":"","oem_sales":"陳志偉","oem_sales_id":"","manager_id":"","company":"馬來西亞資安通路 Sdn. Bhd.","tax_id":"202301234567","country":"my","name":"Daniel Lim","email":"daniel.lim@mysecure.my","phone":"+60-3-2166-8800","job_title":"Sales Executive / Channel","status":"reviewing","applied_at":"2026-09-03"},{"id":"P260101001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"林佳穎","email":"chiaying.lin@upas.com.tw","phone":"02-2658-1001","job_title":"原廠業務 / 通路部","status":"approved","applied_at":"2026-01-01"},{"id":"P260102001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"吳佩珊","email":"peishan.wu@upas.com.tw","phone":"02-2658-1002","job_title":"原廠業務 / 海外組","status":"approved","applied_at":"2026-01-02"},{"id":"P260103001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"佐藤 健","email":"ken.sato@upas.com.tw","phone":"02-2658-1003","job_title":"原廠業務 / 亞太組","status":"approved","applied_at":"2026-01-03"},{"id":"P260104001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"James Cole","email":"james.cole@upas.com.tw","phone":"02-2658-1004","job_title":"OEM Sales / APAC","status":"approved","applied_at":"2026-01-04"},{"id":"P260100001","identity":"oem_manager","level":"","oem_sales":"","oem_sales_id":"","manager_id":"","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"王經理","email":"manager.wang@upas.com.tw","phone":"02-2658-1000","job_title":"原廠業務主管","status":"approved","applied_at":"2026-01-01"},{"id":"P260105001","identity":"oem_sales","level":"","oem_sales":"","oem_sales_id":"","manager_id":"P260100001","company":"UPAS 原廠","tax_id":"12345678","country":"tw","name":"陳志偉","email":"chihwei.chen@upas.com.tw","phone":"02-2658-1005","job_title":"原廠業務 / 通路部","status":"approved","applied_at":"2026-01-05"}]
+    </script>
+</body>
+</html>

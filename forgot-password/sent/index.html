@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="canonical" href="/forgot-password/sent">
+<title>重設連結已寄出 | Partners Portal</title>
+<meta name="description" content="合作夥伴入口網站">
+
+<link rel="icon" href="/images/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32.png">
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Rajdhani:wght@600&display=swap" rel="stylesheet">
+
+<script type="module" src="http://localhost:5173/@vite/client"></script>
+<link rel="stylesheet" href="http://localhost:5173/source/_assets/css/main.css">
+<script defer type="module" src="http://localhost:5173/source/_assets/js/main.js"></script>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+    </head>
+<body class="bg-bg text-gray5 font-sans antialiased selection:bg-brand2/60 selection:text-gray5 min-h-screen overflow-x-hidden">
+    <div class="auth-page">
+    <div class="auth-brand">
+        <a href="/login/" class="inline-flex">
+            <img
+                src="/images/logo.svg"
+                alt="Partners Portal"
+                width="116"
+                height="44"
+                class="w-[116px] h-11"
+            >
+        </a>
+    </div>
+
+    <div
+        class="w-full p-6 md:p-10 bg-white rounded-[8px] shadow-card flex flex-col justify-start items-start gap-8"
+        style="max-width: 500px"
+    >
+        <div class="self-stretch flex flex-col items-start gap-1">
+        <h1 class="text-ch4 text-gray5">重設連結已寄出</h1>
+        <p class="text-cb3 text-gray4">
+            若該 Email 已註冊，重設密碼連結將寄送至您的信箱。請於時限內開啟信件並完成重設。
+        </p>
+    </div>
+
+    <div class="self-stretch flex flex-col items-start gap-5">
+        <div class="self-stretch p-4 rounded-[8px] bg-bg2 border border-gray1 flex flex-col items-start">
+            <p class="text-cb3 text-gray4">已送出至</p>
+            <p class="text-eb2 text-brand2 break-all" data-sent-email>您填寫的 Email</p>
+        </div>
+
+        <a href="/login/" class="btn-primary w-full h-11">返回登入</a>
+
+        <div class="auth-divider" role="separator">
+            <span>尚未收到？</span>
+        </div>
+
+        <a href="/forgot-password/" class="btn-secondary w-full">重新寄送</a>
+
+        <p class="text-cb3 text-gray4">示意流程：正式環境會依實際寄信結果顯示。演示可直接前往
+            <a href="/reset-password/" class="auth-link">重設密碼</a>。
+        </p>
+    </div>
+    </div>
+
+    <footer class="auth-footer">
+        <p class="text-[12px] text-gray3">© 2026 UPAS 商案管理系統 版權所有</p>
+    </footer>
+</div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    var params = new URLSearchParams(window.location.search);
+    var email = params.get('email');
+    var target = document.querySelector('[data-sent-email]');
+    if (email && target) {
+        target.textContent = email;
+    }
+});
+</script>
+</body>
+</html>
