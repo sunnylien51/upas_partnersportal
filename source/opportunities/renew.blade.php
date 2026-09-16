@@ -16,18 +16,18 @@ title: 商機續期申請
 
 @section('body')
     <div
-        class="flex-1 flex flex-col px-4 md:px-12"
+        class="page-body"
         data-renew-page
         data-list-url="{{ $page->baseUrl }}/opportunities/"
     >
         <div class="content-wrapper">
 
-            <div class="self-stretch inline-flex flex-wrap items-center justify-between gap-3">
+            <div class="page-toolbar">
                 <h1 class="text-ch4 text-gray5 truncate">商機續期申請</h1>
                 <a href="{{ $page->baseUrl }}/opportunities/" class="btn-secondary">返回列表</a>
             </div>
 
-            <section class="self-stretch p-6 bg-white rounded-[10px] shadow-card flex flex-col gap-3" data-renew-summary>
+            <section class="card-panel gap-3" data-renew-summary>
                 <div class="self-stretch flex flex-col md:flex-row md:items-start md:justify-between gap-3">
                     <div class="min-w-0 flex flex-col gap-2">
                         <p class="text-eb2 text-gray3 uppercase" data-renew-id>{{ $sample['id'] }}</p>
@@ -56,9 +56,9 @@ title: 商機續期申請
             </div>
 
             <form class="self-stretch flex flex-col gap-5" data-renew-form novalidate>
-                <section class="self-stretch p-6 bg-white rounded-[10px] shadow-card flex flex-col items-start gap-4" data-renew-step-panel="1">
+                <section class="card-panel gap-4" data-renew-step-panel="1">
                     <div class="self-stretch inline-flex items-center gap-3">
-                        <span class="w-[3px] h-5 bg-brand2 shrink-0" aria-hidden="true"></span>
+                        <span class="section-accent" aria-hidden="true"></span>
                         <h2 class="text-ch5 text-gray5">填寫續期申請</h2>
                     </div>
 
@@ -120,7 +120,7 @@ title: 商機續期申請
                             <input type="hidden" name="attachment_type" value="" data-file-type>
 
                             <button type="button" class="file-upload-dropzone" data-file-trigger>
-                                <span class="size-10 rounded-lg bg-bg2 border border-gray1 inline-flex items-center justify-center shrink-0">
+                                <span class="file-icon">
                                     <i data-lucide="upload" class="w-4 h-4 text-gray4"></i>
                                 </span>
                                 <span class="min-w-0 flex flex-col items-start gap-0.5">
@@ -131,7 +131,7 @@ title: 商機續期申請
 
                             <div class="file-upload-item" data-file-item hidden>
                                 <div class="inline-flex items-center gap-3 min-w-0">
-                                    <span class="size-10 rounded-lg bg-bg2 border border-gray1 inline-flex items-center justify-center shrink-0">
+                                    <span class="file-icon">
                                         <i data-lucide="file-text" class="w-4 h-4 text-gray4"></i>
                                     </span>
                                     <span class="min-w-0 flex flex-col items-start gap-0.5">
@@ -147,9 +147,9 @@ title: 商機續期申請
                     </div>
                 </section>
 
-                <section class="self-stretch p-6 bg-white rounded-[10px] shadow-card flex flex-col items-start gap-4" data-renew-step-panel="2" hidden>
+                <section class="card-panel gap-4" data-renew-step-panel="2" hidden>
                     <div class="self-stretch inline-flex items-center gap-3">
-                        <span class="w-[3px] h-5 bg-brand2 shrink-0" aria-hidden="true"></span>
+                        <span class="section-accent" aria-hidden="true"></span>
                         <h2 class="text-ch5 text-gray5">確認送出</h2>
                     </div>
                     <p class="text-cb3 text-gray3">請確認以下續期內容。送出後將進入「審核中」，管理者核准後才會延長保護期。</p>

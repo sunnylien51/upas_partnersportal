@@ -39,14 +39,33 @@
         <i data-lucide="bell" class="w-4 h-4"></i>
     </button>
 
-    <button type="button" class="w-auto max-w-[14rem] md:w-56 pl-1.5 pr-3 py-1.5 bg-white rounded-2xl shadow-card border border-gray1 flex items-center gap-3 text-left">
-        <span class="size-10 shrink-0 bg-brand2 rounded-xl flex items-center justify-center">
-            <i data-lucide="user" class="w-4 h-4 text-white"></i>
-        </span>
-        <span class="flex-1 min-w-0 flex flex-col items-start gap-0.5">
-            <span class="self-stretch text-[14px] font-medium text-gray5 line-clamp-1">{{ $page->partner['company'] }}</span>
-            <span class="text-[10px] font-medium tracking-[0.06em] text-gray3" data-role-label>{{ $page->roles[$page->defaultPreviewRole]['label'] ?? $page->partner['role'] }}</span>
-        </span>
-        <i data-lucide="more-vertical" class="w-4 h-4 text-gray3 shrink-0"></i>
-    </button>
+    <div class="app-user-menu" data-user-menu>
+        <button
+            type="button"
+            class="app-user-trigger w-auto max-w-[14rem] md:w-56 pl-1.5 pr-3 py-1.5 bg-white rounded-2xl shadow-card border border-gray1 flex items-center gap-3 text-left"
+            data-user-menu-trigger
+            aria-haspopup="menu"
+            aria-expanded="false"
+            aria-controls="app-user-dropdown"
+        >
+            <span class="size-10 shrink-0 bg-brand2 rounded-xl flex items-center justify-center">
+                <i data-lucide="user" class="w-4 h-4 text-white"></i>
+            </span>
+            <span class="flex-1 min-w-0 flex flex-col items-start gap-0.5">
+                <span class="self-stretch text-[14px] font-medium text-gray5 line-clamp-1">{{ $page->partner['company'] }}</span>
+                <span class="text-[10px] font-medium tracking-[0.06em] text-gray3" data-role-label>{{ $page->roles[$page->defaultPreviewRole]['label'] ?? $page->partner['role'] }}</span>
+            </span>
+            <i data-lucide="more-vertical" class="w-4 h-4 text-gray3 shrink-0"></i>
+        </button>
+        <div id="app-user-dropdown" class="app-user-dropdown" role="menu">
+            <a href="{{ $page->baseUrl }}/account/" class="app-user-menu-item" role="menuitem">
+                <i data-lucide="circle-user" class="w-4 h-4"></i>
+                <span>用戶資料</span>
+            </a>
+            <a href="{{ $page->baseUrl }}/login/" class="app-user-menu-item is-brand" role="menuitem">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <span>登出</span>
+            </a>
+        </div>
+    </div>
 </div>

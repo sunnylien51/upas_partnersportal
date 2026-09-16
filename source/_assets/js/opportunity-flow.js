@@ -38,6 +38,11 @@ const DEFAULT_DEALER_LABELS = {
 const RENEWAL_DAYS = 90;
 
 function showAppToast(message, tone = 'default') {
+    if (typeof app().showAppToast === 'function') {
+        app().showAppToast(message, tone);
+        return;
+    }
+
     let host = document.querySelector('[data-app-toast-host]');
     if (!host) {
         host = document.createElement('div');
@@ -60,6 +65,14 @@ function showAppToast(message, tone = 'default') {
         toast.classList.remove('is-visible');
         window.setTimeout(() => toast.remove(), 280);
     }, 2600);
+}
+
+function showAppConfirm(options = {}) {
+    if (typeof app().showAppConfirm === 'function') {
+        return app().showAppConfirm(options);
+    }
+
+    return Promise.resolve(window.confirm(options.message || options.title || '確認操作？'));
 }
 
 function parseJsonScript(id, fallback = {}) {
@@ -174,13 +187,37 @@ function createOpportunityDraftId() {
     return `DRAFT-${y}${m}${d}${rand}`;
 }
 
-function createOpportunityId() {
-    const stamp = new Date();
-    const y = String(stamp.getFullYear()).slice(-2);
-    const m = String(stamp.getMonth() + 1).padStart(2, '0');
-    const d = String(stamp.getDate()).padStart(2, '0');
-    const rand = String(Math.floor(Math.random() * 900) + 100);
-    return `N${y}${m}${d}${rand}`;
+/** 商機編號：N + YY + MMDD + 當日流水號(3位)，送出報備時產生 */
+function opportunityIdDatePrefix(date = new Date()) {
+    const y = String(date.getFullYear()).slice(-2);
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `N${y}${m}${d}`;
+}
+
+function collectKnownOpportunityIds() {
+    const ids = new Set();
+    Object.keys(getSeedCatalog() || {}).forEach((id) => ids.add(id));
+    Object.keys(readOpportunityStore() || {}).forEach((id) => ids.add(id));
+    return ids;
+}
+
+function maxSequenceForPrefix(prefix, knownIds) {
+    let max = 0;
+    const pattern = new RegExp(`^${prefix}(\\d{3})$`);
+    knownIds.forEach((id) => {
+        const match = String(id).match(pattern);
+        if (match) {
+            max = Math.max(max, Number(match[1]));
+        }
+    });
+    return max;
+}
+
+function createOpportunityId(date = new Date()) {
+    const prefix = opportunityIdDatePrefix(date);
+    const next = maxSequenceForPrefix(prefix, collectKnownOpportunityIds()) + 1;
+    return `${prefix}${String(next).padStart(3, '0')}`;
 }
 
 function readOpportunityStore() {
@@ -301,6 +338,327 @@ function getOpportunityById(id) {
         form: stored?.form || seed?.form || null,
         renewal: stored?.renewal !== undefined ? stored.renewal : seed?.renewal ?? null,
     };
+}
+
+/* ---------- 商機可見範圍（清單／明細／搜尋／統計／匯出同一套） ---------- */
+
+const PARTNERS_STORAGE_KEY = 'upas-partners';
+const PARTNERS_DELETED_KEY = 'upas-partners-deleted';
+
+function getPreviewActor() {
+    if (typeof app().getPreviewActor === 'function') {
+        return app().getPreviewActor();
+    }
+    return {
+        roleKey: 'admin',
+        label: '總管理者',
+        identity: 'admin',
+        partnerId: '',
+    };
+}
+
+function isDealerIdentity(identity) {
+    return identity === 'dealer_tw' || identity === 'dealer_overseas';
+}
+
+function getPartnersById() {
+    const seed = parseJsonScript('partners-seed-data', []);
+    const byId = new Map();
+    const deleted = new Set();
+
+    try {
+        const rawDeleted = localStorage.getItem(PARTNERS_DELETED_KEY);
+        const parsedDeleted = rawDeleted ? JSON.parse(rawDeleted) : [];
+        if (Array.isArray(parsedDeleted)) {
+            parsedDeleted.forEach((id) => deleted.add(String(id)));
+        }
+    } catch (error) {
+        /* ignore */
+    }
+
+    (Array.isArray(seed) ? seed : []).forEach((item) => {
+        if (item?.id && !deleted.has(String(item.id))) {
+            byId.set(String(item.id), item);
+        }
+    });
+
+    try {
+        const raw = localStorage.getItem(PARTNERS_STORAGE_KEY);
+        const stored = raw ? JSON.parse(raw) : [];
+        if (Array.isArray(stored)) {
+            stored.forEach((item) => {
+                if (!item?.id || deleted.has(String(item.id))) {
+                    return;
+                }
+                byId.set(String(item.id), { ...(byId.get(String(item.id)) || {}), ...item });
+            });
+        }
+    } catch (error) {
+        /* ignore */
+    }
+
+    return byId;
+}
+
+function canViewOpportunity(record, actor = getPreviewActor(), partnersById = getPartnersById()) {
+    if (!record) {
+        return false;
+    }
+
+    const identity = actor?.identity || 'admin';
+    if (identity === 'admin') {
+        return true;
+    }
+
+    const myId = String(actor?.partnerId || '').trim();
+    if (!myId) {
+        return false;
+    }
+
+    const createdBy = String(record.created_by || '').trim();
+    const oemSalesId = String(record.oem_sales_id || '').trim();
+
+    if (isDealerIdentity(identity)) {
+        return createdBy === myId;
+    }
+
+    if (identity === 'oem_sales') {
+        if (oemSalesId === myId || createdBy === myId) {
+            return true;
+        }
+        const creator = partnersById.get(createdBy);
+        return Boolean(
+            creator
+            && isDealerIdentity(creator.identity)
+            && String(creator.oem_sales_id || '') === myId
+            && creator.status === 'approved'
+        );
+    }
+
+    if (identity === 'oem_manager') {
+        if (createdBy === myId || oemSalesId === myId) {
+            return true;
+        }
+        const creator = partnersById.get(createdBy);
+        if (
+            creator
+            && isDealerIdentity(creator.identity)
+            && String(creator.oem_sales_id || '') === myId
+            && creator.status === 'approved'
+        ) {
+            return true;
+        }
+
+        const reports = [...partnersById.values()].filter((partner) => (
+            partner.identity === 'oem_sales'
+            && String(partner.manager_id || '') === myId
+            && partner.status === 'approved'
+        ));
+
+        return reports.some((sales) => canViewOpportunity(
+            record,
+            { identity: 'oem_sales', partnerId: sales.id },
+            partnersById
+        ));
+    }
+
+    return false;
+}
+
+function resolveListRecord(row) {
+    const id = row.dataset.oppId || '';
+    if (!id) {
+        return null;
+    }
+
+    if (row.dataset.status === 'draft') {
+        const draft = getOpportunityDraft(id);
+        return {
+            id,
+            status: 'draft',
+            statusLabel: '暫存',
+            customer_company: draftListLabel(draft) || getRowCustomerName(row),
+            dealer: row.dataset.dealer || draft?.dealer || 'tw',
+            protection: '-',
+            amountValue: 0,
+            created_by: draft?.created_by || row.dataset.createdBy || '',
+            oem_sales_id: draft?.oem_sales_id || row.dataset.oemSalesId || '',
+        };
+    }
+
+    const record = getOpportunityById(id);
+    if (record) {
+        return record;
+    }
+
+    return {
+        id,
+        status: row.dataset.status || '',
+        customer_company: getRowCustomerName(row),
+        dealer: row.dataset.dealer || 'tw',
+        protection: row.querySelector('[data-opp-protection]')?.textContent?.trim() || '-',
+        amountValue: Number(row.dataset.amount || 0),
+        created_by: row.dataset.createdBy || '',
+        oem_sales_id: row.dataset.oemSalesId || '',
+    };
+}
+
+function collectVisibleOpportunityRecords({ respectFilters = true } = {}) {
+    const rows = document.querySelectorAll('[data-opp-row]');
+    const actor = getPreviewActor();
+    const partnersById = getPartnersById();
+    const records = [];
+
+    rows.forEach((row) => {
+        const record = resolveListRecord(row);
+        if (!record || !canViewOpportunity(record, actor, partnersById)) {
+            return;
+        }
+        if (respectFilters && row.hidden) {
+            return;
+        }
+        records.push(record);
+    });
+
+    return records;
+}
+
+function syncOpportunityVisibility() {
+    const rows = document.querySelectorAll('[data-opp-row]');
+    if (!rows.length) {
+        return;
+    }
+
+    const actor = getPreviewActor();
+    const partnersById = getPartnersById();
+
+    rows.forEach((row) => {
+        const record = resolveListRecord(row);
+        const allowed = canViewOpportunity(record, actor, partnersById);
+        row.dataset.visibilityAllowed = allowed ? '1' : '0';
+        if (record?.created_by) {
+            row.dataset.createdBy = record.created_by;
+        }
+        if (record?.oem_sales_id) {
+            row.dataset.oemSalesId = record.oem_sales_id;
+        }
+    });
+}
+
+function syncOpportunityStats() {
+    const cards = document.querySelectorAll('[data-opp-stat]');
+    if (!cards.length) {
+        return;
+    }
+
+    const actor = getPreviewActor();
+    const partnersById = getPartnersById();
+    const counts = {
+        active: 0,
+        reviewing: 0,
+        draft: 0,
+        expiring: 0,
+    };
+
+    document.querySelectorAll('[data-opp-row]').forEach((row) => {
+        const record = resolveListRecord(row);
+        if (!canViewOpportunity(record, actor, partnersById)) {
+            return;
+        }
+        const status = record?.status || row.dataset.status || '';
+        if (status === 'approved' || status === 'reviewing' || status === 'expiring') {
+            counts.active += 1;
+        }
+        if (status === 'reviewing') {
+            counts.reviewing += 1;
+        }
+        if (status === 'draft') {
+            counts.draft += 1;
+        }
+        if (status === 'expiring') {
+            counts.expiring += 1;
+        }
+    });
+
+    cards.forEach((card) => {
+        const key = card.dataset.oppStat;
+        const valueEl = card.querySelector('[data-opp-stat-count]');
+        if (valueEl && key in counts) {
+            valueEl.textContent = String(counts[key]);
+        }
+    });
+}
+
+function defaultOemSalesIdForActor(actor = getPreviewActor(), partnersById = getPartnersById()) {
+    const myId = String(actor.partnerId || '').trim();
+    if (!myId) {
+        return '';
+    }
+    if (actor.identity === 'oem_sales' || actor.identity === 'oem_manager') {
+        return myId;
+    }
+    if (isDealerIdentity(actor.identity)) {
+        return String(partnersById.get(myId)?.oem_sales_id || '').trim();
+    }
+    return '';
+}
+
+function denyOpportunityAccess(listUrl) {
+    showAppToast('找不到此商機資料', 'error');
+    window.setTimeout(() => {
+        window.location.href = listUrl || '/opportunities/';
+    }, 700);
+}
+
+function exportVisibleOpportunities() {
+    if (typeof app().roleCan === 'function' && !app().roleCan('opportunity.export')) {
+        showAppToast('目前身分權限無法匯出', 'error');
+        return;
+    }
+
+    const records = collectVisibleOpportunityRecords({ respectFilters: false });
+    if (!records.length) {
+        showAppToast('目前沒有可匯出的商機', 'error');
+        return;
+    }
+
+    const headers = ['編號', '客戶', '所屬', '狀態', '保護期', '建立者', '原廠業務'];
+    const lines = [headers.join(',')];
+    const dealerLabels = getDealerLabels();
+
+    records.forEach((record) => {
+        const cells = [
+            record.id || '',
+            record.customer_company || '',
+            dealerLabels[record.dealer] || record.dealer || '',
+            record.statusLabel || getStatusLabel(record.status) || record.status || '',
+            protectionForStatus(record.status, record.protection),
+            record.created_by || '',
+            record.oem_sales_id || '',
+        ].map((value) => `"${String(value).replace(/"/g, '""')}"`);
+        lines.push(cells.join(','));
+    });
+
+    const blob = new Blob([`\uFEFF${lines.join('\n')}`], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const stamp = new Date().toISOString().slice(0, 10);
+    link.href = url;
+    link.download = `opportunities-${stamp}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    showAppToast(`已匯出 ${records.length} 筆商機`, 'success');
+}
+
+function bindOpportunityExport() {
+    const btn = document.querySelector('[data-opportunity-export]');
+    if (!btn || btn.dataset.boundExport === '1') {
+        return;
+    }
+    btn.dataset.boundExport = '1';
+    btn.addEventListener('click', () => exportVisibleOpportunities());
 }
 
 function upsertOpportunity(record) {
@@ -701,6 +1059,7 @@ function draftListLabel(draft) {
 function formDataToRecord(formData, options = {}) {
     const meta = getListMeta();
     const partner = meta.partner || {};
+    const actor = getPreviewActor();
     const fields = formData.fields || {};
     const products = (formData.products || []).filter(Boolean);
     const customer = String(fields.customer_company || '').trim() || '未命名客戶';
@@ -726,6 +1085,8 @@ function formDataToRecord(formData, options = {}) {
         booking_code: options.booking_code || id,
         dealer: options.dealer || 'tw',
         protection: options.protection || '-',
+        created_by: options.created_by || actor.partnerId || '',
+        oem_sales_id: options.oem_sales_id || defaultOemSalesIdForActor(actor) || '',
         review: options.review !== undefined ? options.review : null,
         form: formData,
         local: true,
@@ -885,7 +1246,7 @@ function buildRowMoreMenuHtml(status) {
     }).join('');
 }
 
-function handleRowMoreAction(row, action) {
+async function handleRowMoreAction(row, action) {
     const id = row.dataset.oppId;
     const meta = getListMeta();
     const reviewUrl = meta.reviewUrl || '/opportunities/review/';
@@ -912,7 +1273,14 @@ function handleRowMoreAction(row, action) {
     }
 
     if (action === 'delete-draft') {
-        if (!window.confirm(`確定刪除暫存 ${id}？`)) {
+        const ok = await showAppConfirm({
+            title: '刪除',
+            message: `確定刪除暫存 ${id}？此操作無法復原。`,
+            confirmLabel: '刪除',
+            cancelLabel: '取消',
+            danger: true,
+        });
+        if (!ok) {
             return;
         }
         removeOpportunityDraft(id);
@@ -936,6 +1304,15 @@ function handleRowMoreAction(row, action) {
             showAppToast('僅總管理者可對已到期商機結案', 'error');
             return;
         }
+        const ok = await showAppConfirm({
+            title: '結案確認',
+            message: `確定將商機 ${id} 結案？結案後將不再保留保護期。`,
+            confirmLabel: '確認結案',
+            cancelLabel: '取消',
+        });
+        if (!ok) {
+            return;
+        }
         const record = getOpportunityById(id) || {
             id,
             customer_company: getRowCustomerName(row) || id,
@@ -955,7 +1332,14 @@ function handleRowMoreAction(row, action) {
     }
 
     if (action === 'cancel') {
-        if (!window.confirm(`確定取消商機 ${id}？`)) {
+        const ok = await showAppConfirm({
+            title: '取消商機',
+            message: `確定取消商機 ${id}？`,
+            confirmLabel: '確認取消',
+            cancelLabel: '返回',
+            danger: true,
+        });
+        if (!ok) {
             return;
         }
         const record = getOpportunityById(id) || {
@@ -1210,13 +1594,15 @@ function buildOpportunityListRow(record) {
     const status = record.status || 'reviewing';
     const label = record.statusLabel || getStatusLabel(status);
     const row = document.createElement('div');
-    row.className = 'px-4 py-2 bg-white border-b border-gray1 inline-flex w-full items-center';
+    row.className = 'list-row py-2';
     row.dataset.oppRow = '';
     row.dataset.oppId = record.id;
     row.dataset.dealer = record.dealer || 'tw';
     row.dataset.amount = String(record.amountValue || 0);
     row.dataset.status = status;
     row.dataset.search = opportunitySearchText(record.id, record.customer_company, record.dealer);
+    row.dataset.createdBy = record.created_by || '';
+    row.dataset.oemSalesId = record.oem_sales_id || '';
     row.dataset.localRecord = 'true';
 
     const reviewUrl = `${meta.reviewUrl || '/opportunities/review/'}?id=${encodeURIComponent(record.id)}`;
@@ -1321,13 +1707,15 @@ function buildDraftOpportunityRow(draft) {
     const createUrl = `${meta.createUrl || '/opportunities/create/'}?draft=${encodeURIComponent(draft.id)}`;
     const label = draftListLabel(draft);
     const row = document.createElement('div');
-    row.className = 'px-4 py-2 bg-white border-b border-gray1 inline-flex w-full items-center';
+    row.className = 'list-row py-2';
     row.dataset.oppRow = '';
     row.dataset.oppId = draft.id;
-    row.dataset.dealer = 'tw';
+    row.dataset.dealer = draft.dealer || 'tw';
     row.dataset.amount = '0';
     row.dataset.status = 'draft';
-    row.dataset.search = opportunitySearchText(draft.id, label, 'tw');
+    row.dataset.search = opportunitySearchText(draft.id, label, draft.dealer || 'tw');
+    row.dataset.createdBy = draft.created_by || '';
+    row.dataset.oemSalesId = draft.oem_sales_id || '';
     row.dataset.localDraft = 'true';
 
     row.innerHTML = `
@@ -1458,6 +1846,9 @@ function syncOpportunityListUi() {
     });
 
     bindAllRowMoreMenus(list);
+    bindOpportunityExport();
+    syncOpportunityVisibility();
+    syncOpportunityStats();
 
     if (typeof app().applyPreviewRole === 'function') {
         // only re-apply capability visibility without recursion loops
@@ -1759,16 +2150,37 @@ window.syncOpportunityReviewUi = function syncOpportunityReviewUi() {
     if (page) {
         const id = getQueryParam('id');
         const record = getOpportunityById(id);
-        if (record) {
-            renderReviewPage(record);
+        if (!record || !canViewOpportunity(record)) {
+            denyOpportunityAccess(page.dataset.listUrl || '/opportunities/');
+            return;
         }
+        renderReviewPage(record);
     }
 
     // 補件／暫存頁：角色切換時重算「修改審核」顯示
     const createForm = document.querySelector('[data-opportunity-form]');
     if (createForm) {
+        const draftId = getQueryParam('draft') || '';
+        if (draftId) {
+            const draft = getOpportunityDraft(draftId);
+            const draftRecord = {
+                id: draftId,
+                status: 'draft',
+                created_by: draft?.created_by || '',
+                oem_sales_id: draft?.oem_sales_id || '',
+            };
+            if (draft && !canViewOpportunity(draftRecord)) {
+                denyOpportunityAccess(createForm.dataset.listUrl || '/opportunities/');
+                return;
+            }
+        }
+
         const recordId = getQueryParam('id') || '';
         const record = recordId ? getOpportunityById(recordId) : null;
+        if (recordId && (!record || !canViewOpportunity(record))) {
+            denyOpportunityAccess(createForm.dataset.listUrl || '/opportunities/');
+            return;
+        }
         if (record?.status === 'rejected' && record.review) {
             showCreateReviewResult(record.review, record.status, recordId);
         } else {
@@ -1776,6 +2188,15 @@ window.syncOpportunityReviewUi = function syncOpportunityReviewUi() {
             if (editReviewLink) {
                 editReviewLink.hidden = true;
             }
+        }
+    }
+
+    const renewPage = document.querySelector('[data-renew-page]');
+    if (renewPage) {
+        const id = getQueryParam('id');
+        const record = getOpportunityById(id);
+        if (!record || !canViewOpportunity(record)) {
+            denyOpportunityAccess(renewPage.dataset.listUrl || '/opportunities/');
         }
     }
 };
@@ -1788,11 +2209,8 @@ function initReviewPage() {
 
     const id = getQueryParam('id');
     const record = getOpportunityById(id);
-    if (!record) {
-        showAppToast('找不到此商機資料', 'error');
-        window.setTimeout(() => {
-            window.location.href = page.dataset.listUrl || '/opportunities/';
-        }, 700);
+    if (!record || !canViewOpportunity(record)) {
+        denyOpportunityAccess(page.dataset.listUrl || '/opportunities/');
         return;
     }
 
@@ -2207,17 +2625,23 @@ function initOpportunityForm() {
 
     if (activeDraftId) {
         const existing = getOpportunityDraft(activeDraftId);
+        if (existing && !canViewOpportunity({
+            id: activeDraftId,
+            status: 'draft',
+            created_by: existing.created_by || '',
+            oem_sales_id: existing.oem_sales_id || '',
+        })) {
+            denyOpportunityAccess(opportunityForm.dataset.listUrl || '/opportunities/');
+            return;
+        }
         if (existing) {
             applyOpportunityFormData(opportunityForm, existing);
         }
         syncTitles('draft', activeDraftId);
     } else if (activeRecordId) {
         const record = getOpportunityById(activeRecordId);
-        if (!record) {
-            showAppToast('找不到此商機，無法補件', 'error');
-            window.setTimeout(() => {
-                window.location.href = opportunityForm.dataset.listUrl || '/opportunities/';
-            }, 700);
+        if (!record || !canViewOpportunity(record)) {
+            denyOpportunityAccess(opportunityForm.dataset.listUrl || '/opportunities/');
             return;
         }
 
@@ -2278,10 +2702,17 @@ function initOpportunityForm() {
                 activeDraftId = createOpportunityDraftId();
             }
 
+            const actor = getPreviewActor();
+            const existingDraft = getOpportunityDraft(activeDraftId);
             upsertOpportunityDraft({
                 id: activeDraftId,
                 status: 'draft',
                 updatedAt: new Date().toISOString(),
+                created_by: existingDraft?.created_by || actor.partnerId || '',
+                oem_sales_id: existingDraft?.oem_sales_id || defaultOemSalesIdForActor(actor) || '',
+                dealer: existingDraft?.dealer || (isDealerIdentity(actor.identity)
+                    ? (actor.identity === 'dealer_overseas' ? 'overseas' : 'tw')
+                    : 'oem'),
                 data,
             });
 
@@ -2311,15 +2742,20 @@ function initOpportunityForm() {
 
         const data = collectOpportunityFormData(opportunityForm);
         const existing = activeRecordId ? getOpportunityById(activeRecordId) : null;
+        const actor = getPreviewActor();
         const record = formDataToRecord(data, {
             id: activeRecordId || undefined,
             status: 'reviewing',
             amount: existing?.amount || '-',
             amountValue: existing?.amountValue || 0,
-            dealer: existing?.dealer || 'tw',
+            dealer: existing?.dealer || (isDealerIdentity(actor.identity)
+                ? (actor.identity === 'dealer_overseas' ? 'overseas' : 'tw')
+                : 'oem'),
             protection: existing?.protection || '-',
             booking_code: existing?.booking_code || activeRecordId || undefined,
             review: existing?.review || null,
+            created_by: existing?.created_by || actor.partnerId || '',
+            oem_sales_id: existing?.oem_sales_id || defaultOemSalesIdForActor(actor) || '',
         });
 
         upsertOpportunity(record);
@@ -2348,6 +2784,11 @@ function initRenewPage() {
     const listUrl = page.dataset.listUrl || '/opportunities/';
     const id = getQueryParam('id');
     const record = getOpportunityById(id);
+
+    if (!record || !canViewOpportunity(record)) {
+        denyOpportunityAccess(listUrl);
+        return;
+    }
 
     if (!canApplyRenewal(record)) {
         showAppToast('此商機目前無法申請續期', 'error');

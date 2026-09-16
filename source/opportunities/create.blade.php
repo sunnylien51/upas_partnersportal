@@ -11,10 +11,10 @@ title: 新增商機
 @endphp
 
 @section('body')
-    <div class="flex-1 flex flex-col px-4 md:px-12">
+    <div class="page-body">
         <div class="content-wrapper">
 
-            <div class="self-stretch inline-flex flex-wrap items-center justify-between gap-3">
+            <div class="page-toolbar">
                 <h1 class="text-ch4 text-gray5 truncate" data-page-heading>新增商機</h1>
                 <a href="{{ $page->baseUrl }}/opportunities/" class="btn-secondary">返回列表</a>
             </div>
@@ -34,13 +34,13 @@ title: 新增商機
                 <div class="review-layout">
 
                     {{-- ========== 左側：表單內容 ========== --}}
-                    <div class="min-w-0 self-stretch flex flex-col items-start gap-5">
+                    <div class="review-main">
 
                         {{-- 商機來源 + 原廠負責資訊 --}}
                         <div class="self-stretch flex flex-col md:flex-row items-stretch gap-5">
-                            <section class="flex-1 p-6 bg-white rounded-[10px] shadow-card flex flex-col items-start gap-4">
+                            <section class="card-panel flex-1 gap-4">
                                 <div class="self-stretch inline-flex items-center gap-3">
-                                    <span class="w-[3px] h-5 bg-brand2 shrink-0" aria-hidden="true"></span>
+                                    <span class="section-accent" aria-hidden="true"></span>
                                     <h2 class="text-ch5 text-gray5">商機來源</h2>
                                 </div>
 
@@ -68,9 +68,9 @@ title: 新增商機
                                 </div>
                             </section>
 
-                            <section class="flex-1 p-6 bg-white rounded-[10px] shadow-card flex flex-col items-start gap-4">
+                            <section class="card-panel flex-1 gap-4">
                                 <div class="self-stretch inline-flex items-center gap-3">
-                                    <span class="w-[3px] h-5 bg-brand2 shrink-0" aria-hidden="true"></span>
+                                    <span class="section-accent" aria-hidden="true"></span>
                                     <h2 class="text-ch5 text-gray5">原廠負責資訊</h2>
                                 </div>
 
@@ -85,10 +85,10 @@ title: 新增商機
                         </div>
 
                         {{-- 報備者資料 --}}
-                        <section class="self-stretch p-6 bg-white rounded-[10px] shadow-card flex flex-col items-start gap-5">
+                        <section class="card-panel gap-5">
                             <div class="self-stretch inline-flex justify-between items-center gap-3">
                                 <div class="inline-flex items-center gap-3">
-                                    <span class="w-[3px] h-5 bg-brand2 shrink-0" aria-hidden="true"></span>
+                                    <span class="section-accent" aria-hidden="true"></span>
                                     <h2 class="text-ch5 text-gray5">報備者資料</h2>
                                 </div>
                                 <p class="text-cb3 text-gray3">登入後由會員資料自動帶入</p>
@@ -127,9 +127,9 @@ title: 新增商機
                         </section>
 
                         {{-- 客戶資料 --}}
-                        <section class="self-stretch p-6 bg-white rounded-[10px] shadow-card flex flex-col items-start gap-5">
+                        <section class="card-panel gap-5">
                             <div class="self-stretch inline-flex items-center gap-3">
-                                <span class="w-[3px] h-5 bg-brand2 shrink-0" aria-hidden="true"></span>
+                                <span class="section-accent" aria-hidden="true"></span>
                                 <h2 class="text-ch5 text-gray5">客戶資料</h2>
                             </div>
 
@@ -191,9 +191,9 @@ title: 新增商機
 
                         {{-- 專案細節 --}}
                         <div class="self-stretch flex flex-col items-start gap-4">
-                            <section class="self-stretch p-6 bg-white rounded-[10px] shadow-card flex flex-col items-start gap-4">
+                            <section class="card-panel gap-4">
                                 <div class="self-stretch inline-flex items-center gap-3">
-                                    <span class="w-[3px] h-5 bg-brand2 shrink-0" aria-hidden="true"></span>
+                                    <span class="section-accent" aria-hidden="true"></span>
                                     <h2 class="text-ch5 text-gray5">專案細節</h2>
                                 </div>
 
@@ -212,13 +212,13 @@ title: 新增商機
                                     @endforeach
                                 </div>
 
-                                <button type="button" class="btn-add" data-add-product>
+                                <button type="button" class="btn-dashed" data-add-product>
                                     <i data-lucide="plus" class="w-4 h-4"></i>
                                     <span>新增其他展品</span>
                                 </button>
                             </section>
 
-                            <section class="self-stretch p-6 bg-white rounded-[10px] shadow-card flex flex-col items-start gap-5">
+                            <section class="card-panel gap-5">
                                 <div class="self-stretch flex flex-col md:flex-row items-stretch gap-6">
                                     <div class="flex-1 flex flex-col items-start gap-4">
                                         @foreach ($page->opportunityDates as $dateField)
@@ -248,9 +248,9 @@ title: 新增商機
                                 </div>
                             </section>
 
-                            <section class="self-stretch p-6 bg-white rounded-[10px] shadow-card flex flex-col items-start gap-4">
+                            <section class="card-panel gap-4">
                                 <div class="self-stretch inline-flex items-center gap-3">
-                                    <span class="w-[3px] h-5 bg-brand2 shrink-0" aria-hidden="true"></span>
+                                    <span class="section-accent" aria-hidden="true"></span>
                                     <h2 class="text-ch5 text-gray5">檔案上傳</h2>
                                 </div>
                                 <p class="text-cb3 text-gray3">選填。可上傳需求規格、簡報或其他佐證檔案（PDF、Word、Excel、圖片，單檔 2MB 內）。</p>
@@ -262,7 +262,7 @@ title: 新增商機
                                     <input type="hidden" name="attachment_type" value="" data-file-type>
 
                                     <button type="button" class="file-upload-dropzone" data-file-trigger>
-                                        <span class="size-10 rounded-lg bg-bg2 border border-gray1 inline-flex items-center justify-center shrink-0">
+                                        <span class="file-icon">
                                             <i data-lucide="upload" class="w-4 h-4 text-gray4"></i>
                                         </span>
                                         <span class="min-w-0 flex flex-col items-start gap-0.5">
@@ -273,7 +273,7 @@ title: 新增商機
 
                                     <div class="file-upload-item" data-file-item hidden>
                                         <div class="inline-flex items-center gap-3 min-w-0">
-                                            <span class="size-10 rounded-lg bg-bg2 border border-gray1 inline-flex items-center justify-center shrink-0">
+                                            <span class="file-icon">
                                                 <i data-lucide="file-text" class="w-4 h-4 text-gray4"></i>
                                             </span>
                                             <span class="min-w-0 flex flex-col items-start gap-0.5">
@@ -294,7 +294,7 @@ title: 新增商機
                     <aside class="review-aside">
                         <div class="review-panel">
                             <div class="self-stretch inline-flex items-center gap-3">
-                                <span class="w-[3px] h-5 bg-brand2 shrink-0" aria-hidden="true"></span>
+                                <span class="section-accent" aria-hidden="true"></span>
                                 <h2 class="text-ch5 text-gray5" data-create-aside-title>送出與暫存</h2>
                             </div>
 

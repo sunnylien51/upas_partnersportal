@@ -21,15 +21,18 @@
     </div>
 
     <div class="self-stretch flex flex-col items-stretch">
-        {{-- 演示用：預覽身分切換（與下方語言列同為 px-6，靠左） --}}
+        {{-- 演示用：預覽身分權限切換（與下方語言列同為 px-6，靠左） --}}
         <div class="role-preview role-preview--sidebar self-stretch px-6 pb-4 text-left" data-role-preview>
             <div class="flex items-center justify-start gap-2 mb-2">
-                <span class="text-[12px] font-medium tracking-[0.06em] text-gray4">預覽身分</span>
+                <span class="text-[12px] font-medium tracking-[0.06em] text-gray4">預覽身分權限</span>
                 <span class="role-preview-badge">演示用</span>
             </div>
-            <div class="role-preview-switch role-preview-switch--sidebar justify-start" role="group" aria-label="預覽身分">
-                <button type="button" class="role-preview-btn is-active" data-role-switch="admin" aria-pressed="true">總管理者</button>
-                <button type="button" class="role-preview-btn" data-role-switch="user" aria-pressed="false">業務/經銷商</button>
+            <div class="role-preview-switch role-preview-switch--sidebar justify-start" role="group" aria-label="預覽身分權限">
+                <button type="button" class="role-preview-btn is-active" data-role-switch="admin" aria-pressed="true">總管</button>
+                <button type="button" class="role-preview-btn" data-role-switch="oem_manager" aria-pressed="false">主管</button>
+                <button type="button" class="role-preview-btn" data-role-switch="oem_sales" aria-pressed="false">業務</button>
+                <button type="button" class="role-preview-btn" data-role-switch="dealer_tw" aria-pressed="false">國內</button>
+                <button type="button" class="role-preview-btn" data-role-switch="dealer_overseas" aria-pressed="false">海外</button>
             </div>
         </div>
 

@@ -3,7 +3,7 @@
 @import 'tailwindcss/utilities';
 
 :root {
-  --font-sans: 'Noto Sans TC', sans-serif;
+  --font-sans: 'Noto Sans TC','Rajdhani', sans-serif;
   --font-en: 'Rajdhani', 'Noto Sans TC', sans-serif;
   --color-brand: #FFC800;
   --color-brand2: #E0AC7E;
@@ -31,7 +31,71 @@
     @apply fixed top-6 right-4 md:right-12 z-30 flex items-center gap-2.5;
   }
 
-  /* ---------- 預覽身分切換（演示用，側邊欄靠左） ---------- */
+  .app-user-menu {
+    @apply relative;
+  }
+
+  .app-user-menu::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 0.75rem;
+  }
+
+  .app-user-trigger {
+    @apply transition-colors;
+  }
+
+  .app-user-menu:hover .app-user-trigger,
+  .app-user-menu:focus-within .app-user-trigger,
+  .app-user-menu.is-open .app-user-trigger {
+    @apply border-gray2;
+  }
+
+  .app-user-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    z-index: 40;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 11rem;
+    padding: 0.35rem;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: var(--shadow-card);
+    outline: 1px solid var(--color-gray1);
+    outline-offset: -1px;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .app-user-menu:hover .app-user-dropdown,
+  .app-user-menu:focus-within .app-user-dropdown,
+  .app-user-menu.is-open .app-user-dropdown {
+    display: inline-flex;
+  }
+
+  .app-user-menu-item {
+    @apply w-full px-3 py-[6px] rounded-lg text-left text-cb3 text-gray5 transition-colors inline-flex items-center gap-2 no-underline;
+  }
+
+  .app-user-menu-item:hover {
+    @apply bg-bg;
+  }
+
+  .app-user-menu-item.is-brand {
+    @apply text-brand2;
+  }
+
+  .app-user-menu-item.is-brand:hover {
+    @apply bg-brand2/10 text-brand2;
+  }
+
+  /* ---------- 預覽身分權限切換（演示用，側邊欄靠左） ---------- */
   .role-preview {
     display: flex;
     flex-direction: column;
@@ -52,11 +116,16 @@
     padding: 0.25rem;
     background: var(--color-bg);
     border: 1px solid var(--color-gray1);
-    border-radius: 10px;
+    border-radius:8px;
+  }
+
+  .role-preview-switch--sidebar {
+    flex-wrap: wrap;
+    max-width: 100%;
   }
 
   .role-preview-switch--sidebar .role-preview-btn {
-    @apply px-2.5 py-2;
+    @apply px-2 py-1.5;
   }
 
   .role-preview-btn {
@@ -72,7 +141,7 @@
   }
 
   .sidebar-link {
-    @apply self-stretch w-full px-4 py-[10px] rounded-[10px] inline-flex items-center gap-2 text-gray4 bg-brand2/0;
+    @apply self-stretch w-full px-4 py-[8px] rounded-[8px] inline-flex items-center gap-2 text-gray4 bg-brand2/0;
     font-family: var(--font-sans);
     font-weight: 500;
     font-size: 15px;
@@ -86,7 +155,7 @@
   }
 
   .sidebar-link.active {
-    @apply bg-brand2/25 text-gray5;
+    @apply bg-brand2/25 border border-brand2/30 text-gray5;
     font-weight: 700;
   }
 
@@ -114,26 +183,68 @@
     @apply text-gray5;
   }
 
-  .feature-card {
-    @apply self-stretch min-h-[13rem] p-6 bg-white rounded-2xl shadow-card inline-flex flex-col items-end gap-3 overflow-hidden;
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
-  }
-
-  .feature-card:hover {
-    @apply shadow-[0px_0px_40px_0px_rgba(0,0,0,0.08)];
-  }
-
-  .enter-btn {
-    @apply pl-4 pr-3 py-1.5 bg-brand2 rounded-[20px] inline-flex items-center justify-center gap-1.5 text-white text-eb3 uppercase;
-    transition: background-color 0.3s ease;
-  }
-
-  .feature-card:hover .enter-btn {
-    @apply bg-brand2/90;
-  }
-
   .content-wrapper {
     @apply pb-10 md:pb-16 flex-1 flex flex-col gap-5;
+  }
+
+  .page-body {
+    @apply flex-1 flex flex-col px-4 md:px-12;
+  }
+
+  .page-toolbar {
+    @apply self-stretch inline-flex flex-wrap items-center justify-between gap-3;
+  }
+
+  .card-panel {
+    @apply self-stretch p-6 bg-white rounded-[8px] shadow-card flex flex-col items-start;
+  }
+
+  .list-card {
+    @apply self-stretch bg-white rounded-2xl shadow-card flex flex-col;
+  }
+
+  .list-card-body {
+    @apply self-stretch px-3 pt-3 pb-6 flex flex-col;
+  }
+
+  .list-head {
+    @apply px-4 py-3 bg-bg rounded-t-[10px] inline-flex w-full items-center;
+  }
+
+  .list-row {
+    @apply px-4 py-2 bg-white border-b border-gray1 inline-flex w-full items-center;
+  }
+
+  .list-row-link {
+    @apply text-inherit no-underline cursor-pointer transition-colors hover:bg-bg2;
+  }
+
+  .list-empty {
+    @apply px-4 py-10 text-center text-cb3 text-gray3;
+  }
+
+  .pagination-bar {
+    @apply self-stretch px-4 pt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3;
+  }
+
+  .pagination-nav {
+    @apply bg-white rounded-md border border-gray1 inline-flex items-center overflow-hidden;
+  }
+
+  .search-bar {
+    @apply shrink-0 px-3 py-2.5 bg-white rounded-[8px] border border-gray1 inline-flex items-center gap-2;
+  }
+
+  .file-icon {
+    @apply size-10 rounded-lg bg-bg2 border border-gray1 inline-flex items-center justify-center shrink-0;
+  }
+
+  .section-accent {
+    @apply w-[3px] h-5 bg-brand2 shrink-0;
+  }
+
+  .review-main {
+    @apply min-w-0 self-stretch flex flex-col items-start gap-5;
   }
 
   /* ---------- 麵包屑 ---------- */
@@ -167,20 +278,15 @@
 
   /* ---------- 共用按鈕 ---------- */
   .btn-primary {
-    @apply px-6 py-2.5 bg-gray5/90 rounded-[10px] inline-flex items-center justify-center gap-2 text-cb3 text-white transition-colors hover:bg-gray5;
+    @apply px-6 py-2.5 bg-gray5/90 rounded-[8px] inline-flex items-center justify-center gap-2 text-cb3 text-white transition-colors hover:bg-gray5;
   }
 
   .btn-secondary {
-    @apply px-6 py-2.5 bg-white rounded-[10px] border border-gray1 inline-flex items-center justify-center gap-2 text-cb3 text-gray4 transition-colors hover:text-gray5 hover:border-gray2;
+    @apply px-6 py-2.5 bg-white rounded-[8px] border border-gray1 inline-flex items-center justify-center gap-2 text-cb3 text-gray4 transition-colors hover:text-gray5 hover:border-gray2;
   }
 
-  /* ---------- 商機統計卡數字 ---------- */
-  .stat-count {
-    font-family: var(--font-en);
-    font-weight: 600;
-    font-size: 48px;
-    line-height: 1;
-    letter-spacing: 3px;
+  .btn-dashed {
+    @apply px-6 py-2.5 bg-white rounded-[8px] border border-dashed border-gray2 inline-flex justify-center items-center gap-2 text-cb3 text-gray4 transition-colors hover:text-gray5 hover:border-gray3;
   }
 
   /* ---------- 狀態下拉（觸發器 + 選單 + 選項 + 狀態色） ---------- */
@@ -232,13 +338,41 @@
   [data-product-row][hidden],
   [data-product-empty][hidden],
   [data-catalog-row][hidden],
-  [data-catalog-empty][hidden] {
+  [data-catalog-empty][hidden],
+  [data-catalog-missing][hidden],
+  [data-catalog-forbidden][hidden],
+  [data-catalog-form-toolbar][hidden],
+  [data-add-category-panel][hidden],
+  [data-category-add-panel][hidden],
+  [data-locale-incomplete][hidden],
+  [data-locale-fallback-hint][hidden],
+  [data-attachment-file][hidden],
+  [data-attachment-link][hidden],
+  [data-faq-item][hidden],
+  [data-faq-empty][hidden],
+  [data-faq-form][hidden],
+  [data-faq-form-toolbar][hidden],
+  [data-faq-forbidden][hidden],
+  [data-faq-missing][hidden],
+  [data-download-empty][hidden],
+  [data-download-form][hidden],
+  [data-download-form-toolbar][hidden],
+  [data-download-forbidden][hidden],
+  [data-download-missing][hidden],
+  [data-file-item][hidden],
+  [data-file-trigger][hidden],
+  [data-ticket-row][hidden],
+  [data-ticket-empty][hidden],
+  [data-ticket-modal-attachment-section][hidden],
+  [data-ticket-modal-note-section][hidden],
+  [data-ticket-manage][hidden],
+  [data-ticket-manage-save][hidden] {
     display: none !important;
   }
 
   /* ---------- 分類分頁 ---------- */
   .tab {
-    @apply px-4 py-2 rounded-[10px] text-cb3 text-gray4 bg-white transition-colors;
+    @apply px-4 py-2 rounded-[8px] text-cb3 text-gray4 bg-white transition-colors;
   }
 
   .tab:hover {
@@ -347,7 +481,11 @@
 
   /* ---------- 表格列動作按鈕、分頁 ---------- */
   .icon-action {
-    @apply size-9 p-2.5 rounded-[10px] inline-flex items-center justify-center text-gray3 transition-colors hover:bg-bg hover:text-gray5;
+    @apply size-9 p-2.5 rounded-[8px] inline-flex items-center justify-center text-gray3 transition-colors hover:bg-bg hover:text-gray5;
+  }
+
+  .icon-action:disabled {
+    @apply opacity-30 pointer-events-none;
   }
 
   /* ---------- 操作回饋 toast ---------- */
@@ -357,7 +495,7 @@
   }
 
   .app-toast {
-    @apply px-4 py-2.5 rounded-[10px] bg-gray5 text-white text-cb3 shadow-card opacity-0 translate-y-2 transition-all duration-300;
+    @apply px-4 py-2.5 rounded-[8px] bg-gray5 text-white text-cb3 shadow-card opacity-0 translate-y-2 transition-all duration-300;
   }
 
   .app-toast.is-visible {
@@ -370,6 +508,153 @@
 
   .app-toast--error {
     @apply bg-red;
+  }
+
+  /* ---------- 底部確認視窗 ---------- */
+  .app-confirm-host {
+    @apply fixed inset-0 z-[100] flex items-end justify-center p-4 md:p-6;
+  }
+
+  .app-confirm-backdrop {
+    @apply absolute inset-0 bg-gray5/40 opacity-0 transition-opacity duration-200;
+  }
+
+  .app-confirm-panel {
+    @apply relative z-[1] w-full max-w-md rounded-[14px] bg-white shadow-card outline outline-1 outline-offset-[-1px] outline-gray1 px-5 pt-5 pb-4 flex flex-col gap-4 translate-y-4 opacity-0 transition-all duration-200;
+  }
+
+  .app-confirm-host.is-open .app-confirm-backdrop {
+    @apply opacity-100;
+  }
+
+  .app-confirm-host.is-open .app-confirm-panel {
+    @apply translate-y-0 opacity-100;
+  }
+
+  .app-confirm-title {
+    @apply text-cb2 text-gray5;
+  }
+
+  .app-confirm-message {
+    @apply text-cb3 text-gray4 leading-relaxed;
+  }
+
+  .app-confirm-actions {
+    @apply self-stretch inline-flex items-center justify-end gap-2 pt-1;
+  }
+
+  /* ---------- 內容彈窗（說明／富文字） ---------- */
+  .app-modal-host {
+    @apply fixed inset-0 z-[90] flex items-center justify-center p-4 md:p-6;
+  }
+
+  .app-modal-backdrop {
+    @apply absolute inset-0 bg-gray5/40 opacity-0 transition-opacity duration-200;
+  }
+
+  .app-modal-panel {
+    @apply relative z-[1] w-full max-w-lg rounded-[14px] bg-white shadow-card outline outline-1 outline-offset-[-1px] outline-gray1 px-5 pt-5 pb-5 flex flex-col gap-4 translate-y-3 opacity-0 transition-all duration-200;
+  }
+
+  .app-modal-host.is-open .app-modal-backdrop {
+    @apply opacity-100;
+  }
+
+  .app-modal-host.is-open .app-modal-panel {
+    @apply translate-y-0 opacity-100;
+  }
+
+  .category-manager-panel {
+    @apply max-w-xl;
+  }
+
+  .ticket-modal-panel {
+    @apply max-w-2xl max-h-full p-0 gap-0;
+  }
+
+  .ticket-modal-header {
+    @apply self-stretch shrink-0 px-5 pt-5 pb-4 flex items-start justify-between gap-4 border-b border-gray1;
+  }
+
+  .ticket-modal-body {
+    @apply self-stretch flex-1 min-h-0 overflow-y-auto px-5 py-5 flex flex-col gap-5;
+  }
+
+  .ticket-modal-footer {
+    @apply self-stretch shrink-0 px-5 pt-4 pb-5 flex justify-end gap-2 border-t border-gray1;
+  }
+
+  .partner-preview-panel {
+    @apply max-w-xl;
+  }
+
+  .category-manager-list {
+    @apply self-stretch max-h-[min(24rem,50vh)] overflow-y-auto flex flex-col gap-2;
+  }
+
+  .category-manager-row {
+    @apply self-stretch px-2 py-2 rounded-[8px] border border-gray1 bg-white inline-flex items-center gap-2;
+  }
+
+  .category-manager-row.is-dragging {
+    @apply opacity-40;
+  }
+
+  .category-manager-row.is-drop-target {
+    @apply border-brand2 bg-bg2;
+  }
+
+  .category-manager-handle {
+    @apply size-9 rounded-[8px] inline-flex items-center justify-center text-gray3 cursor-grab shrink-0;
+  }
+
+  .category-manager-handle:active {
+    @apply cursor-grabbing;
+  }
+
+  .category-manager-row .form-input {
+    @apply min-w-0 flex-1 py-2;
+  }
+
+  .category-manager-row.is-untranslated .form-input {
+    @apply bg-bg2;
+  }
+
+  /* ---------- 語系編輯切換 ---------- */
+  .locale-editor-bar {
+    @apply self-stretch mb-5 flex items-center justify-start;
+  }
+
+  .locale-tabs {
+    @apply inline-flex items-center border border-gray1/80 gap-1 p-1 bg-bg2 rounded-[8px];
+  }
+
+  .locale-tab {
+    @apply relative px-3 py-1.5 rounded-[6px] inline-flex items-center text-eb3 uppercase text-gray3 transition-colors;
+  }
+
+  .locale-tab:hover {
+    @apply text-gray5;
+  }
+
+  .locale-tab.is-active {
+    @apply bg-brand2/25 border border-brand2/30 text-gray5 shadow-sm;
+  }
+
+  .locale-tab-dot {
+    @apply absolute top-1 right-1 size-1.5 rounded-full bg-brand2;
+  }
+
+  .locale-chip {
+    @apply px-1.5 py-0.5 rounded-[4px] bg-bg2 text-[11px] font-medium tracking-[0.06em] text-gray4 uppercase;
+  }
+
+  .badge-untranslated {
+    @apply ml-2 px-1.5 py-0.5 rounded-[4px] bg-bg2 text-[11px] font-medium tracking-[0.04em] text-gray3 align-middle;
+  }
+
+  .btn-danger {
+    @apply px-6 py-2.5 bg-red rounded-[8px] inline-flex items-center justify-center gap-2 text-cb3 text-white transition-colors hover:bg-red/90;
   }
 
   /* ---------- 列表列更多選單 ---------- */
@@ -385,7 +670,7 @@
     min-width: 11rem;
     padding: 0.35rem;
     background: #fff;
-    border-radius: 0.75rem;
+    border-radius: 12px;
     box-shadow: var(--shadow-card);
     outline: 1px solid var(--color-gray1);
     outline-offset: -1px;
@@ -398,7 +683,7 @@
   }
 
   .row-more-item {
-    @apply w-full px-3 py-2 rounded-lg text-left text-cb3 text-gray5 transition-colors inline-flex items-center gap-2;
+    @apply w-full px-3 py-[6px] rounded-lg text-left text-cb3 text-gray5 transition-colors inline-flex items-center gap-2;
   }
 
   .row-more-item:hover:not(:disabled):not(.is-disabled) {
@@ -423,16 +708,12 @@
     @apply bg-transparent;
   }
 
-  .review-attachment {
-    @apply self-stretch px-3 py-2.5 rounded-[5px] border border-gray1 bg-bg2 inline-flex items-center justify-between gap-3;
-  }
-
   .file-upload {
     @apply self-stretch flex flex-col items-start gap-3;
   }
 
   .file-upload-dropzone {
-    @apply self-stretch w-full px-5 py-5 rounded-[10px] border border-dashed border-gray2 bg-bg2 inline-flex items-center gap-3 text-left transition-colors hover:border-gray3 hover:bg-white;
+    @apply self-stretch w-full px-5 py-5 rounded-[8px] border border-dashed border-gray2 bg-bg2 inline-flex items-center gap-3 text-left transition-colors hover:border-gray3 hover:bg-white;
   }
 
   .file-upload-dropzone.is-dragover {
@@ -440,7 +721,7 @@
   }
 
   .file-upload-item {
-    @apply self-stretch px-3 py-3 rounded-[10px] border border-gray1 bg-white inline-flex items-center justify-between gap-3;
+    @apply self-stretch px-3 py-3 rounded-[8px] border border-gray1 bg-white inline-flex items-center justify-between gap-3 hover:bg-bg2 transition-colors;
   }
 
   .pagination-btn {
@@ -461,7 +742,7 @@
   }
 
   .filter-trigger {
-    @apply pl-4 pr-1.5 py-1.5 bg-white rounded-[10px] border border-gray1 inline-flex items-center gap-2 transition-colors;
+    @apply pl-4 pr-1.5 py-1.5 bg-white rounded-[8px] border border-gray1 inline-flex items-center gap-2 transition-colors;
   }
 
   .filter-trigger:hover,
@@ -471,10 +752,6 @@
 
   .filter-dropdown.has-filters .filter-trigger {
     @apply border-brand2;
-  }
-
-  .filter-dot {
-    @apply absolute top-1.5 right-1.5 size-1.5 rounded-full bg-brand2;
   }
 
   .filter-panel {
@@ -494,22 +771,6 @@
     display: flex;
   }
 
-  .filter-panel-header {
-    @apply self-stretch px-5 py-3 border-b border-gray1;
-  }
-
-  .filter-panel-body {
-    @apply self-stretch px-5 py-4 flex flex-col gap-4;
-  }
-
-  .filter-group {
-    @apply self-stretch flex flex-col items-start gap-2;
-  }
-
-  .filter-chips {
-    @apply self-stretch inline-flex justify-start items-start gap-2 flex-wrap content-start;
-  }
-
   .filter-chip {
     @apply px-3.5 py-1.5 rounded-[20px] outline outline-1 outline-offset-[-1px] outline-gray1 inline-flex justify-center items-center text-cb3 text-gray3 uppercase transition-colors cursor-pointer;
   }
@@ -526,18 +787,6 @@
     @apply text-white outline-brand2;
   }
 
-  .filter-panel-footer {
-    @apply self-stretch px-4 py-3 border-t border-gray1 inline-flex justify-end items-center gap-2.5;
-  }
-
-  .filter-clear {
-    @apply px-6 py-2 bg-white rounded-[10px] outline outline-1 outline-offset-[-1px] outline-gray1 text-cb3 text-gray4 transition-colors hover:text-gray5 hover:outline-gray2;
-  }
-
-  .filter-apply {
-    @apply px-6 py-2 bg-gray5 rounded-[10px] text-cb3 text-white transition-colors hover:bg-gray5/90;
-  }
-
   /* ---------- 新增商機表單 ---------- */
   .form-field {
     @apply self-stretch min-h-20 inline-flex flex-col justify-center items-start gap-1;
@@ -548,7 +797,7 @@
   }
 
   .form-input {
-    @apply self-stretch w-full px-3 py-2.5 bg-white rounded-[5px] outline outline-1 outline-offset-[-1px] outline-gray1 text-cb3 text-gray5 placeholder:text-gray3 transition-[outline-color];
+    @apply self-stretch w-full px-3 py-2.5 bg-white rounded-[8px] outline outline-1 outline-offset-[-1px] outline-gray1 text-cb3 text-gray5 placeholder:text-gray3 transition-[outline-color];
   }
 
   .form-input:hover {
@@ -589,7 +838,7 @@
   }
 
   .source-option {
-    @apply px-4 py-[10px] rounded-[5px] outline outline-1 outline-offset-[-1px] outline-gray1 inline-flex items-center gap-2.5 cursor-pointer transition-colors;
+    @apply px-4 py-[10px] rounded-[8px] outline outline-1 outline-offset-[-1px] outline-gray1 inline-flex items-center gap-2.5 cursor-pointer transition-colors;
   }
 
   .source-option:hover {
@@ -628,29 +877,41 @@
     transform: translate(-50%, -50%);
   }
 
+  .source-option.form-error {
+    outline-color: var(--color-red) !important;
+  }
+
   .form-select {
     @apply relative self-stretch;
   }
 
   .form-select-trigger {
-    @apply w-full px-3 py-2.5 bg-white rounded-[5px] outline outline-1 outline-offset-[-1px] outline-gray1 inline-flex justify-between items-center gap-2 text-left text-cb3 text-gray5 transition-[outline-color];
+    @apply appearance-none w-full px-3 py-2.5 bg-white rounded-[8px] border border-gray1 inline-flex justify-between items-center gap-2 text-left text-cb3 text-gray5 transition-[border-color];
   }
 
   .form-select-trigger:hover,
   .form-select.is-open .form-select-trigger {
-    outline-color: var(--color-gray2);
+    border-color: var(--color-gray2);
   }
 
   .form-select.is-open .form-select-trigger {
-    outline-color: var(--color-brand);
+    border-color: var(--color-brand);
+  }
+
+  .form-select-trigger:focus {
+    outline: none;
+  }
+
+  .form-select-trigger:focus-visible {
+    border-color: var(--color-brand);
   }
 
   .form-select-trigger--muted {
-    @apply bg-bg2 rounded-sm;
+    @apply bg-bg2;
   }
 
   .form-select-trigger--units {
-    @apply rounded-sm outline-gray2;
+    @apply border-gray2;
   }
 
   .form-select-trigger [data-form-select-label] {
@@ -674,7 +935,7 @@
   }
 
   .form-select.is-readonly .form-select-trigger:hover {
-    outline-color: var(--color-gray1);
+    border-color: var(--color-gray1);
   }
 
   .form-select.is-readonly .form-select-trigger svg {
@@ -685,12 +946,14 @@
     position: absolute;
     top: calc(100% + 6px);
     left: 0;
-    z-index: 60;
+    /* 高於 app-modal-host(90)，讓彈窗內的下拉不會被面板遮住；仍低於確認視窗(100) */
+    z-index: 95;
     display: none;
     box-sizing: border-box;
     width: 100%;
     min-width: 0;
     max-width: 100%;
+    max-height: min(20rem, calc(100vh - 2rem));
     padding: 0.375rem;
     background: #fff;
     border: 1px solid var(--color-gray1);
@@ -698,14 +961,56 @@
     box-shadow: 0 12px 32px rgba(47, 49, 49, 0.12);
     flex-direction: column;
     gap: 0.125rem;
+    overflow: hidden;
   }
 
   .form-select-menu.is-open {
     display: flex;
   }
 
+  .form-select-search {
+    @apply sticky top-0 z-[1] shrink-0 pb-1 bg-white;
+  }
+
+  .form-select-search-input {
+    @apply w-full px-2.5 py-2 rounded-lg outline outline-1 outline-offset-[-1px] outline-gray1 text-cb3 text-gray5 placeholder:text-gray3 bg-bg2;
+  }
+
+  .form-select-search-input:focus {
+    outline-color: var(--color-brand);
+  }
+
+  .form-select-search-input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 0.875rem;
+    height: 0.875rem;
+    cursor: pointer;
+    background-color: var(--color-gray4);
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 4l8 8M12 4l-8 8' stroke='black' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 4l8 8M12 4l-8 8' stroke='black' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    -webkit-mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+  }
+
+  .form-select-options {
+    @apply flex flex-col gap-0.5 min-h-0 overflow-y-auto;
+  }
+
+  .form-select-empty {
+    @apply px-2.5 py-3 text-cb3 text-gray3 text-center;
+  }
+
   .form-select-option {
     @apply w-full px-2.5 py-2 rounded-lg inline-flex items-center text-left text-cb3 text-gray5 transition-colors whitespace-normal break-words;
+  }
+
+  .form-select-option[hidden] {
+    display: none !important;
   }
 
   .form-select-option:hover,
@@ -713,12 +1018,8 @@
     background: var(--color-bg2);
   }
 
-  .btn-add {
-    @apply px-6 py-2.5 bg-white rounded-[10px] border border-dashed border-gray2 inline-flex justify-center items-center gap-2 text-cb3 text-gray4 transition-colors hover:text-gray5 hover:border-gray3;
-  }
-
   .btn-remove-product {
-    @apply size-10 shrink-0 inline-flex items-center justify-center rounded-[5px] text-gray3 transition-colors hover:text-red hover:bg-red/5;
+    @apply size-10 shrink-0 inline-flex items-center justify-center rounded-[8px] text-gray3 transition-colors hover:text-red hover:bg-red/5;
   }
 
   [data-remove-product][hidden] {
@@ -727,6 +1028,7 @@
 
   .form-error {
     outline-color: var(--color-red) !important;
+    border-color: var(--color-red) !important;
   }
 
   /* ---------- 審核頁：左內容／右審核、狀態標籤 ---------- */
@@ -746,7 +1048,7 @@
   }
 
   .review-panel {
-    @apply self-stretch p-6 bg-white rounded-[10px] shadow-card flex flex-col items-start gap-5;
+    @apply self-stretch p-6 bg-white rounded-[8px] shadow-card flex flex-col items-start gap-5;
   }
 
   @media (min-width: 1200px) {
@@ -757,7 +1059,7 @@
   }
 
   .review-result-card {
-    @apply self-stretch flex flex-col gap-1 rounded-[10px] border border-gray1 bg-bg2 p-4;
+    @apply self-stretch flex flex-col gap-1 rounded-[8px] border border-gray1 bg-bg2 p-4;
   }
 
   .review-result-row {
@@ -794,7 +1096,7 @@
   }
 
   .status-pill {
-    @apply shrink-0 px-2.5 py-1 rounded-lg bg-bg2 border border-gray1 text-[12px] font-medium tracking-[0.06em] leading-5;
+    @apply shrink-0 px-2.5 py-1 rounded-[5px] bg-bg2 border border-gray1 text-[12px] font-medium tracking-[0.06em] leading-5;
   }
 
   .status-pill.status-reviewing {
@@ -830,11 +1132,103 @@
     @apply text-green;
   }
 
-  /* ---------- 教育訓練：二階層課程目錄 + 圖文內容 ---------- */
-  .training-mobile-toggle {
-    @apply w-full px-4 py-3 bg-white rounded-2xl shadow-[0px_0px_40px_0px_rgba(0,0,0,0.04)] inline-flex items-center gap-2.5 text-left text-cb2 text-gray5;
+  .status-pill.status-open {
+    @apply text-red;
   }
 
+  .status-pill.status-progress {
+    @apply text-brand2;
+  }
+
+  .status-pill.status-resolved {
+    @apply text-green;
+  }
+
+  .level-pill {
+    @apply shrink-0 px-2 py-0.5 rounded-[5px] border border-gray1 bg-white text-[11px] font-medium tracking-[0.04em] leading-4 text-gray4;
+  }
+
+  .level-pill.level-none {
+    @apply border-transparent bg-transparent text-gray3 px-0;
+  }
+
+  .level-pill.level-standard {
+    @apply text-gray5;
+  }
+
+  .level-pill.level-gold {
+    @apply text-brand2 border-brand2/30;
+  }
+
+  .level-pill.level-platinum {
+    @apply text-gray5 border-gray3;
+  }
+
+  .level-pill.level-diamond {
+    @apply text-green border-green/30;
+  }
+
+  /* ---------- 技術支援：FAQ 摺疊 ---------- */
+  .faq-item {
+    @apply self-stretch border-b border-gray1;
+  }
+
+  .faq-heading {
+    @apply w-full inline-flex items-stretch transition-colors;
+  }
+
+  .faq-item:hover .faq-heading,
+  .faq-item.is-open .faq-heading {
+    @apply bg-bg2;
+  }
+
+  .faq-trigger {
+    @apply w-full min-w-0 px-4 py-3 inline-flex items-center gap-3 text-left;
+  }
+
+  .faq-admin {
+    @apply shrink-0 pr-2 inline-flex items-center;
+  }
+
+  .faq-plus {
+    @apply size-8 text-gray4 inline-flex items-center justify-center shrink-0 transition-colors;
+  }
+
+  .faq-item.is-open .faq-plus {
+    @apply text-gray4;
+  }
+
+  .faq-plus svg {
+    @apply w-4 h-4 transition-transform duration-200;
+  }
+
+  .faq-item.is-open .faq-plus svg {
+    transform: rotate(45deg);
+  }
+
+  .faq-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.28s ease;
+  }
+
+  .faq-item.is-open .faq-panel {
+    grid-template-rows: 1fr;
+  }
+
+  .faq-panel-clip {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq-panel,
+    .faq-plus svg {
+      transition: none;
+    }
+  }
+
+  /* ---------- 教育訓練：二階層課程目錄 + 圖文內容 ---------- */
   .training-tree-panel {
     @apply mt-2 lg:mt-0;
   }
@@ -915,9 +1309,42 @@
   }
 
   .training-tree-children-inner {
-    @apply self-stretch px-5 pt-3 pb-5 bg-white flex flex-col items-start gap-2;
+    @apply self-stretch px-5 pt-3 pb-5 bg-white flex flex-col items-stretch gap-1;
     list-style: none;
     margin: 0;
+  }
+
+  .training-article-row {
+    @apply self-stretch inline-flex items-center gap-1 min-w-0;
+  }
+
+  .training-article-row.is-dragging {
+    @apply opacity-40;
+  }
+
+  .training-article-row.is-drop-target {
+    @apply rounded-lg bg-bg2;
+  }
+
+  .training-article-handle {
+    @apply size-8 shrink-0 rounded-[8px] inline-flex items-center justify-center text-gray3 cursor-grab;
+    transition: color 0.2s ease, background-color 0.2s ease;
+  }
+
+  .training-article-handle:hover {
+    @apply text-gray5 bg-gray1/60;
+  }
+
+  .training-article-handle:active {
+    @apply cursor-grabbing;
+  }
+
+  .training-article-link {
+    @apply min-w-0 flex-1;
+  }
+
+  .training-tree-child .training-article-handle {
+    @apply -ml-1;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -926,7 +1353,8 @@
     .training-tree-toggle,
     .training-tree-caret,
     .training-tree-children,
-    .training-tree-link {
+    .training-tree-link,
+    .training-article-handle {
       transition: none;
     }
   }
@@ -949,35 +1377,112 @@
     @apply text-gray5;
   }
 
-  .training-article {
-    @apply bg-white rounded-2xl shadow-card overflow-hidden flex flex-col min-w-0;
+  /* ---------- 共用富文本（FAQ、課程內容） ---------- */
+  .richtext {
+    @apply text-[15px] font-medium leading-[1.8] tracking-wider text-gray4;
   }
 
-  .training-cover {
-    @apply w-full aspect-[2/1] object-cover bg-bg block;
+  .richtext > *:first-child {
+    margin-top: 0;
   }
 
-  .training-chip {
-    @apply px-2.5 py-1 rounded-lg bg-bg text-cb3 text-gray4 inline-flex items-center;
+  .richtext > *:last-child {
+    margin-bottom: 0;
   }
 
-  .training-prose h3 {
-    @apply text-ch5 text-gray5 mt-8 mb-3;
+  .richtext h1,
+  .richtext h2,
+  .richtext h3,
+  .richtext h4 {
+    @apply text-gray5 mt-8 mb-3;
   }
 
-  .training-prose p {
-    @apply text-cb2 text-gray4 mb-4;
+  .richtext h1 {
+    @apply text-ch4;
   }
 
-  .training-prose ul {
-    @apply flex flex-col gap-2 mb-5 pl-0;
+  .richtext h2 {
+    @apply text-ch5;
   }
 
-  .training-prose ul li {
-    @apply relative pl-5 text-cb2 text-gray4;
+  .richtext h3 {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 1.5;
+    letter-spacing: 0.06em;
   }
 
-  .training-prose ul li::before {
+  .richtext h4 {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1.5;
+    letter-spacing: 0.06em;
+  }
+
+  .richtext p {
+    @apply mb-3;
+  }
+
+  .richtext a {
+    @apply text-gray5 underline underline-offset-2;
+  }
+
+  .richtext code {
+    @apply inline-block px-2 py-1 rounded-md bg-bg border border-gray1 text-cb3 text-gray5 font-mono;
+  }
+
+  .richtext strong,
+  .richtext b {
+    @apply font-bold text-gray5;
+  }
+
+  .richtext em,
+  .richtext i {
+    font-style: italic;
+  }
+
+  .richtext i[data-lucide],
+  .richtext svg.lucide {
+    font-style: normal;
+    @apply inline-block shrink-0;
+  }
+
+  .richtext img {
+    @apply max-w-full h-auto rounded-xl my-5;
+  }
+
+  .richtext figure {
+    @apply my-6;
+  }
+
+  .richtext figcaption {
+    @apply mt-2 text-cb3 text-gray3;
+  }
+
+  .richtext hr {
+    @apply my-8 border-0 border-t border-gray1;
+  }
+
+  .richtext ul,
+  .richtext ol {
+    @apply flex flex-col mb-3;
+  }
+
+  .richtext ul {
+    @apply pl-0 list-none;
+  }
+
+  .richtext ol {
+    @apply pl-6 list-decimal;
+  }
+
+  .richtext ul li {
+    @apply relative pl-5;
+  }
+
+  .richtext ul li::before {
     content: '';
     position: absolute;
     left: 0;
@@ -988,74 +1493,94 @@
     background: var(--color-brand2);
   }
 
-  .training-figure {
-    @apply my-6 rounded-xl overflow-hidden border border-gray1 bg-bg;
+  .richtext ol li {
+    @apply pl-1;
   }
 
-  .training-figure img {
-    @apply w-full block bg-bg2;
+  .richtext ol li::marker {
+    color: var(--color-gray4);
+    font-family: var(--font-en);
+    font-weight: 600;
   }
 
-  .training-figure figcaption {
-    @apply px-4 py-3 text-cb3 text-gray3 bg-white border-t border-gray1;
+  .richtext blockquote {
+    @apply my-6 px-5 py-4 rounded-xl bg-bg border border-gray1 text-cb2 text-gray5;
   }
 
-  .training-steps {
-    @apply my-6 flex flex-col gap-0;
-    counter-reset: training-step;
+  .richtext table {
+    @apply w-full mb-5 text-cb3 text-gray5 border-collapse;
   }
 
-  .training-step {
-    @apply relative flex gap-4 py-4;
-    counter-increment: training-step;
+  .richtext th,
+  .richtext td {
+    @apply px-3 py-2 border border-gray1 text-left align-top;
   }
 
-  .training-step:not(:last-child) {
-    @apply border-b border-gray1;
+  .richtext th {
+    @apply bg-bg font-medium text-gray4;
   }
 
-  .training-step-index {
-    @apply size-8 rounded-full bg-bg text-eb3 text-gray5 inline-flex items-center justify-center shrink-0;
+  /* ---------- 認證流程（登入／註冊／忘記密碼／重設密碼） ---------- */
+  .auth-page {
+    @apply min-h-screen w-full px-4 py-16 inline-flex flex-col justify-center items-center gap-8;
   }
 
-  .training-prose .training-step h3 {
-    @apply text-cb1 text-gray5 mt-0 mb-1;
+  .auth-brand {
+    @apply flex flex-col justify-center items-center gap-3;
   }
 
-  .training-step p {
-    @apply text-cb3 text-gray4 mb-0;
+  .auth-checkbox {
+    @apply size-4 shrink-0 appearance-none bg-white rounded-sm border border-gray2 cursor-pointer transition-colors;
   }
 
-  .training-callout {
-    @apply my-6 px-5 py-4 rounded-xl bg-bg border border-gray1 flex items-start gap-3;
+  .auth-checkbox:hover {
+    border-color: var(--color-gray3);
   }
 
-  .training-callout-bar {
-    @apply w-[3px] self-stretch rounded-full bg-brand shrink-0;
+  .auth-checkbox:checked {
+    @apply bg-brand2 border-brand2;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M3.5 8.5L6.5 11.5L12.5 4.5' stroke='white' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
   }
 
-  .training-quote {
-    @apply my-6 px-6 py-5 rounded-xl bg-bg2 border border-gray1;
+  .auth-checkbox:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
   }
 
-  .training-quote p {
-    @apply text-cb2 text-gray5 mb-2;
+  .auth-link {
+    @apply text-cb3 text-brand2 transition-colors hover:text-brand2/80;
   }
 
-  .training-quote cite {
-    @apply text-cb3 text-gray3 not-italic;
+  .auth-agree {
+    @apply self-stretch w-full px-4 py-2.5 bg-bg2 rounded-full outline outline-1 outline-offset-[-1px] outline-gray1 inline-flex items-center gap-2 cursor-pointer select-none;
   }
 
-  .training-pager {
-    @apply pt-6 border-t border-gray1 flex flex-col md:flex-row md:justify-between gap-3;
+  .auth-agree:has(.auth-checkbox:checked) {
+    outline-color: var(--color-brand2);
   }
 
-  .training-pager-btn {
-    @apply w-full px-4 py-3 rounded-xl border border-gray1 bg-white inline-flex flex-col items-start gap-1 text-left transition-colors hover:border-gray2;
+  .auth-agree:has(.auth-checkbox:focus-visible) {
+    outline-color: var(--color-brand);
   }
 
-  .training-pager-btn:hover {
-    @apply bg-bg2;
+  .auth-divider {
+    @apply self-stretch relative flex items-center justify-center;
+  }
+
+  .auth-divider::before {
+    content: '';
+    @apply absolute inset-x-0 top-1/2 h-px bg-gray1;
+  }
+
+  .auth-divider span {
+    @apply relative z-[1] px-2.5 bg-white text-[12px] font-medium tracking-[0.06em] leading-5 text-gray3;
+  }
+
+  .auth-footer {
+    @apply pt-2 flex flex-col items-center gap-2;
   }
 }
 
@@ -1082,6 +1607,15 @@
     font-weight: 500;
     font-size: 14px;
     line-height: 1.7;
+    letter-spacing: 0.06em;
+
+  }
+
+  .text-cb4 {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 1.6;
     letter-spacing: 0.06em;
   }
 

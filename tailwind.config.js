@@ -29,7 +29,7 @@ export default {
                 bg2: 'rgb(from var(--color-bg2) r g b / <alpha-value>)',
             },
             fontFamily: {
-                sans: ['Noto Sans TC', 'sans-serif'],
+                sans: ['Noto Sans TC','Rajdhani','sans-serif'],
                 en: ['Rajdhani', 'Noto Sans TC', 'sans-serif'],
             },
             boxShadow: {

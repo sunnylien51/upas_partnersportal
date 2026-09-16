@@ -25,5 +25,8 @@
             'roles' => $page->roles,
         ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
     </script>
+    <script type="application/json" id="partners-seed-data">
+        {!! json_encode($page->partners ?? [], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
+    </script>
 </body>
 </html>

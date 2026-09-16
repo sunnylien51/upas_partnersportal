@@ -40,6 +40,39 @@ if (sidebarOverlay) {
     sidebarOverlay.addEventListener('click', closeAppSidebar);
 }
 
+const userMenu = document.querySelector('[data-user-menu]');
+const userMenuTrigger = userMenu?.querySelector('[data-user-menu-trigger]');
+
+function closeUserMenu() {
+    if (!userMenu) {
+        return;
+    }
+
+    userMenu.classList.remove('is-open');
+    userMenuTrigger?.setAttribute('aria-expanded', 'false');
+}
+
+if (userMenu && userMenuTrigger) {
+    userMenuTrigger.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const open = !userMenu.classList.contains('is-open');
+        userMenu.classList.toggle('is-open', open);
+        userMenuTrigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+
+    document.addEventListener('click', (event) => {
+        if (!userMenu.contains(event.target)) {
+            closeUserMenu();
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            closeUserMenu();
+        }
+    });
+}
+
 window.addEventListener('resize', () => {
     if (window.innerWidth >= 800) {
         if (sidebarOverlay) {
@@ -52,13 +85,50 @@ window.addEventListener('resize', () => {
     }
 });
 
-document.querySelectorAll('[data-locale]').forEach((button) => {
-    button.addEventListener('click', function () {
-        document.querySelectorAll('[data-locale]').forEach((item) => {
-            item.classList.toggle('is-active', item === button);
-        });
+/* ---------- 預覽語系：內容顯示語言（介面文字目前仍為中文） ---------- */
+const LOCALE_STORAGE_KEY = 'upas-preview-locale';
+
+function localeButtons() {
+    return [...document.querySelectorAll('[data-locale]')];
+}
+
+function availableLocales() {
+    const list = localeButtons().map((button) => button.dataset.locale).filter(Boolean);
+    return list.length ? list : ['TW'];
+}
+
+function getPreviewLocale() {
+    const list = availableLocales();
+    const stored = localStorage.getItem(LOCALE_STORAGE_KEY);
+    return stored && list.includes(stored) ? stored : list[0];
+}
+
+function applyPreviewLocale(locale, { persist = true } = {}) {
+    const list = availableLocales();
+    const next = list.includes(locale) ? locale : list[0];
+
+    if (persist) {
+        localStorage.setItem(LOCALE_STORAGE_KEY, next);
+    }
+
+    document.body.dataset.previewLocale = next;
+
+    localeButtons().forEach((button) => {
+        const active = button.dataset.locale === next;
+        button.classList.toggle('is-active', active);
+        button.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+
+    document.dispatchEvent(new CustomEvent('upas:localechange', { detail: { locale: next } }));
+}
+
+localeButtons().forEach((button) => {
+    button.addEventListener('click', () => {
+        applyPreviewLocale(button.dataset.locale);
     });
 });
+
+applyPreviewLocale(getPreviewLocale(), { persist: false });
 
 function refreshIcons(scope) {
     if (typeof lucide === 'undefined') {
@@ -288,10 +358,11 @@ function applyOpportunityFilters() {
     let visibleCount = 0;
 
     rows.forEach((row) => {
+        const visibilityOk = row.dataset.visibilityAllowed !== '0';
         const dealerOk = appliedFilters.dealer === 'all' || row.dataset.dealer === appliedFilters.dealer;
         const statusOk = appliedFilters.status === 'all' || row.dataset.status === appliedFilters.status;
         const searchOk = query.length === 0 || (row.dataset.search || '').toLowerCase().includes(query);
-        const visible = dealerOk && statusOk && searchOk;
+        const visible = visibilityOk && dealerOk && statusOk && searchOk;
 
         row.hidden = !visible;
         if (visible) {
@@ -425,7 +496,7 @@ if (filterDropdown && filterTrigger && filterPanel) {
     }
 }
 
-/* ---------- 預覽身分：總管理者 / 一般使用者 ---------- */
+/* ---------- 預覽身分權限：總管理者 / 一般使用者 ---------- */
 const ROLE_STORAGE_KEY = 'upas-preview-role';
 const rolesConfigEl = document.getElementById('app-roles-config');
 let rolesConfig = {
@@ -443,11 +514,30 @@ if (rolesConfigEl) {
 
 function getPreviewRole() {
     const stored = localStorage.getItem(ROLE_STORAGE_KEY);
-    if (stored && rolesConfig.roles[stored]) {
-        return stored;
+    const legacyMap = { user: 'dealer_tw' };
+    const resolved = legacyMap[stored] || stored;
+    if (resolved && rolesConfig.roles[resolved]) {
+        if (resolved !== stored) {
+            localStorage.setItem(ROLE_STORAGE_KEY, resolved);
+        }
+        return resolved;
     }
 
     return rolesConfig.defaultRole || 'admin';
+}
+
+function getPreviewRoleConfig() {
+    return rolesConfig.roles[getPreviewRole()] || null;
+}
+
+function getPreviewActor() {
+    const role = getPreviewRoleConfig() || {};
+    return {
+        roleKey: getPreviewRole(),
+        label: role.label || '',
+        identity: role.identity || getPreviewRole(),
+        partnerId: String(role.partnerId || '').trim(),
+    };
 }
 
 function roleCan(capability) {
@@ -477,7 +567,11 @@ function applyPreviewRole(roleKey) {
     });
 
     document.querySelectorAll('[data-role-label]').forEach((label) => {
-        label.textContent = role.label;
+        if (label instanceof HTMLInputElement || label instanceof HTMLTextAreaElement) {
+            label.value = role.label;
+        } else {
+            label.textContent = role.label;
+        }
     });
 
     document.querySelectorAll('[data-requires]').forEach((element) => {
@@ -522,6 +616,8 @@ function applyPreviewRole(roleKey) {
     if (typeof window.syncOpportunityReviewUi === 'function') {
         window.syncOpportunityReviewUi();
     }
+
+    document.dispatchEvent(new CustomEvent('upas:rolechange', { detail: { role: roleKey } }));
 }
 
 document.querySelectorAll('[data-role-switch]').forEach((button) => {
@@ -531,6 +627,11 @@ document.querySelectorAll('[data-role-switch]').forEach((button) => {
 });
 
 applyPreviewRole(getPreviewRole());
+
+document.querySelector('[data-account-form]')?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    showAppToast('已儲存用戶資料（示意）');
+});
 
 document.querySelectorAll('[data-search-input]').forEach((input) => {
     const clearBtn = input.parentElement.querySelector('[data-search-clear]');
@@ -628,6 +729,7 @@ function setFormSelectValue(select, option) {
 
     if (hidden) {
         hidden.value = value;
+        hidden.dispatchEvent(new Event('change', { bubbles: true }));
     }
 
     if (labelEl) {
@@ -647,6 +749,90 @@ function setFormSelectValue(select, option) {
     }
 }
 
+function ensureFormSelectSearch(select, menu) {
+    if (!select.hasAttribute('data-searchable')) {
+        return null;
+    }
+
+    let searchInput = menu.querySelector('[data-form-select-search]');
+    if (searchInput) {
+        return searchInput;
+    }
+
+    let optionsWrap = menu.querySelector('[data-form-select-options]');
+    if (!optionsWrap) {
+        optionsWrap = document.createElement('div');
+        optionsWrap.className = 'form-select-options';
+        optionsWrap.setAttribute('data-form-select-options', '');
+
+        const options = Array.from(menu.querySelectorAll('[data-form-select-option]'));
+        options.forEach((option) => {
+            optionsWrap.appendChild(option);
+        });
+        menu.appendChild(optionsWrap);
+    }
+
+    const searchWrap = document.createElement('div');
+    searchWrap.className = 'form-select-search';
+    searchWrap.innerHTML = '<input type="search" class="form-select-search-input" data-form-select-search placeholder="搜尋國家／地區" autocomplete="off">';
+    menu.insertBefore(searchWrap, optionsWrap);
+
+    const empty = document.createElement('div');
+    empty.className = 'form-select-empty';
+    empty.setAttribute('data-form-select-empty', '');
+    empty.hidden = true;
+    empty.textContent = '找不到符合的選項';
+    optionsWrap.appendChild(empty);
+
+    searchInput = searchWrap.querySelector('[data-form-select-search]');
+
+    const filterOptions = () => {
+        const query = (searchInput.value || '').trim().toLowerCase();
+        let visibleCount = 0;
+
+        optionsWrap.querySelectorAll('[data-form-select-option]').forEach((option) => {
+            const label = (option.dataset.label || option.textContent || '').toLowerCase();
+            const value = (option.dataset.value || '').toLowerCase();
+            const code = (option.dataset.code || '').toLowerCase();
+            const matched = !query || label.includes(query) || value.includes(query) || code.includes(query);
+            option.hidden = !matched;
+            if (matched) {
+                visibleCount += 1;
+            }
+        });
+
+        empty.hidden = visibleCount > 0;
+    };
+
+    searchInput.addEventListener('input', filterOptions);
+    searchInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            closeFormSelects();
+            select.querySelector('[data-form-select-trigger]')?.focus();
+            return;
+        }
+
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            const firstVisible = optionsWrap.querySelector('[data-form-select-option]:not([hidden])');
+            if (firstVisible) {
+                setFormSelectValue(select, firstVisible);
+                closeFormSelects();
+            }
+        }
+    });
+
+    searchInput.addEventListener('click', (event) => {
+        event.stopPropagation();
+    });
+
+    select._formSelectFilter = filterOptions;
+    select._formSelectSearch = searchInput;
+
+    return searchInput;
+}
+
 function bindFormSelect(select) {
     if (select.dataset.bound === 'true') {
         return;
@@ -662,6 +848,7 @@ function bindFormSelect(select) {
     select.dataset.bound = 'true';
     menu._formOwner = select;
     select._formMenu = menu;
+    ensureFormSelectSearch(select, menu);
 
     trigger.addEventListener('click', (event) => {
         event.preventDefault();
@@ -686,6 +873,16 @@ function bindFormSelect(select) {
         select.classList.add('is-open');
         trigger.setAttribute('aria-expanded', 'true');
         positionFormMenu(trigger, menu);
+
+        if (select._formSelectSearch) {
+            select._formSelectSearch.value = '';
+            if (typeof select._formSelectFilter === 'function') {
+                select._formSelectFilter();
+            }
+            requestAnimationFrame(() => {
+                select._formSelectSearch.focus();
+            });
+        }
     });
 
     menu.addEventListener('click', (event) => {
@@ -805,24 +1002,97 @@ function showAppToast(message, tone = 'default') {
     }, 2600);
 }
 
+function showAppConfirm({
+    title = '確認操作',
+    message = '',
+    confirmLabel = '確認',
+    cancelLabel = '取消',
+    danger = false,
+} = {}) {
+    return new Promise((resolve) => {
+        document.querySelector('[data-app-confirm-host]')?.remove();
+
+        const host = document.createElement('div');
+        host.className = 'app-confirm-host';
+        host.setAttribute('data-app-confirm-host', '');
+        host.setAttribute('role', 'dialog');
+        host.setAttribute('aria-modal', 'true');
+        host.setAttribute('aria-labelledby', 'app-confirm-title');
+
+        host.innerHTML = `
+            <div class="app-confirm-backdrop" data-app-confirm-dismiss></div>
+            <div class="app-confirm-panel">
+                <div class="flex flex-col gap-1.5">
+                    <h3 id="app-confirm-title" class="app-confirm-title">${title}</h3>
+                    ${message ? `<p class="app-confirm-message">${message}</p>` : ''}
+                </div>
+                <div class="app-confirm-actions">
+                    <button type="button" class="btn-secondary" data-app-confirm-dismiss>${cancelLabel}</button>
+                    <button type="button" class="${danger ? 'btn-danger' : 'btn-primary'}" data-app-confirm-ok>${confirmLabel}</button>
+                </div>
+            </div>
+        `;
+
+        const finish = (result) => {
+            host.classList.remove('is-open');
+            window.setTimeout(() => host.remove(), 200);
+            document.removeEventListener('keydown', onKeyDown);
+            resolve(result);
+        };
+
+        const onKeyDown = (event) => {
+            if (event.key === 'Escape') {
+                event.preventDefault();
+                finish(false);
+            }
+        };
+
+        host.addEventListener('click', (event) => {
+            if (event.target.closest('[data-app-confirm-ok]')) {
+                finish(true);
+                return;
+            }
+            if (event.target.closest('[data-app-confirm-dismiss]')) {
+                finish(false);
+            }
+        });
+
+        document.addEventListener('keydown', onKeyDown);
+        document.body.appendChild(host);
+        requestAnimationFrame(() => {
+            host.classList.add('is-open');
+            host.querySelector('[data-app-confirm-ok]')?.focus();
+        });
+    });
+}
+
 function bindResourceCatalog(root) {
-    if (!root) {
+    if (!root || root.dataset.catalogBound === 'true') {
         return;
     }
 
+    root.dataset.catalogBound = 'true';
+
     const pageSize = Number(root.dataset.pageSize || 8);
-    const tabs = [...root.querySelectorAll('[data-catalog-tab]')];
-    const rows = [...root.querySelectorAll('[data-catalog-row]')];
     const empty = root.querySelector('[data-catalog-empty]');
     const summary = root.querySelector('[data-catalog-summary]');
     const pagination = root.querySelector('[data-catalog-pagination]');
     const search = root.querySelector('[data-catalog-search]');
     const searchClear = search?.closest('label')?.querySelector('[data-search-clear]');
+    const tablist = root.querySelector('[data-catalog-tabs]') || root.querySelector('[role="tablist"]');
     let page = 1;
+
+    function tabs() {
+        return [...root.querySelectorAll('[data-catalog-tab]')];
+    }
+
+    function rows() {
+        return [...root.querySelectorAll('[data-catalog-row]')];
+    }
 
     function activeCategory() {
         return root.querySelector('[data-catalog-tab].is-active')?.dataset.catalogTab
-            || tabs[0]?.dataset.catalogTab
+            || tabs()[0]?.dataset.catalogTab
             || '';
     }
 
@@ -830,7 +1100,7 @@ function bindResourceCatalog(root) {
         const category = activeCategory();
         const query = (search?.value || '').trim().toLowerCase();
 
-        return rows.filter((row) => {
+        return rows().filter((row) => {
             const categoryOk = !category || row.dataset.category === category;
             const haystack = (row.dataset.search || row.textContent || '').toLowerCase();
             const searchOk = !query || haystack.includes(query);
@@ -909,7 +1179,7 @@ function bindResourceCatalog(root) {
         const start = total === 0 ? 0 : (page - 1) * pageSize;
         const end = start + pageSize;
 
-        rows.forEach((row) => {
+        rows().forEach((row) => {
             row.hidden = true;
         });
         matched.forEach((row, index) => {
@@ -929,16 +1199,19 @@ function bindResourceCatalog(root) {
         renderPagination(page, pages);
     }
 
-    tabs.forEach((tab) => {
-        tab.addEventListener('click', () => {
-            tabs.forEach((item) => {
-                const active = item === tab;
-                item.classList.toggle('is-active', active);
-                item.setAttribute('aria-selected', active ? 'true' : 'false');
-            });
-            page = 1;
-            render();
+    tablist?.addEventListener('click', (event) => {
+        const tab = event.target.closest('[data-catalog-tab]');
+        if (!tab || !root.contains(tab)) {
+            return;
+        }
+
+        tabs().forEach((item) => {
+            const active = item === tab;
+            item.classList.toggle('is-active', active);
+            item.setAttribute('aria-selected', active ? 'true' : 'false');
         });
+        page = 1;
+        render();
     });
 
     if (search) {
@@ -977,31 +1250,62 @@ function bindResourceCatalog(root) {
         showAppToast(kind === 'link' ? '已開啟連結（示意）' : '已開始下載（示意）');
     });
 
+    root._catalogGoToPage = (nextPage) => {
+        page = nextPage;
+        render();
+    };
+    root._catalogRender = render;
     render();
+}
+
+function refreshResourceCatalog(root) {
+    const targets = root
+        ? [root]
+        : [...document.querySelectorAll('[data-resource-catalog]')];
+
+    targets.forEach((el) => {
+        if (typeof el._catalogRender === 'function') {
+            el._catalogRender();
+        } else {
+            bindResourceCatalog(el);
+        }
+    });
 }
 
 document.querySelectorAll('[data-resource-catalog]').forEach(bindResourceCatalog);
 
 function bindTrainingCenter(root) {
-    const groups = [...root.querySelectorAll('[data-training-group]')];
-    const links = [...root.querySelectorAll('[data-training-link]')];
-    const panels = [...root.querySelectorAll('[data-training-panel]')];
+    if (!root || root.dataset.trainingBound === 'true') {
+        return;
+    }
+    root.dataset.trainingBound = 'true';
+
     const crumb = document.querySelector('[data-training-crumb]');
     const mobileLabel = root.querySelector('[data-training-mobile-label]');
     const mobileToggle = root.querySelector('[data-training-mobile-toggle]');
     const treePanel = root.querySelector('[data-training-tree-panel]');
     const articleShell = root.querySelector('[data-training-article]');
-    const prevBtn = root.querySelector('[data-training-prev]');
-    const nextBtn = root.querySelector('[data-training-next]');
-    const prevLabel = prevBtn?.querySelector('[data-training-nav-label]');
-    const nextLabel = nextBtn?.querySelector('[data-training-nav-label]');
 
-    const articles = links.map((link) => ({
-        id: link.dataset.trainingLink,
-        group: link.closest('[data-training-group]'),
-        label: link.textContent.trim(),
-        link,
-    }));
+    function groups() {
+        return [...root.querySelectorAll('[data-training-group]')];
+    }
+
+    function links() {
+        return [...root.querySelectorAll('[data-training-link]')];
+    }
+
+    function panels() {
+        return [...root.querySelectorAll('[data-training-panel]')];
+    }
+
+    function articleEntries() {
+        return links().map((link) => ({
+            id: link.dataset.trainingLink,
+            group: link.closest('[data-training-group]'),
+            label: link.textContent.trim(),
+            link,
+        }));
+    }
 
     function syncGroupClip(group, open) {
         const clip = group.querySelector('.training-tree-children-clip');
@@ -1011,7 +1315,7 @@ function bindTrainingCenter(root) {
     }
 
     function setOpenGroup(groupId) {
-        groups.forEach((group) => {
+        groups().forEach((group) => {
             const open = group.dataset.trainingGroup === groupId;
             group.classList.toggle('is-open', open);
             syncGroupClip(group, open);
@@ -1022,43 +1326,19 @@ function bindTrainingCenter(root) {
         });
     }
 
-    function updatePager(index) {
-        const prev = articles[index - 1];
-        const next = articles[index + 1];
-
-        if (prevBtn) {
-            prevBtn.hidden = !prev;
-            if (prev) {
-                prevBtn.dataset.target = prev.id;
-                if (prevLabel) {
-                    prevLabel.textContent = prev.label;
-                }
-            }
-        }
-
-        if (nextBtn) {
-            nextBtn.hidden = !next;
-            if (next) {
-                nextBtn.dataset.target = next.id;
-                if (nextLabel) {
-                    nextLabel.textContent = next.label;
-                }
-            }
-        }
-    }
-
     function closeMobileTree() {
         treePanel?.classList.remove('is-mobile-open');
         mobileToggle?.setAttribute('aria-expanded', 'false');
     }
 
     function showArticle(id, { updateHash = true, scroll = false } = {}) {
+        const articles = articleEntries();
         const article = articles.find((item) => item.id === id) || articles[0];
         if (!article) {
             return;
         }
 
-        links.forEach((link) => {
+        links().forEach((link) => {
             const active = link === article.link;
             link.classList.toggle('is-active', active);
             if (active) {
@@ -1068,7 +1348,7 @@ function bindTrainingCenter(root) {
             }
         });
 
-        panels.forEach((panel) => {
+        panels().forEach((panel) => {
             panel.hidden = panel.dataset.trainingPanel !== article.id;
         });
 
@@ -1084,7 +1364,6 @@ function bindTrainingCenter(root) {
             mobileLabel.textContent = article.label;
         }
 
-        updatePager(articles.indexOf(article));
         closeMobileTree();
 
         if (updateHash) {
@@ -1096,9 +1375,15 @@ function bindTrainingCenter(root) {
         }
     }
 
-    groups.forEach((group) => {
-        const toggle = group.querySelector('[data-training-group-toggle]');
-        toggle?.addEventListener('click', () => {
+    root._trainingShowArticle = showArticle;
+
+    root.addEventListener('click', (event) => {
+        const toggle = event.target.closest('[data-training-group-toggle]');
+        if (toggle && root.contains(toggle)) {
+            const group = toggle.closest('[data-training-group]');
+            if (!group) {
+                return;
+            }
             const alreadyOpen = group.classList.contains('is-open');
             if (alreadyOpen) {
                 group.classList.remove('is-open');
@@ -1106,16 +1391,15 @@ function bindTrainingCenter(root) {
                 toggle.setAttribute('aria-expanded', 'false');
                 return;
             }
-
             setOpenGroup(group.dataset.trainingGroup);
-        });
-    });
+            return;
+        }
 
-    links.forEach((link) => {
-        link.addEventListener('click', (event) => {
+        const link = event.target.closest('[data-training-link]');
+        if (link && root.contains(link)) {
             event.preventDefault();
             showArticle(link.dataset.trainingLink, { scroll: true });
-        });
+        }
     });
 
     mobileToggle?.addEventListener('click', () => {
@@ -1123,20 +1407,8 @@ function bindTrainingCenter(root) {
         mobileToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
 
-    prevBtn?.addEventListener('click', () => {
-        if (prevBtn.dataset.target) {
-            showArticle(prevBtn.dataset.target, { scroll: true });
-        }
-    });
-
-    nextBtn?.addEventListener('click', () => {
-        if (nextBtn.dataset.target) {
-            showArticle(nextBtn.dataset.target, { scroll: true });
-        }
-    });
-
     const initial = (location.hash || '').replace('#', '');
-    showArticle(initial || articles[0]?.id, { updateHash: Boolean(initial) });
+    showArticle(initial || articleEntries()[0]?.id, { updateHash: Boolean(initial) });
 
     window.addEventListener('hashchange', () => {
         const id = location.hash.replace('#', '');
@@ -1151,7 +1423,12 @@ document.querySelectorAll('[data-training-center]').forEach(bindTrainingCenter);
 window.upasApp = {
     roleCan,
     getPreviewRole,
+    getPreviewRoleConfig,
+    getPreviewActor,
     applyPreviewRole,
+    getPreviewLocale,
+    applyPreviewLocale,
+    availableLocales,
     refreshIcons,
     closeFormSelects,
     closeStatusSelects,
@@ -1163,7 +1440,17 @@ window.upasApp = {
     syncProductRowRemoveButtons,
     applyOpportunityFilters,
     showAppToast,
+    showAppConfirm,
+    bindResourceCatalog,
+    refreshResourceCatalog,
+    bindTrainingCenter,
 };
 
 import('./opportunity-flow.js');
+import('./support-center.js');
+import('./faq-admin.js');
+import('./download-admin.js');
+import('./partner-list.js');
+import('./catalog-admin.js');
+import('./training-admin.js');
 

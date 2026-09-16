@@ -18,14 +18,14 @@ title: 商機中心
 @endphp
 
 @section('body')
-    <div class="flex-1 flex flex-col px-4 md:px-12">
+    <div class="page-body">
         <div class="content-wrapper">
 
             {{-- ========== 工具列：搜尋、狀態篩選｜匯出、新增商機 ========== --}}
             <div class="self-stretch flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
                 {{-- 左側：搜尋 + 狀態篩選 --}}
                 <div class="flex items-center gap-2 min-w-0">
-                    <label class="search-field w-56 shrink-0 px-3 py-2.5 bg-white rounded-[10px] border border-gray1 inline-flex items-center gap-2">
+                    <label class="search-field search-bar w-56">
                         <i data-lucide="search" class="w-3.5 h-3.5 text-gray3 shrink-0"></i>
                         <span class="sr-only">搜尋案件/客戶</span>
                         <input type="search" name="q" placeholder="搜尋案件/客戶" class="w-full min-w-0 bg-transparent text-cb3 text-gray5 placeholder:text-gray3 outline-none" data-search-input>
@@ -39,20 +39,20 @@ title: 商機中心
                             <span class="text-cb3 text-gray3 line-clamp-1">狀態篩選</span>
                             <span class="relative size-8 bg-gray1 rounded-lg inline-flex items-center justify-center">
                                 <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5 text-gray3"></i>
-                                <span class="filter-dot" data-filter-dot hidden></span>
+                                <span class="absolute top-1.5 right-1.5 size-1.5 rounded-full bg-brand2" data-filter-dot hidden></span>
                             </span>
                         </button>
 
                         <div id="opportunity-filter-panel" class="filter-panel" data-filter-panel hidden role="dialog" aria-label="篩選條件">
-                            <div class="filter-panel-header">
+                            <div class="self-stretch px-5 py-3 border-b border-gray1">
                                 <p class="text-cb3 text-gray5">篩選條件</p>
                             </div>
 
-                            <div class="filter-panel-body">
+                            <div class="self-stretch px-5 py-4 flex flex-col gap-4">
                                 @foreach ($page->opportunityFilters as $group)
-                                    <div class="filter-group" data-filter-group="{{ $group['key'] }}">
+                                    <div class="self-stretch flex flex-col items-start gap-2" data-filter-group="{{ $group['key'] }}">
                                         <p class="text-cb3 text-gray4">{{ $group['label'] }}</p>
-                                        <div class="filter-chips">
+                                        <div class="self-stretch inline-flex justify-start items-start gap-2 flex-wrap content-start">
                                             @foreach ($group['options'] as $option)
                                                 <button
                                                     type="button"
@@ -69,9 +69,9 @@ title: 商機中心
                                 @endforeach
                             </div>
 
-                            <div class="filter-panel-footer">
-                                <button type="button" class="filter-clear" data-filter-clear>清除條件</button>
-                                <button type="button" class="filter-apply" data-filter-apply>套用篩選</button>
+                            <div class="self-stretch px-4 py-3 border-t border-gray1 inline-flex justify-end items-center gap-2.5">
+                                <button type="button" class="px-6 py-2 bg-white rounded-[8px] outline outline-1 outline-offset-[-1px] outline-gray1 text-cb3 text-gray4 transition-colors hover:text-gray5 hover:outline-gray2" data-filter-clear>清除條件</button>
+                                <button type="button" class="px-6 py-2 bg-gray5 rounded-[8px] text-cb3 text-white transition-colors hover:bg-gray5/90" data-filter-apply>套用篩選</button>
                             </div>
                         </div>
                     </div>
@@ -79,7 +79,7 @@ title: 商機中心
 
                 {{-- 右側：匯出 Excel、新增商機（僅總管理者） --}}
                 <div class="flex flex-wrap items-center gap-2">
-                    <button type="button" class="btn-secondary" data-requires="opportunity.export">匯出 Excel</button>
+                    <button type="button" class="btn-secondary" data-requires="opportunity.export" data-opportunity-export>匯出 Excel</button>
                     <a href="{{ $page->baseUrl }}/opportunities/create/" class="btn-primary" data-requires="opportunity.create">
                         <i data-lucide="plus" class="w-4 h-4"></i>
                         <span>新增商機</span>
@@ -87,17 +87,21 @@ title: 商機中心
                 </div>
             </div>
 
-            {{-- ========== 統計卡：進行中 / 審核中 / 即將到期（資料：config opportunityStats） ========== --}}
+            {{-- ========== 統計卡：進行中 / 審核中 / 即將到期（依可見範圍重算） ========== --}}
             <div class="self-stretch px-6 py-4 bg-white rounded-2xl shadow-card flex flex-col md:flex-row md:items-stretch gap-4 md:gap-7">
                 @foreach ($page->opportunityStats as $index => $stat)
+                    @php
+                        $statKeys = ['active', 'reviewing', 'draft', 'expiring'];
+                        $statKey = $statKeys[$index] ?? 'active';
+                    @endphp
                     @if ($index > 0)
                         <div class="hidden md:block w-px self-stretch bg-gray1 shrink-0" aria-hidden="true"></div>
                         <div class="md:hidden h-px w-full bg-gray1" aria-hidden="true"></div>
                     @endif
-                    <div class="flex-1 flex flex-col items-start gap-2">
+                    <div class="flex-1 flex flex-col items-start gap-2" data-opp-stat="{{ $statKey }}">
                         <p class="text-cb3 text-gray4">{{ $stat['label'] }}</p>
                         <div class="self-stretch inline-flex justify-end items-baseline gap-1">
-                            <span class="stat-count @if ($stat['tone'] === 'warning') text-brand2 @elseif ($stat['tone'] === 'danger') text-red @else text-gray5 @endif">{{ $stat['count'] }}</span>
+                            <span class="font-en font-semibold text-[48px] leading-none tracking-[3px] @if ($stat['tone'] === 'warning') text-brand2 @elseif ($stat['tone'] === 'danger') text-red @else text-gray5 @endif" data-opp-stat-count>{{ $stat['count'] }}</span>
                             <span class="text-cb3 @if ($stat['tone'] === 'warning') text-brand2 @elseif ($stat['tone'] === 'danger') text-red @else text-gray5 @endif">筆</span>
                         </div>
                     </div>
@@ -105,13 +109,13 @@ title: 商機中心
             </div>
 
             {{-- ========== 商機列表卡：表頭 + 列資料 + 分頁 ========== --}}
-            <div class="self-stretch bg-white rounded-2xl shadow-card flex flex-col">
-                <div class="self-stretch px-3 pt-3 pb-6 flex flex-col">
+            <div class="list-card">
+                <div class="list-card-body">
                     <div class="self-stretch overflow-x-auto">
                         <div class="min-w-[800px]">
 
                             {{-- 表頭 --}}
-                            <div class="px-4 py-3 bg-bg rounded-t-[10px] inline-flex w-full items-center">
+                            <div class="list-head">
                                 <div class="w-36 text-cb3 text-gray4">編號</div>
                                 <div class="flex-1 text-cb3 text-gray4">客戶</div>
                                 <div class="w-32 text-cb3 text-gray4">所屬</div>
@@ -133,12 +137,14 @@ title: 商機中心
                                         }
                                     @endphp
                                     <div
-                                        class="px-4 py-2 bg-white border-b border-gray1 inline-flex w-full items-center"
+                                        class="list-row py-2"
                                         data-opp-row
                                         data-opp-id="{{ $item['id'] }}"
                                         data-dealer="{{ $item['dealer'] }}"
                                         data-amount="{{ $item['amountValue'] }}"
                                         data-status="{{ $item['status'] }}"
+                                        data-created-by="{{ $item['created_by'] ?? '' }}"
+                                        data-oem-sales-id="{{ $item['oem_sales_id'] ?? '' }}"
                                         data-search="{{ $item['id'] }} {{ $item['customer'] }} {{ $dealerLabels[$item['dealer']] ?? '' }}"
                                     >
                                         <div class="w-36 text-eb2 text-gray5 uppercase">{{ $item['id'] }}</div>
@@ -216,7 +222,7 @@ title: 商機中心
                                         </div>
                                     </div>
                                 @endforeach
-                                <div class="px-4 py-10 text-center text-cb3 text-gray3" data-filter-empty hidden>
+                                <div class="list-empty" data-filter-empty hidden>
                                     沒有符合條件的商機
                                 </div>
                             </div>
@@ -224,10 +230,10 @@ title: 商機中心
                     </div>
 
                     {{-- 分頁（目前為示意 UI，資料：config opportunityPagination） --}}
-                    <div class="self-stretch px-4 pt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                    <div class="pagination-bar">
                         <p class="text-eb3 text-gray3 uppercase">{{ $page->opportunityPagination['summary'] }}</p>
 
-                        <nav class="bg-white rounded-md border border-gray1 inline-flex items-center overflow-hidden self-start md:self-auto" aria-label="分頁">
+                        <nav class="pagination-nav self-start md:self-auto" aria-label="分頁">
                             <button type="button" class="pagination-btn" aria-label="上一頁">
                                 <i data-lucide="chevron-left" class="w-4 h-4 text-gray4"></i>
                             </button>

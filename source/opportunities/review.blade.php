@@ -28,7 +28,7 @@ title: 商機審核
 
 @section('body')
     <div
-        class="flex-1 flex flex-col px-4 md:px-12"
+        class="page-body"
         data-review-page
         data-list-url="{{ $page->baseUrl }}/opportunities/"
         data-create-url="{{ $page->baseUrl }}/opportunities/create/"
@@ -39,7 +39,7 @@ title: 商機審核
     >
         <div class="content-wrapper">
 
-            <div class="self-stretch inline-flex flex-wrap items-center justify-between gap-3">
+            <div class="page-toolbar">
                 <div class="inline-flex items-center gap-3 min-w-0">
                     <h1 class="text-ch4 text-gray5 truncate">
                         <span data-review-id>{{ $sample['id'] }}</span>
@@ -54,11 +54,11 @@ title: 商機審核
             <div class="review-layout">
 
                 {{-- ========== 左側：與新增／編輯相同欄位（唯讀） ========== --}}
-                <div class="min-w-0 self-stretch flex flex-col items-start gap-5" data-review-detail>
+                <div class="review-main" data-review-detail>
 
-                    <section class="self-stretch p-6 bg-white rounded-[10px] shadow-card flex flex-col items-start gap-4" data-review-renewal hidden>
+                    <section class="card-panel gap-4" data-review-renewal hidden>
                         <div class="self-stretch inline-flex items-center gap-3">
-                            <span class="w-[3px] h-5 bg-brand2 shrink-0" aria-hidden="true"></span>
+                            <span class="section-accent" aria-hidden="true"></span>
                             <h2 class="text-ch5 text-gray5">續期申請內容</h2>
                         </div>
                         <div class="review-result-card">
@@ -86,9 +86,9 @@ title: 商機審核
                     </section>
 
                     <div class="self-stretch flex flex-col md:flex-row items-stretch gap-5">
-                        <section class="flex-1 p-6 bg-white rounded-[10px] shadow-card flex flex-col items-start gap-4">
+                        <section class="card-panel flex-1 gap-4">
                             <div class="self-stretch inline-flex items-center gap-3">
-                                <span class="w-[3px] h-5 bg-brand2 shrink-0" aria-hidden="true"></span>
+                                <span class="section-accent" aria-hidden="true"></span>
                                 <h2 class="text-ch5 text-gray5">商機來源</h2>
                             </div>
                             <div class="form-field">
@@ -104,9 +104,9 @@ title: 商機審核
                             </div>
                         </section>
 
-                        <section class="flex-1 p-6 bg-white rounded-[10px] shadow-card flex flex-col items-start gap-4">
+                        <section class="card-panel flex-1 gap-4">
                             <div class="self-stretch inline-flex items-center gap-3">
-                                <span class="w-[3px] h-5 bg-brand2 shrink-0" aria-hidden="true"></span>
+                                <span class="section-accent" aria-hidden="true"></span>
                                 <h2 class="text-ch5 text-gray5">原廠負責資訊</h2>
                             </div>
                             <div class="form-field">
@@ -123,10 +123,10 @@ title: 商機審核
                         </section>
                     </div>
 
-                    <section class="self-stretch p-6 bg-white rounded-[10px] shadow-card flex flex-col items-start gap-5">
+                    <section class="card-panel gap-5">
                         <div class="self-stretch inline-flex justify-between items-center gap-3">
                             <div class="inline-flex items-center gap-3">
-                                <span class="w-[3px] h-5 bg-brand2 shrink-0" aria-hidden="true"></span>
+                                <span class="section-accent" aria-hidden="true"></span>
                                 <h2 class="text-ch5 text-gray5">報備者資料</h2>
                             </div>
                             <p class="text-cb3 text-gray3">登入後由會員資料自動帶入</p>
@@ -157,9 +157,9 @@ title: 商機審核
                         </div>
                     </section>
 
-                    <section class="self-stretch p-6 bg-white rounded-[10px] shadow-card flex flex-col items-start gap-5">
+                    <section class="card-panel gap-5">
                         <div class="self-stretch inline-flex items-center gap-3">
-                            <span class="w-[3px] h-5 bg-brand2 shrink-0" aria-hidden="true"></span>
+                            <span class="section-accent" aria-hidden="true"></span>
                             <h2 class="text-ch5 text-gray5">客戶資料</h2>
                         </div>
                         <div class="self-stretch grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -206,9 +206,9 @@ title: 商機審核
                     </section>
 
                     <div class="self-stretch flex flex-col items-start gap-4">
-                        <section class="self-stretch p-6 bg-white rounded-[10px] shadow-card flex flex-col items-start gap-4">
+                        <section class="card-panel gap-4">
                             <div class="self-stretch inline-flex items-center gap-3">
-                                <span class="w-[3px] h-5 bg-brand2 shrink-0" aria-hidden="true"></span>
+                                <span class="section-accent" aria-hidden="true"></span>
                                 <h2 class="text-ch5 text-gray5">專案細節</h2>
                             </div>
 
@@ -231,7 +231,7 @@ title: 商機審核
                             </div>
                         </section>
 
-                        <section class="self-stretch p-6 bg-white rounded-[10px] shadow-card flex flex-col items-start gap-5">
+                        <section class="card-panel gap-5">
                             <div class="self-stretch flex flex-col md:flex-row items-stretch gap-6">
                                 <div class="flex-1 flex flex-col items-start gap-4">
                                     @foreach ($page->opportunityDates as $dateField)
@@ -261,9 +261,9 @@ title: 商機審核
                             </div>
                         </section>
 
-                        <section class="self-stretch p-6 bg-white rounded-[10px] shadow-card flex flex-col items-start gap-4">
+                        <section class="card-panel gap-4">
                             <div class="self-stretch inline-flex items-center gap-3">
-                                <span class="w-[3px] h-5 bg-brand2 shrink-0" aria-hidden="true"></span>
+                                <span class="section-accent" aria-hidden="true"></span>
                                 <h2 class="text-ch5 text-gray5">檔案上傳</h2>
                             </div>
 
@@ -273,7 +273,7 @@ title: 商機審核
 
                             <div class="file-upload-item" data-review-attachment {{ empty($attachment) ? 'hidden' : '' }}>
                                 <div class="inline-flex items-center gap-3 min-w-0">
-                                    <span class="size-10 rounded-lg bg-bg2 border border-gray1 inline-flex items-center justify-center shrink-0">
+                                    <span class="file-icon">
                                         <i data-lucide="file-text" class="w-4 h-4 text-gray4"></i>
                                     </span>
                                     <span class="min-w-0 flex flex-col items-start gap-0.5">
@@ -304,7 +304,7 @@ title: 商機審核
                 <aside class="review-aside">
                     <form class="review-panel" data-review-form novalidate>
                         <div class="self-stretch inline-flex items-center gap-3">
-                            <span class="w-[3px] h-5 bg-brand2 shrink-0" aria-hidden="true"></span>
+                            <span class="section-accent" aria-hidden="true"></span>
                             <h2 class="text-ch5 text-gray5" data-review-aside-title>審核處理</h2>
                         </div>
 
