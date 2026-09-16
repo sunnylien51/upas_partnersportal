@@ -9,19 +9,66 @@
   --color-brand2: #E0AC7E;
   --color-red: #EF4444;
   --color-green: #00845F;
+  --color-blue: #2563EB;
   --color-gray5: #2F3131;
   --color-gray4: #636568;
   --color-gray3: #969CA6;
   --color-gray2: #C2C6CD;
-  --color-gray1: #EFF0F2;
+  --color-gray1: #EBEBEB;
   --color-bg: #F3F4F5;
   --color-bg2: #FBFBFC;
-  --shadow-card: 0 0 40px 0 #0000000A;
+  --shadow-card: 0 0 40px 0 #00000008;
+}
+
+@layer base {
+  [hidden] {
+    display: none !important;
+  }
 }
 
 @layer components {
   .app-user-fixed {
     @apply fixed top-6 right-4 md:right-12 z-30 flex items-center gap-2.5;
+  }
+
+  /* ---------- 預覽身分切換（演示用，側邊欄靠左） ---------- */
+  .role-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .role-preview-badge {
+    @apply text-[10px] font-medium tracking-[0.06em] text-gray3;
+  }
+
+  .role-preview-switch {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    background: var(--color-bg);
+    border: 1px solid var(--color-gray1);
+    border-radius: 10px;
+  }
+
+  .role-preview-switch--sidebar .role-preview-btn {
+    @apply px-2.5 py-2;
+  }
+
+  .role-preview-btn {
+    @apply px-3 py-1.5 rounded-lg text-[12px] font-medium tracking-[0.06em] text-gray3 transition-colors whitespace-nowrap inline-flex items-center;
+  }
+
+  .role-preview-btn:hover {
+    @apply text-gray5;
+  }
+
+  .role-preview-btn.is-active {
+    @apply bg-white text-gray5 shadow-sm;
   }
 
   .sidebar-link {
@@ -83,6 +130,932 @@
 
   .feature-card:hover .enter-btn {
     @apply bg-brand2/90;
+  }
+
+  .content-wrapper {
+    @apply pb-10 md:pb-16 flex-1 flex flex-col gap-5;
+  }
+
+  /* ---------- 麵包屑 ---------- */
+  .breadcrumb {
+    @apply self-stretch inline-flex items-center gap-1.5 flex-wrap;
+  }
+
+  .breadcrumb-home {
+    @apply w-3.5 h-3.5 text-gray3 shrink-0;
+  }
+
+  .breadcrumb-link {
+    @apply text-[13px] font-medium tracking-[0.08em] text-gray3 hover:text-gray5 transition-colors;
+  }
+
+  .breadcrumb-sep {
+    @apply text-[12px] font-medium text-gray3;
+  }
+
+  .breadcrumb-text {
+    @apply text-[13px] font-medium tracking-[0.08em] text-gray3;
+  }
+
+  .breadcrumb-text.is-current {
+    @apply text-gray5;
+  }
+
+  .breadcrumb-text.is-uppercase {
+    @apply uppercase;
+  }
+
+  /* ---------- 共用按鈕 ---------- */
+  .btn-primary {
+    @apply px-6 py-2.5 bg-gray5/90 rounded-[10px] inline-flex items-center justify-center gap-2 text-cb3 text-white transition-colors hover:bg-gray5;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-2.5 bg-white rounded-[10px] border border-gray1 inline-flex items-center justify-center gap-2 text-cb3 text-gray4 transition-colors hover:text-gray5 hover:border-gray2;
+  }
+
+  /* ---------- 商機統計卡數字 ---------- */
+  .stat-count {
+    font-family: var(--font-en);
+    font-weight: 600;
+    font-size: 48px;
+    line-height: 1;
+    letter-spacing: 3px;
+  }
+
+  /* ---------- 狀態下拉（觸發器 + 選單 + 選項 + 狀態色） ---------- */
+  .status-select {
+    @apply relative inline-flex;
+  }
+
+  /* 觸發器：表格「狀態」欄的按鈕 */
+  .status-trigger {
+    @apply w-[7.5rem] px-1.5 py-1 bg-bg2 rounded-lg border border-gray1 inline-flex items-center justify-between gap-1 text-[12px] font-medium tracking-[0.06em] leading-6 transition-colors;
+  }
+
+  .status-trigger:hover,
+  .status-select.is-open .status-trigger {
+    @apply border-gray2 bg-white;
+  }
+
+  .status-trigger-main {
+    @apply inline-flex items-center gap-1 min-w-0;
+  }
+
+  .status-trigger-icon {
+    @apply w-3.5 h-3.5 shrink-0;
+  }
+
+  .status-trigger-caret {
+    @apply w-3.5 h-3.5 shrink-0 text-gray4 transition-transform;
+  }
+
+  .status-select.is-open .status-trigger-caret {
+    @apply rotate-180;
+  }
+
+  /* 一般使用者：狀態僅顯示，不可開啟下拉 */
+  .status-select.is-readonly .status-trigger {
+    @apply pointer-events-none cursor-default;
+  }
+
+  .status-select.is-readonly .status-trigger-caret {
+    @apply hidden;
+  }
+
+  .is-role-hidden {
+    display: none !important;
+  }
+
+  [data-opp-row][hidden],
+  [data-filter-empty][hidden],
+  [data-product-row][hidden],
+  [data-product-empty][hidden],
+  [data-catalog-row][hidden],
+  [data-catalog-empty][hidden] {
+    display: none !important;
+  }
+
+  /* ---------- 分類分頁 ---------- */
+  .tab {
+    @apply px-4 py-2 rounded-[10px] text-cb3 text-gray4 bg-white transition-colors;
+  }
+
+  .tab:hover {
+    @apply text-gray5;
+  }
+
+  .tab.is-active {
+    @apply bg-gray5 text-white;
+  }
+
+
+
+  /* 下拉面板：寬度改 min-width */
+  .status-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    z-index: 60;
+    display: none;
+    min-width: 160px;
+    padding: 0.375rem;
+    background: #fff;
+    border: 1px solid var(--color-gray1);
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(47, 49, 49, 0.12);
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  .status-menu.is-open {
+    display: flex;
+  }
+
+  /* 選項列 */
+  .status-option {
+    @apply w-full px-2.5 py-2 rounded-lg inline-flex items-center justify-between gap-2 text-left text-[12px] font-medium tracking-[0.06em] leading-5 transition-colors;
+  }
+
+  .status-option:hover {
+    background: var(--color-bg2);
+  }
+
+  .status-option-main {
+    @apply inline-flex items-center gap-2 min-w-0;
+  }
+
+  .status-option-icon {
+    @apply w-3.5 h-3.5 shrink-0;
+  }
+
+  .status-option-check {
+    @apply w-3.5 h-3.5 shrink-0 text-gray3 opacity-0;
+  }
+
+  .status-option.is-selected .status-option-check {
+    @apply opacity-100;
+  }
+
+  /* 狀態色：綠 / 橘 / 紅 / 灰 */
+  .status-trigger.status-approved,
+  .status-option.status-approved {
+    @apply text-green;
+  }
+
+  .status-trigger.status-draft,
+  .status-option.status-draft {
+    @apply text-gray4;
+  }
+
+  .status-trigger.status-reviewing,
+  .status-trigger.status-expiring,
+  .status-option.status-reviewing,
+  .status-option.status-expiring {
+    @apply text-brand2;
+  }
+
+  .status-trigger.status-rejected,
+  .status-trigger.status-expired,
+  .status-option.status-rejected,
+  .status-option.status-expired {
+    @apply text-red;
+  }
+
+  .status-trigger.status-cancelled,
+  .status-option.status-cancelled {
+    @apply text-gray4;
+  }
+
+  .status-trigger.status-completed,
+  .status-trigger.status-invalid,
+  .status-option.status-completed,
+  .status-option.status-invalid {
+    @apply text-gray3;
+  }
+
+  /* ---------- 搜尋框：關掉瀏覽器原生叉叉，改用 Lucide x ---------- */
+  .search-field input[type="search"]::-webkit-search-cancel-button,
+  .search-field input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .search-clear {
+    @apply shrink-0 inline-flex items-center justify-center text-gray3 hover:text-gray5;
+  }
+
+  /* ---------- 表格列動作按鈕、分頁 ---------- */
+  .icon-action {
+    @apply size-9 p-2.5 rounded-[10px] inline-flex items-center justify-center text-gray3 transition-colors hover:bg-bg hover:text-gray5;
+  }
+
+  /* ---------- 操作回饋 toast ---------- */
+  .app-toast-host {
+    @apply fixed bottom-6 left-1/2 z-[80] flex flex-col items-center gap-2 pointer-events-none;
+    transform: translateX(-50%);
+  }
+
+  .app-toast {
+    @apply px-4 py-2.5 rounded-[10px] bg-gray5 text-white text-cb3 shadow-card opacity-0 translate-y-2 transition-all duration-300;
+  }
+
+  .app-toast.is-visible {
+    @apply opacity-100 translate-y-0;
+  }
+
+  .app-toast--success {
+    @apply bg-gray5;
+  }
+
+  .app-toast--error {
+    @apply bg-red;
+  }
+
+  /* ---------- 列表列更多選單 ---------- */
+  .row-more {
+    @apply relative inline-flex;
+  }
+
+  .row-more-menu {
+    display: none;
+    z-index: 70;
+    box-sizing: border-box;
+    width: max-content;
+    min-width: 11rem;
+    padding: 0.35rem;
+    background: #fff;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow-card);
+    outline: 1px solid var(--color-gray1);
+    outline-offset: -1px;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .row-more-menu.is-open {
+    display: inline-flex;
+  }
+
+  .row-more-item {
+    @apply w-full px-3 py-2 rounded-lg text-left text-cb3 text-gray5 transition-colors inline-flex items-center gap-2;
+  }
+
+  .row-more-item:hover:not(:disabled):not(.is-disabled) {
+    @apply bg-bg;
+  }
+
+  .row-more-item.is-danger {
+    @apply text-red;
+  }
+
+  .row-more-item.is-danger:hover:not(:disabled):not(.is-disabled) {
+    @apply bg-red/5;
+  }
+
+  .row-more-item:disabled,
+  .row-more-item.is-disabled {
+    @apply text-gray2 cursor-not-allowed;
+  }
+
+  .row-more-item:disabled:hover,
+  .row-more-item.is-disabled:hover {
+    @apply bg-transparent;
+  }
+
+  .review-attachment {
+    @apply self-stretch px-3 py-2.5 rounded-[5px] border border-gray1 bg-bg2 inline-flex items-center justify-between gap-3;
+  }
+
+  .file-upload {
+    @apply self-stretch flex flex-col items-start gap-3;
+  }
+
+  .file-upload-dropzone {
+    @apply self-stretch w-full px-5 py-5 rounded-[10px] border border-dashed border-gray2 bg-bg2 inline-flex items-center gap-3 text-left transition-colors hover:border-gray3 hover:bg-white;
+  }
+
+  .file-upload-dropzone.is-dragover {
+    @apply border-gray3 bg-white;
+  }
+
+  .file-upload-item {
+    @apply self-stretch px-3 py-3 rounded-[10px] border border-gray1 bg-white inline-flex items-center justify-between gap-3;
+  }
+
+  .pagination-btn {
+    @apply size-8 bg-white border-r border-gray1 inline-flex items-center justify-center text-eb3 text-gray5 uppercase;
+  }
+
+  .pagination-btn.is-active {
+    @apply bg-bg2;
+  }
+
+  .pagination-btn:disabled {
+    @apply text-gray3 opacity-40 pointer-events-none;
+  }
+
+  /* ---------- 商機篩選下拉 ---------- */
+  .filter-dropdown {
+    @apply relative;
+  }
+
+  .filter-trigger {
+    @apply pl-4 pr-1.5 py-1.5 bg-white rounded-[10px] border border-gray1 inline-flex items-center gap-2 transition-colors;
+  }
+
+  .filter-trigger:hover,
+  .filter-dropdown.is-open .filter-trigger {
+    @apply border-gray2;
+  }
+
+  .filter-dropdown.has-filters .filter-trigger {
+    @apply border-brand2;
+  }
+
+  .filter-dot {
+    @apply absolute top-1.5 right-1.5 size-1.5 rounded-full bg-brand2;
+  }
+
+  .filter-panel {
+    display: none;
+    z-index: 70;
+    width: min(766px, calc(100vw - 24px));
+    background: #fff;
+    border-radius: 1rem;
+    box-shadow: var(--shadow-card);
+    outline: 1px solid var(--color-gray1);
+    outline-offset: -1px;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .filter-panel.is-open {
+    display: flex;
+  }
+
+  .filter-panel-header {
+    @apply self-stretch px-5 py-3 border-b border-gray1;
+  }
+
+  .filter-panel-body {
+    @apply self-stretch px-5 py-4 flex flex-col gap-4;
+  }
+
+  .filter-group {
+    @apply self-stretch flex flex-col items-start gap-2;
+  }
+
+  .filter-chips {
+    @apply self-stretch inline-flex justify-start items-start gap-2 flex-wrap content-start;
+  }
+
+  .filter-chip {
+    @apply px-3.5 py-1.5 rounded-[20px] outline outline-1 outline-offset-[-1px] outline-gray1 inline-flex justify-center items-center text-cb3 text-gray3 uppercase transition-colors cursor-pointer;
+  }
+
+  .filter-chip:hover {
+    @apply outline-gray2 text-gray4;
+  }
+
+  .filter-chip.is-selected {
+    @apply bg-brand2 outline-brand2 text-white;
+  }
+
+  .filter-chip.is-selected:hover {
+    @apply text-white outline-brand2;
+  }
+
+  .filter-panel-footer {
+    @apply self-stretch px-4 py-3 border-t border-gray1 inline-flex justify-end items-center gap-2.5;
+  }
+
+  .filter-clear {
+    @apply px-6 py-2 bg-white rounded-[10px] outline outline-1 outline-offset-[-1px] outline-gray1 text-cb3 text-gray4 transition-colors hover:text-gray5 hover:outline-gray2;
+  }
+
+  .filter-apply {
+    @apply px-6 py-2 bg-gray5 rounded-[10px] text-cb3 text-white transition-colors hover:bg-gray5/90;
+  }
+
+  /* ---------- 新增商機表單 ---------- */
+  .form-field {
+    @apply self-stretch min-h-20 inline-flex flex-col justify-center items-start gap-1;
+  }
+
+  .form-label {
+    @apply self-stretch inline-flex items-center gap-1 text-cb2 text-gray5;
+  }
+
+  .form-input {
+    @apply self-stretch w-full px-3 py-2.5 bg-white rounded-[5px] outline outline-1 outline-offset-[-1px] outline-gray1 text-cb3 text-gray5 placeholder:text-gray3 transition-[outline-color];
+  }
+
+  .form-input:hover {
+    outline-color: var(--color-gray2);
+  }
+
+  .form-input:focus {
+    outline-color: var(--color-brand);
+  }
+
+  .form-input.is-readonly {
+    @apply bg-bg2 text-gray3 pointer-events-none;
+  }
+
+  .form-textarea {
+    @apply flex-1 min-h-[12.5rem] resize-none items-start;
+  }
+
+  .form-date-wrap {
+    @apply relative self-stretch w-full;
+  }
+
+  .form-date {
+    @apply pr-10 appearance-none;
+  }
+
+  .form-date::-webkit-calendar-picker-indicator {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .form-date-icon {
+    @apply pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray4;
+  }
+
+  .source-option {
+    @apply px-4 py-[10px] rounded-[5px] outline outline-1 outline-offset-[-1px] outline-gray1 inline-flex items-center gap-2.5 cursor-pointer transition-colors;
+  }
+
+  .source-option:hover {
+    outline-color: var(--color-gray2);
+  }
+
+  .source-option.is-selected {
+    @apply bg-bg2 outline-[1.5px] outline-offset-[-1.5px] outline-brand;
+  }
+
+  .source-option-label {
+    @apply text-cb3 text-gray4;
+  }
+
+  .source-option.is-selected .source-option-label {
+    @apply text-gray5;
+  }
+
+  .source-radio {
+    @apply size-4 rounded-full border-2 border-gray2 bg-white shrink-0 relative;
+  }
+
+  .source-option.is-selected .source-radio {
+    @apply border-0 bg-brand;
+  }
+
+  .source-option.is-selected .source-radio::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 9999px;
+    background: #fff;
+    transform: translate(-50%, -50%);
+  }
+
+  .form-select {
+    @apply relative self-stretch;
+  }
+
+  .form-select-trigger {
+    @apply w-full px-3 py-2.5 bg-white rounded-[5px] outline outline-1 outline-offset-[-1px] outline-gray1 inline-flex justify-between items-center gap-2 text-left text-cb3 text-gray5 transition-[outline-color];
+  }
+
+  .form-select-trigger:hover,
+  .form-select.is-open .form-select-trigger {
+    outline-color: var(--color-gray2);
+  }
+
+  .form-select.is-open .form-select-trigger {
+    outline-color: var(--color-brand);
+  }
+
+  .form-select-trigger--muted {
+    @apply bg-bg2 rounded-sm;
+  }
+
+  .form-select-trigger--units {
+    @apply rounded-sm outline-gray2;
+  }
+
+  .form-select-trigger [data-form-select-label] {
+    @apply truncate;
+  }
+
+  .form-select-trigger [data-form-select-label].is-placeholder {
+    @apply text-gray3;
+  }
+
+  .form-select-trigger svg {
+    @apply shrink-0 transition-transform;
+  }
+
+  .form-select.is-open .form-select-trigger svg {
+    @apply rotate-180;
+  }
+
+  .form-select.is-readonly .form-select-trigger {
+    @apply bg-bg2 pointer-events-none cursor-default;
+  }
+
+  .form-select.is-readonly .form-select-trigger:hover {
+    outline-color: var(--color-gray1);
+  }
+
+  .form-select.is-readonly .form-select-trigger svg {
+    @apply hidden;
+  }
+
+  .form-select-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    z-index: 60;
+    display: none;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    padding: 0.375rem;
+    background: #fff;
+    border: 1px solid var(--color-gray1);
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(47, 49, 49, 0.12);
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  .form-select-menu.is-open {
+    display: flex;
+  }
+
+  .form-select-option {
+    @apply w-full px-2.5 py-2 rounded-lg inline-flex items-center text-left text-cb3 text-gray5 transition-colors whitespace-normal break-words;
+  }
+
+  .form-select-option:hover,
+  .form-select-option.is-selected {
+    background: var(--color-bg2);
+  }
+
+  .btn-add {
+    @apply px-6 py-2.5 bg-white rounded-[10px] border border-dashed border-gray2 inline-flex justify-center items-center gap-2 text-cb3 text-gray4 transition-colors hover:text-gray5 hover:border-gray3;
+  }
+
+  .btn-remove-product {
+    @apply size-10 shrink-0 inline-flex items-center justify-center rounded-[5px] text-gray3 transition-colors hover:text-red hover:bg-red/5;
+  }
+
+  [data-remove-product][hidden] {
+    display: none !important;
+  }
+
+  .form-error {
+    outline-color: var(--color-red) !important;
+  }
+
+  /* ---------- 審核頁：左內容／右審核、狀態標籤 ---------- */
+  .review-layout {
+    @apply self-stretch grid gap-5 items-start;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @media (min-width: 1200px) {
+    .review-layout {
+      grid-template-columns: minmax(0, 1fr) 22.5rem;
+    }
+  }
+
+  .review-aside {
+    @apply w-full min-w-0;
+  }
+
+  .review-panel {
+    @apply self-stretch p-6 bg-white rounded-[10px] shadow-card flex flex-col items-start gap-5;
+  }
+
+  @media (min-width: 1200px) {
+    .review-panel {
+      position: sticky;
+      top: 1.5rem;
+    }
+  }
+
+  .review-result-card {
+    @apply self-stretch flex flex-col gap-1 rounded-[10px] border border-gray1 bg-bg2 p-4;
+  }
+
+  .review-result-row {
+    @apply flex w-full items-start gap-3;
+  }
+
+  .form-stepper {
+    @apply self-stretch inline-flex items-center justify-center gap-3 py-1;
+  }
+
+  .form-step {
+    @apply inline-flex items-center gap-2 text-cb3 text-gray3;
+  }
+
+  .form-step.is-active,
+  .form-step.is-done {
+    @apply text-gray5;
+  }
+
+  .form-step-index {
+    @apply size-7 rounded-full bg-gray1 text-eb3 text-gray4 inline-flex items-center justify-center shrink-0;
+  }
+
+  .form-step.is-active .form-step-index {
+    @apply bg-gray5 text-white;
+  }
+
+  .form-step.is-done .form-step-index {
+    @apply bg-brand2 text-white;
+  }
+
+  .form-step-line {
+    @apply w-16 h-px bg-gray1;
+  }
+
+  .status-pill {
+    @apply shrink-0 px-2.5 py-1 rounded-lg bg-bg2 border border-gray1 text-[12px] font-medium tracking-[0.06em] leading-5;
+  }
+
+  .status-pill.status-reviewing {
+    @apply text-brand2;
+  }
+
+  .status-pill.status-approved {
+    @apply text-green;
+  }
+
+  .status-pill.status-rejected {
+    @apply text-red;
+  }
+
+  .status-pill.status-invalid {
+    @apply text-gray3;
+  }
+
+  .status-pill.status-draft {
+    @apply text-gray4;
+  }
+
+  .status-pill.status-expiring {
+    @apply text-brand2;
+  }
+
+  .status-pill.status-expired,
+  .status-pill.status-cancelled {
+    @apply text-gray3;
+  }
+
+  .status-pill.status-completed {
+    @apply text-green;
+  }
+
+  /* ---------- 教育訓練：二階層課程目錄 + 圖文內容 ---------- */
+  .training-mobile-toggle {
+    @apply w-full px-4 py-3 bg-white rounded-2xl shadow-[0px_0px_40px_0px_rgba(0,0,0,0.04)] inline-flex items-center gap-2.5 text-left text-cb2 text-gray5;
+  }
+
+  .training-tree-panel {
+    @apply mt-2 lg:mt-0;
+  }
+
+  .training-tree {
+    @apply w-full lg:w-64 flex flex-col items-stretch gap-1 min-h-0;
+  }
+
+  @media (max-width: 1199px) {
+    .training-tree-panel {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.32s ease;
+    }
+
+    .training-tree-panel.is-mobile-open {
+      grid-template-rows: 1fr;
+    }
+
+    .training-tree-panel .training-tree {
+      overflow: hidden;
+    }
+  }
+
+  .training-tree-group {
+    @apply self-stretch rounded-2xl overflow-hidden;
+    transition: background-color 0.32s ease, box-shadow 0.32s ease;
+  }
+
+  .training-tree-group.is-open {
+    @apply bg-white;
+    box-shadow: 0 0 40px 0 rgba(0, 0, 0, 0.04);
+  }
+
+  .training-tree-toggle {
+    @apply self-stretch w-full px-5 py-[10px] bg-transparent inline-flex items-center bg-gray4/5 gap-2.5 text-left text-gray4 border-b border-transparent;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 2;
+    letter-spacing: 0.06em;
+    transition: color 0.25s ease, background-color 0.25s ease, border-color 0.32s ease;
+  }
+
+  .training-tree-group:not(.is-open) .training-tree-toggle:hover {
+    @apply text-gray5 bg-white/70;
+  }
+
+  .training-tree-group:not(.is-open) .training-tree-toggle:hover .training-tree-caret {
+    @apply text-gray5;
+  }
+
+  .training-tree-group.is-open .training-tree-toggle {
+    @apply bg-white text-gray5 border-gray1;
+  }
+
+  .training-tree-caret {
+    @apply size-4 shrink-0 text-gray4 transition-[transform,color] duration-300 ease-out;
+  }
+
+  .training-tree-group.is-open .training-tree-caret {
+    @apply rotate-180;
+  }
+
+  .training-tree-children {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.32s ease;
+  }
+
+  .training-tree-group.is-open .training-tree-children {
+    grid-template-rows: 1fr;
+  }
+
+  .training-tree-children-clip {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .training-tree-children-inner {
+    @apply self-stretch px-5 pt-3 pb-5 bg-white flex flex-col items-start gap-2;
+    list-style: none;
+    margin: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .training-tree-panel,
+    .training-tree-group,
+    .training-tree-toggle,
+    .training-tree-caret,
+    .training-tree-children,
+    .training-tree-link {
+      transition: none;
+    }
+  }
+
+  .training-tree-link {
+    @apply block text-gray4;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 1.75;
+    letter-spacing: 0.06em;
+    transition: color 0.25s ease, opacity 0.25s ease;
+  }
+
+  .training-tree-link:hover {
+    @apply text-gray5;
+  }
+
+  .training-tree-link.is-active {
+    @apply text-gray5;
+  }
+
+  .training-article {
+    @apply bg-white rounded-2xl shadow-card overflow-hidden flex flex-col min-w-0;
+  }
+
+  .training-cover {
+    @apply w-full aspect-[2/1] object-cover bg-bg block;
+  }
+
+  .training-chip {
+    @apply px-2.5 py-1 rounded-lg bg-bg text-cb3 text-gray4 inline-flex items-center;
+  }
+
+  .training-prose h3 {
+    @apply text-ch5 text-gray5 mt-8 mb-3;
+  }
+
+  .training-prose p {
+    @apply text-cb2 text-gray4 mb-4;
+  }
+
+  .training-prose ul {
+    @apply flex flex-col gap-2 mb-5 pl-0;
+  }
+
+  .training-prose ul li {
+    @apply relative pl-5 text-cb2 text-gray4;
+  }
+
+  .training-prose ul li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.7em;
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--color-brand2);
+  }
+
+  .training-figure {
+    @apply my-6 rounded-xl overflow-hidden border border-gray1 bg-bg;
+  }
+
+  .training-figure img {
+    @apply w-full block bg-bg2;
+  }
+
+  .training-figure figcaption {
+    @apply px-4 py-3 text-cb3 text-gray3 bg-white border-t border-gray1;
+  }
+
+  .training-steps {
+    @apply my-6 flex flex-col gap-0;
+    counter-reset: training-step;
+  }
+
+  .training-step {
+    @apply relative flex gap-4 py-4;
+    counter-increment: training-step;
+  }
+
+  .training-step:not(:last-child) {
+    @apply border-b border-gray1;
+  }
+
+  .training-step-index {
+    @apply size-8 rounded-full bg-bg text-eb3 text-gray5 inline-flex items-center justify-center shrink-0;
+  }
+
+  .training-prose .training-step h3 {
+    @apply text-cb1 text-gray5 mt-0 mb-1;
+  }
+
+  .training-step p {
+    @apply text-cb3 text-gray4 mb-0;
+  }
+
+  .training-callout {
+    @apply my-6 px-5 py-4 rounded-xl bg-bg border border-gray1 flex items-start gap-3;
+  }
+
+  .training-callout-bar {
+    @apply w-[3px] self-stretch rounded-full bg-brand shrink-0;
+  }
+
+  .training-quote {
+    @apply my-6 px-6 py-5 rounded-xl bg-bg2 border border-gray1;
+  }
+
+  .training-quote p {
+    @apply text-cb2 text-gray5 mb-2;
+  }
+
+  .training-quote cite {
+    @apply text-cb3 text-gray3 not-italic;
+  }
+
+  .training-pager {
+    @apply pt-6 border-t border-gray1 flex flex-col md:flex-row md:justify-between gap-3;
+  }
+
+  .training-pager-btn {
+    @apply w-full px-4 py-3 rounded-xl border border-gray1 bg-white inline-flex flex-col items-start gap-1 text-left transition-colors hover:border-gray2;
+  }
+
+  .training-pager-btn:hover {
+    @apply bg-bg2;
   }
 }
 

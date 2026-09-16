@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" fill="none">
+  <rect width="960" height="480" fill="#F3F4F5"/>
+  <rect x="120" y="80" width="720" height="320" rx="28" fill="white"/>
+  <path d="M280 168c0-8 6-18 36-36 18-10 36-10 54 0 30 18 36 28 36 36v88c0 42-36 70-90 86-54-16-90-44-90-86v-88z" fill="#E0AC7E" fill-opacity="0.18"/>
+  <path d="M316 204c0-4 4-10 22-20 10-6 20-6 30 0 18 10 22 16 22 20v52c0 24-20 40-52 50-32-10-52-26-52-50v-52z" fill="#E0AC7E"/>
+  <path d="M352 228l12 12 22-24" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="500" y="156" width="260" height="18" rx="9" fill="#2F3131" fill-opacity="0.78"/>
+  <rect x="500" y="196" width="220" height="10" rx="5" fill="#C2C6CD"/>
+  <rect x="500" y="220" width="196" height="10" rx="5" fill="#EBEBEB"/>
+  <rect x="500" y="256" width="88" height="36" rx="18" fill="#FFC800"/>
+  <rect x="600" y="256" width="120" height="36" rx="18" fill="#F3F4F5"/>
+  <rect x="500" y="316" width="72" height="10" rx="5" fill="#C2C6CD"/>
+  <rect x="584" y="316" width="96" height="10" rx="5" fill="#EBEBEB"/>
+  <path d="M796 80h16l44 108h-16z" fill="#FFC800"/>
+</svg>

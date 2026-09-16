@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Rajdhani:wght@600&display=swap" rel="stylesheet">
 
-@viteRefresh()
-<link rel="stylesheet" href="{{ vite('source/_assets/css/main.css') }}">
-<script defer type="module" src="{{ vite('source/_assets/js/main.js') }}"></script>
+<script type="module" src="http://localhost:5173/@@vite/client"></script>
+<link rel="stylesheet" href="http://localhost:5173/source/_assets/css/main.css">
+<script defer type="module" src="http://localhost:5173/source/_assets/js/main.js"></script>
 
 <script src="https://unpkg.com/lucide@latest"></script>

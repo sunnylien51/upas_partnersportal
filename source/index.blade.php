@@ -5,23 +5,24 @@ title: 概覽
 
 @section('body')
     <div class="flex-1 flex flex-col px-4 md:px-12">
-        <div class="py-6 md:py-9 inline-flex items-center gap-3">
-            <span class="w-3 h-6 bg-brand shrink-0" aria-hidden="true"></span>
-            <p class="text-ch4 text-gray5">您好~{{ $page->partner['company'] }}</p>
-        </div>
 
-        <div class="flex-1 flex flex-col pt-4 md:pt-6 pb-10 md:pb-16 gap-5">
-            <p class="text-cb3 text-gray4">您可使用以下 {{ count($page->overviewModules) }} 個功能區塊</p>
+        <div class="content-wrapper">
+            <div class="flex flex-col items-start gap-1 pb-2">
+                <p class="text-ch4 text-gray5">您好~{{ $page->partner['company'] }}</p>
+                <p class="text-cb3 text-gray4">您可使用以下<span data-module-count>{{ count($page->overviewModules) }}</span>個功能區塊</p>
+            </div>
+
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                 @foreach ($page->overviewModules as $module)
-                    <a href="{{ $page->baseUrl }}{{ rtrim($module['path'], '/') }}/" class="feature-card group">
+                    <a href="{{ $page->baseUrl }}{{ rtrim($module['path'], '/') }}/" class="feature-card group" data-nav-path="{{ $module['path'] }}" data-overview-module>
                         <div class="self-stretch pb-3 border-b border-gray1 inline-flex items-center gap-3">
                             <span class="w-[3px] h-5 bg-brand2 shrink-0" aria-hidden="true"></span>
                             <h2 class="text-ch5 text-gray5">{{ $module['label'] }}</h2>
                         </div>
 
-                        <p class="self-stretch flex-1 text-cb3 text-gray4 whitespace-pre-line">{{ $module['description'] }}</p>
+                        <p class="self-stretch flex-1 text-cb3 text-gray4 whitespace-pre-line">{{ $module['description'] }}
+                        </p>
 
                         <span class="enter-btn">
                             <span>Enter</span>
