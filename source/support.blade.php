@@ -31,14 +31,14 @@ title: 技術支援中心
             data-ticket-page-size="5"
             data-download-page-size="5"
             data-manage="support.manage"
-            data-list-url="{{ $page->baseUrl }}/support/"
-            data-ticket-url="{{ $page->baseUrl }}/support/ticket/"
-            data-faq-create-url="{{ $page->baseUrl }}/support/faq/"
-            data-download-create-url="{{ $page->baseUrl }}/support/download/"
+            data-list-url="{{ site_href($page, '/support') }}"
+            data-ticket-url="{{ site_href($page, '/support/ticket') }}"
+            data-faq-create-url="{{ site_href($page, '/support/faq') }}"
+            data-download-create-url="{{ site_href($page, '/support/download') }}"
         >
 
             <div class="self-stretch flex justify-end">
-                <a href="{{ $page->baseUrl }}/support/create/" class="btn-primary" data-requires="support.create">
+                <a href="{{ site_href($page, '/support/create') }}" class="btn-primary" data-requires="support.create">
                     <i data-lucide="plus" class="w-4 h-4"></i>
                     <span>建立技術工單</span>
                 </a>
@@ -62,7 +62,7 @@ title: 技術支援中心
                                     <i data-lucide="list-ordered" class="w-4 h-4"></i>
                                     <span>排序 FAQ</span>
                                 </button>
-                                <a href="{{ $page->baseUrl }}/support/faq/" class="btn-primary shrink-0" data-requires="support.manage">
+                                <a href="{{ site_href($page, '/support/faq') }}" class="btn-primary shrink-0" data-requires="support.manage">
                                     <i data-lucide="plus" class="w-4 h-4"></i>
                                     <span>新增 FAQ</span>
                                 </a>
@@ -216,7 +216,7 @@ title: 技術支援中心
                             <i data-lucide="list-ordered" class="w-4 h-4"></i>
                             <span>排序檔案</span>
                         </button>
-                        <a href="{{ $page->baseUrl }}/support/download/" class="btn-primary shrink-0" data-requires="support.manage">
+                        <a href="{{ site_href($page, '/support/download') }}" class="btn-primary shrink-0" data-requires="support.manage">
                             <i data-lucide="plus" class="w-4 h-4"></i>
                             <span>新增檔案</span>
                         </a>
@@ -434,10 +434,10 @@ title: 技術支援中心
             'downloads' => $page->supportDownloads,
             'locales' => $page->locales,
             'capability' => 'support.manage',
-            'ticketUrl' => rtrim($page->baseUrl, '/') . '/support/ticket/',
-            'createFaqUrl' => rtrim($page->baseUrl, '/') . '/support/faq/',
-            'createDownloadUrl' => rtrim($page->baseUrl, '/') . '/support/download/',
-            'listUrl' => rtrim($page->baseUrl, '/') . '/support/',
+            'ticketUrl' => site_href($page, '/support/ticket'),
+            'createFaqUrl' => site_href($page, '/support/faq'),
+            'createDownloadUrl' => site_href($page, '/support/download'),
+            'listUrl' => site_href($page, '/support'),
         ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
     </script>
 @endsection

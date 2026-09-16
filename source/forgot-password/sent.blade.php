@@ -17,16 +17,16 @@ title: 重設連結已寄出
             <p class="text-eb2 text-brand2 break-all" data-sent-email>您填寫的 Email</p>
         </div>
 
-        <a href="{{ $page->baseUrl }}/login/" class="btn-primary w-full h-11">返回登入</a>
+        <a href="{{ site_href($page, '/login') }}" class="btn-primary w-full h-11">返回登入</a>
 
         <div class="auth-divider" role="separator">
             <span>尚未收到？</span>
         </div>
 
-        <a href="{{ $page->baseUrl }}/forgot-password/" class="btn-secondary w-full">重新寄送</a>
+        <a href="{{ site_href($page, '/forgot-password') }}" class="btn-secondary w-full">重新寄送</a>
 
         <p class="text-cb3 text-gray4">示意流程：正式環境會依實際寄信結果顯示。演示可直接前往
-            <a href="{{ $page->baseUrl }}/reset-password/" class="auth-link">重設密碼</a>。
+            <a href="{{ site_href($page, '/reset-password') }}" class="auth-link">重設密碼</a>。
         </p>
     </div>
 @endsection

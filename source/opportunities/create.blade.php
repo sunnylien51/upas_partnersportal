@@ -16,17 +16,17 @@ title: 新增商機
 
             <div class="page-toolbar">
                 <h1 class="text-ch4 text-gray5 truncate" data-page-heading>新增商機</h1>
-                <a href="{{ $page->baseUrl }}/opportunities/" class="btn-secondary">返回列表</a>
+                <a href="{{ site_href($page, '/opportunities') }}" class="btn-secondary">返回列表</a>
             </div>
 
             <form
                 class="self-stretch"
                 data-opportunity-form
-                data-cancel-url="{{ $page->baseUrl }}/opportunities/"
-                data-list-url="{{ $page->baseUrl }}/opportunities/"
-                data-create-url="{{ $page->baseUrl }}/opportunities/create/"
-                data-review-url="{{ $page->baseUrl }}/opportunities/review/"
-                data-renew-url="{{ $page->baseUrl }}/opportunities/renew/"
+                data-cancel-url="{{ site_href($page, '/opportunities') }}"
+                data-list-url="{{ site_href($page, '/opportunities') }}"
+                data-create-url="{{ site_href($page, '/opportunities/create') }}"
+                data-review-url="{{ site_href($page, '/opportunities/review') }}"
+                data-renew-url="{{ site_href($page, '/opportunities/renew') }}"
                 data-partner-company="{{ $page->partner['company'] }}"
                 data-partner-contact="{{ $page->partner['contact'] }}"
                 novalidate
@@ -404,7 +404,7 @@ title: 新增商機
                                 <button type="button" class="btn-primary w-full h-11" data-create-update-review hidden>更新審核結果</button>
                                 <button type="button" class="btn-secondary w-full h-11" data-create-cancel-edit-review hidden>取消修改</button>
                                 <button type="button" class="btn-secondary w-full h-11" data-save-draft>儲存暫存檔</button>
-                                <a href="{{ $page->baseUrl }}/opportunities/" class="btn-secondary w-full h-11" data-create-cancel>取消</a>
+                                <a href="{{ site_href($page, '/opportunities') }}" class="btn-secondary w-full h-11" data-create-cancel>取消</a>
                             </div>
                         </div>
                     </aside>

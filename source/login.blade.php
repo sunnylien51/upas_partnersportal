@@ -11,7 +11,7 @@ title: 經銷商登入
 
     <form
         class="self-stretch flex flex-col items-start gap-8"
-        action="{{ $page->baseUrl }}/"
+        action="{{ site_href($page, '/') }}"
         method="get"
     >
         <div class="self-stretch flex flex-col items-start gap-3">
@@ -52,7 +52,7 @@ title: 經銷商登入
                     <input type="checkbox" name="remember" value="1" class="auth-checkbox">
                     <span>保持登入</span>
                 </label>
-                <a href="{{ $page->baseUrl }}/forgot-password/" class="auth-link">忘記密碼？</a>
+                <a href="{{ site_href($page, '/forgot-password') }}" class="auth-link">忘記密碼？</a>
             </div>
         </div>
 
@@ -63,7 +63,7 @@ title: 經銷商登入
                 <span>尚未有帳號</span>
             </div>
 
-            <a href="{{ $page->baseUrl }}/register/" class="btn-secondary w-full">申請經銷商帳號</a>
+            <a href="{{ site_href($page, '/register') }}" class="btn-secondary w-full">申請經銷商帳號</a>
 
             <p class="text-cb3 text-gray4">帳號尚未啟用或被鎖定，請聯絡 UPAS 系統管理者。</p>
         </div>

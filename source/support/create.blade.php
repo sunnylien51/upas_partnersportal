@@ -9,13 +9,13 @@ title: 建立技術工單
 
             <div class="page-toolbar">
                 <h1 class="text-ch4 text-gray5 truncate">建立技術工單</h1>
-                <a href="{{ $page->baseUrl }}/support/" class="btn-secondary">返回列表</a>
+                <a href="{{ site_href($page, '/support') }}" class="btn-secondary">返回列表</a>
             </div>
 
             <form
                 class="self-stretch"
                 data-support-ticket-form
-                data-list-url="{{ $page->baseUrl }}/support/"
+                data-list-url="{{ site_href($page, '/support') }}"
                 novalidate
             >
                 <div class="review-layout">
@@ -162,7 +162,7 @@ title: 建立技術工單
                             </p>
                             <div class="self-stretch inline-flex flex-col gap-2 pt-1">
                                 <button type="submit" class="btn-primary w-full">送出工單</button>
-                                <a href="{{ $page->baseUrl }}/support/" class="btn-secondary w-full">取消</a>
+                                <a href="{{ site_href($page, '/support') }}" class="btn-secondary w-full">取消</a>
                             </div>
                         </div>
                     </aside>

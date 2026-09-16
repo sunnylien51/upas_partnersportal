@@ -88,7 +88,7 @@ title: 編輯夥伴資料
                     </div>
                     <p class="text-[12px] font-en font-medium uppercase tracking-[0.06em] text-gray3" data-partner-member-id>{{ $sample['id'] }}</p>
                 </div>
-                <a href="{{ $page->baseUrl }}/profile/" class="btn-secondary">返回列表</a>
+                <a href="{{ site_href($page, '/profile') }}" class="btn-secondary">返回列表</a>
             </div>
 
             <div class="list-empty" data-partner-missing hidden>
@@ -98,7 +98,7 @@ title: 編輯夥伴資料
             <form
                 class="self-stretch"
                 data-partner-edit-form
-                data-list-url="{{ $page->baseUrl }}/profile/"
+                data-list-url="{{ site_href($page, '/profile') }}"
                 novalidate
             >
                 <input type="hidden" name="id" value="{{ $sample['id'] }}">
@@ -398,7 +398,7 @@ title: 編輯夥伴資料
                             </p>
                             <div class="self-stretch inline-flex flex-col gap-2 pt-1">
                                 <button type="submit" class="btn-primary w-full h-11" data-requires="profile.manage">儲存變更</button>
-                                <a href="{{ $page->baseUrl }}/profile/" class="btn-secondary w-full h-11">取消</a>
+                                <a href="{{ site_href($page, '/profile') }}" class="btn-secondary w-full h-11">取消</a>
                             </div>
                         </div>
                     </aside>

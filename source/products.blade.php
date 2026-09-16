@@ -21,7 +21,7 @@ title: 產品資訊中心
             data-catalog-kind="product"
             data-page-size="8"
             data-manage="product.manage"
-            data-create-url="{{ $page->baseUrl }}/products/create/"
+            data-create-url="{{ site_href($page, '/products/create') }}"
         >
 
             <div class="self-stretch flex flex-col md:flex-row md:items-center md:justify-between gap-3">
@@ -44,7 +44,7 @@ title: 產品資訊中心
                         <i data-lucide="layers" class="w-4 h-4"></i>
                         <span>管理分類</span>
                     </button>
-                    <a href="{{ $page->baseUrl }}/products/create/" class="btn-primary shrink-0 self-start" data-requires="product.manage">
+                    <a href="{{ site_href($page, '/products/create') }}" class="btn-primary shrink-0 self-start" data-requires="product.manage">
                         <i data-lucide="plus" class="w-4 h-4"></i>
                         <span>新增公告</span>
                     </a>
@@ -95,7 +95,7 @@ title: 產品資訊中心
                                         </div>
                                         <div class="w-20 shrink-0 inline-flex items-center justify-end" data-catalog-actions data-requires="product.manage">
                                             <a
-                                                href="{{ $page->baseUrl }}/products/create/?id={{ urlencode($item['id']) }}"
+                                                href="{{ site_href($page, '/products/create') }}?id={{ urlencode($item['id']) }}"
                                                 class="icon-action"
                                                 data-catalog-edit
                                                 aria-label="編輯 {{ $item['title'] }}"
@@ -167,8 +167,8 @@ title: 產品資訊中心
         {!! json_encode([
             'kind' => 'product',
             'capability' => 'product.manage',
-            'createUrl' => rtrim($page->baseUrl, '/') . '/products/create/',
-            'listUrl' => rtrim($page->baseUrl, '/') . '/products/',
+            'createUrl' => site_href($page, '/products/create'),
+            'listUrl' => site_href($page, '/products'),
             'categories' => $categories,
             'items' => $page->productAnnouncements,
             'locales' => $page->locales,

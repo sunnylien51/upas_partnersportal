@@ -9,14 +9,14 @@
 
 <div class="page-toolbar" data-training-form-toolbar>
     <h1 class="text-ch4 text-gray5 truncate" data-page-heading>{{ $copy['headingNew'] ?? '新增文章' }}</h1>
-    <a href="{{ $page->baseUrl }}{{ $listPath }}" class="btn-secondary">返回總覽</a>
+    <a href="{{ site_href($page, $listPath) }}" class="btn-secondary">返回總覽</a>
 </div>
 
 <div class="list-card" data-training-forbidden hidden>
     <div class="px-6 py-16 text-center">
         <p class="text-cb3 text-gray5">目前身分權限無法管理此資料</p>
         <p class="mt-2 text-cb3 text-gray3">請切換為總管理者後再試。</p>
-        <a href="{{ $page->baseUrl }}{{ $listPath }}" class="btn-secondary mt-5 inline-flex">返回總覽</a>
+        <a href="{{ site_href($page, $listPath) }}" class="btn-secondary mt-5 inline-flex">返回總覽</a>
     </div>
 </div>
 
@@ -24,7 +24,7 @@
     <div class="px-6 py-16 text-center">
         <p class="text-cb3 text-gray5">找不到這筆資料</p>
         <p class="mt-2 text-cb3 text-gray3">可能已刪除，或連結已失效。</p>
-        <a href="{{ $page->baseUrl }}{{ $listPath }}" class="btn-secondary mt-5 inline-flex">返回總覽</a>
+        <a href="{{ site_href($page, $listPath) }}" class="btn-secondary mt-5 inline-flex">返回總覽</a>
     </div>
 </div>
 
@@ -32,9 +32,9 @@
     class="self-stretch"
     data-training-form
     data-manage="{{ $capability }}"
-    data-list-url="{{ $page->baseUrl }}{{ $listPath }}"
-    data-create-url="{{ $page->baseUrl }}{{ $createPath }}"
-    data-article-url="{{ $page->baseUrl }}{{ $articlePath }}"
+    data-list-url="{{ site_href($page, $listPath) }}"
+    data-create-url="{{ site_href($page, $createPath) }}"
+    data-article-url="{{ site_href($page, $articlePath) }}"
     novalidate
 >
     <input type="hidden" name="id" value="">
@@ -125,7 +125,7 @@
                 <button type="submit" class="btn-primary w-full">
                     <span data-training-submit-label>{{ $copy['submitNew'] ?? '發布文章' }}</span>
                 </button>
-                <a href="{{ $page->baseUrl }}{{ $listPath }}" class="btn-secondary w-full text-center">取消</a>
+                <a href="{{ site_href($page, $listPath) }}" class="btn-secondary w-full text-center">取消</a>
             </section>
         </aside>
     </div>
@@ -134,9 +134,9 @@
 <script type="application/json" id="training-catalog-data">
     {!! json_encode([
         'capability' => $capability,
-        'createUrl' => $page->baseUrl . $createPath,
-        'articleUrl' => $page->baseUrl . $articlePath,
-        'listUrl' => $page->baseUrl . $listPath,
+        'createUrl' => site_href($page, $createPath),
+        'articleUrl' => site_href($page, $articlePath),
+        'listUrl' => site_href($page, $listPath),
         'locales' => $page->locales,
         'courses' => $courses,
         'copy' => $copy,

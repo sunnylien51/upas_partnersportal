@@ -9,20 +9,20 @@ title: 教育訓練中心
             class="content-wrapper"
             data-training-center
             data-manage="training.manage"
-            data-create-url="{{ $page->baseUrl }}/training/create/"
-            data-article-url="{{ $page->baseUrl }}/training/article/"
-            data-list-url="{{ $page->baseUrl }}/training/"
+            data-create-url="{{ site_href($page, '/training/create') }}"
+            data-article-url="{{ site_href($page, '/training/article') }}"
+            data-list-url="{{ site_href($page, '/training') }}"
         >
             <div class="self-stretch inline-flex flex-wrap items-center justify-end gap-2">
                 <button type="button" class="btn-secondary shrink-0" data-manage-categories data-requires="training.manage">
                     <i data-lucide="layers" class="w-4 h-4"></i>
                     <span>管理分類</span>
                 </button>
-                <a href="{{ $page->baseUrl }}/training/create/" class="btn-primary shrink-0" data-requires="training.manage">
+                <a href="{{ site_href($page, '/training/create') }}" class="btn-primary shrink-0" data-requires="training.manage">
                     <i data-lucide="plus" class="w-4 h-4"></i>
                     <span>新增文章</span>
                 </a>
-                <a href="{{ $page->baseUrl }}/training/" class="btn-secondary shrink-0">返回總覽</a>
+                <a href="{{ site_href($page, '/training') }}" class="btn-secondary shrink-0">返回總覽</a>
             </div>
 
             <div class="self-stretch flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
@@ -54,9 +54,9 @@ title: 教育訓練中心
     <script type="application/json" id="training-catalog-data">
         {!! json_encode([
             'capability' => 'training.manage',
-            'createUrl' => $page->baseUrl . '/training/create/',
-            'articleUrl' => $page->baseUrl . '/training/article/',
-            'listUrl' => $page->baseUrl . '/training/',
+            'createUrl' => site_href($page, '/training/create'),
+            'articleUrl' => site_href($page, '/training/article'),
+            'listUrl' => site_href($page, '/training'),
             'locales' => $page->locales,
             'courses' => $page->trainingCourses,
         ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}

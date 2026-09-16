@@ -8,19 +8,19 @@
         <button id="sidebar-toggle" type="button" class="md:hidden p-2 -ml-1 text-gray5 shrink-0" aria-label="開啟選單" aria-controls="app-sidebar">
             <i data-lucide="menu" class="w-5 h-5"></i>
         </button>
-        <img src="{{ $page->baseUrl }}/images/yellow-slash-motif.svg" alt="" class="w-3 h-6 shrink-0" aria-hidden="true" />
+        <img src="{{ site_asset($page, 'images/yellow-slash-motif.svg') }}" alt="" class="w-3 h-6 shrink-0" aria-hidden="true" />
         <h1 class="text-ch5 text-gray5 truncate">{{ $page->title ?? $page->siteName }}</h1>
     </div>
 
     @if (count($breadcrumbItems))
         <nav class="breadcrumb mt-8 pr-[11.5rem] md:pr-[18.5rem]" aria-label="麵包屑">
             <i data-lucide="home" class="breadcrumb-home"></i>
-            <a href="{{ $page->baseUrl }}/" class="breadcrumb-link">首頁</a>
+            <a href="{{ site_href($page, '/') }}" class="breadcrumb-link">首頁</a>
             @foreach ($breadcrumbItems as $item)
                 <span class="breadcrumb-sep">/</span>
                 @if (!empty($item['path']))
                     <a
-                        href="{{ $page->baseUrl }}{{ $item['path'] === '/' ? '/' : rtrim($item['path'], '/') . '/' }}"
+                        href="{{ site_href($page, $item['path']) }}"
                         class="breadcrumb-link"
                     >{{ $item['label'] }}</a>
                 @else
@@ -58,11 +58,11 @@
             <i data-lucide="more-vertical" class="w-4 h-4 text-gray3 shrink-0"></i>
         </button>
         <div id="app-user-dropdown" class="app-user-dropdown" role="menu">
-            <a href="{{ $page->baseUrl }}/account/" class="app-user-menu-item" role="menuitem">
+            <a href="{{ site_href($page, '/account') }}" class="app-user-menu-item" role="menuitem">
                 <i data-lucide="circle-user" class="w-4 h-4"></i>
                 <span>用戶資料</span>
             </a>
-            <a href="{{ $page->baseUrl }}/login/" class="app-user-menu-item is-brand" role="menuitem">
+            <a href="{{ site_href($page, '/login') }}" class="app-user-menu-item is-brand" role="menuitem">
                 <i data-lucide="log-out" class="w-4 h-4"></i>
                 <span>登出</span>
             </a>

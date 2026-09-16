@@ -4,9 +4,9 @@
 @endphp
 <div class="auth-page">
     <div class="auth-brand">
-        <a href="{{ $page->baseUrl }}/login/" class="inline-flex">
+        <a href="{{ site_href($page, '/login') }}" class="inline-flex">
             <img
-                src="{{ $page->baseUrl }}/images/logo.svg"
+                src="{{ site_asset($page, 'images/logo.svg') }}"
                 alt="{{ $page->siteName }}"
                 width="116"
                 height="44"

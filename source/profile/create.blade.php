@@ -71,13 +71,13 @@ title: 新增帳號
                     </div>
                     <p class="text-[12px] font-medium tracking-[0.04em] text-gray3">會員編號將於儲存時自動產生</p>
                 </div>
-                <a href="{{ $page->baseUrl }}/profile/" class="btn-secondary">返回列表</a>
+                <a href="{{ site_href($page, '/profile') }}" class="btn-secondary">返回列表</a>
             </div>
 
             <form
                 class="self-stretch"
                 data-partner-create-form
-                data-list-url="{{ $page->baseUrl }}/profile/"
+                data-list-url="{{ site_href($page, '/profile') }}"
                 novalidate
             >
                 <input type="hidden" name="applied_at" value="{{ $sample['applied_at'] }}">
@@ -360,7 +360,7 @@ title: 新增帳號
                             </p>
                             <div class="self-stretch inline-flex flex-col gap-2 pt-1">
                                 <button type="submit" class="btn-primary w-full h-11" data-requires="profile.manage">建立帳號</button>
-                                <a href="{{ $page->baseUrl }}/profile/" class="btn-secondary w-full h-11">取消</a>
+                                <a href="{{ site_href($page, '/profile') }}" class="btn-secondary w-full h-11">取消</a>
                             </div>
                         </div>
                     </aside>
@@ -382,7 +382,7 @@ title: 新增帳號
             'oemManagerOptions' => array_map(function ($item) {
                 return ['id' => $item['id'], 'name' => $item['name']];
             }, $oemManagerOptions),
-            'editUrl' => rtrim($page->baseUrl, '/') . '/profile/edit/',
+            'editUrl' => site_href($page, '/profile/edit'),
         ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
     </script>
 @endsection

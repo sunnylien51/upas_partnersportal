@@ -18,13 +18,13 @@ title: 商機續期申請
     <div
         class="page-body"
         data-renew-page
-        data-list-url="{{ $page->baseUrl }}/opportunities/"
+        data-list-url="{{ site_href($page, '/opportunities') }}"
     >
         <div class="content-wrapper">
 
             <div class="page-toolbar">
                 <h1 class="text-ch4 text-gray5 truncate">商機續期申請</h1>
-                <a href="{{ $page->baseUrl }}/opportunities/" class="btn-secondary">返回列表</a>
+                <a href="{{ site_href($page, '/opportunities') }}" class="btn-secondary">返回列表</a>
             </div>
 
             <section class="card-panel gap-3" data-renew-summary>
@@ -175,7 +175,7 @@ title: 商機續期申請
 
                 <div class="self-stretch inline-flex flex-wrap justify-end items-center gap-2">
                     <button type="button" class="btn-secondary" data-renew-back hidden>上一步</button>
-                    <a href="{{ $page->baseUrl }}/opportunities/" class="btn-secondary" data-renew-cancel>取消</a>
+                    <a href="{{ site_href($page, '/opportunities') }}" class="btn-secondary" data-renew-cancel>取消</a>
                     <button type="button" class="btn-primary" data-renew-next>下一步</button>
                     <button type="submit" class="btn-primary" data-renew-submit hidden>送出續期審核</button>
                 </div>

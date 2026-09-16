@@ -30,9 +30,9 @@ title: 商機審核
     <div
         class="page-body"
         data-review-page
-        data-list-url="{{ $page->baseUrl }}/opportunities/"
-        data-create-url="{{ $page->baseUrl }}/opportunities/create/"
-        data-renew-url="{{ $page->baseUrl }}/opportunities/renew/"
+        data-list-url="{{ site_href($page, '/opportunities') }}"
+        data-create-url="{{ site_href($page, '/opportunities/create') }}"
+        data-renew-url="{{ site_href($page, '/opportunities/renew') }}"
         data-partner-company="{{ $page->partner['company'] }}"
         data-partner-contact="{{ $page->partner['contact'] }}"
         data-partner-phone="{{ $page->partner['phone'] }}"
@@ -48,7 +48,7 @@ title: 商機審核
                     </h1>
                     <span class="status-pill status-{{ $sample['status'] }}" data-review-status-pill>{{ $sample['statusLabel'] }}</span>
                 </div>
-                <a href="{{ $page->baseUrl }}/opportunities/" class="btn-secondary">返回列表</a>
+                <a href="{{ site_href($page, '/opportunities') }}" class="btn-secondary">返回列表</a>
             </div>
 
             <div class="review-layout">
@@ -404,7 +404,7 @@ title: 商機審核
                             <button type="submit" class="btn-primary w-full h-11" data-review-submit hidden>送出審核結果</button>
                             <button type="button" class="btn-primary w-full h-11" data-review-edit-btn hidden>修改審核</button>
                             <button type="button" class="btn-secondary w-full h-11" data-review-cancel-edit hidden>取消修改</button>
-                            <a href="{{ $page->baseUrl }}/opportunities/" class="btn-secondary w-full h-11" data-review-cancel>取消</a>
+                            <a href="{{ site_href($page, '/opportunities') }}" class="btn-secondary w-full h-11" data-review-cancel>取消</a>
                             <a
                                 href="#"
                                 class="btn-secondary w-full h-11"

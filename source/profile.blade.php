@@ -85,7 +85,7 @@ title: 夥伴管理
             class="content-wrapper"
             data-partner-list
             data-page-size="8"
-            data-edit-url="{{ $page->baseUrl }}/profile/edit/"
+            data-edit-url="{{ site_href($page, '/profile/edit') }}"
         >
 
             <div class="self-stretch flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
@@ -129,7 +129,7 @@ title: 夥伴管理
                 </div>
 
                 <div class="flex flex-wrap items-center gap-2">
-                    <a href="{{ $page->baseUrl }}/profile/create/" class="btn-primary" data-requires="profile.manage">新增帳號</a>
+                    <a href="{{ site_href($page, '/profile/create') }}" class="btn-primary" data-requires="profile.manage">新增帳號</a>
                     <button type="button" class="btn-secondary" data-requires="profile.manage" data-partner-export>匯出 Excel</button>
                 </div>
             </div>
@@ -184,7 +184,7 @@ title: 夥伴管理
                                         class="list-row list-row-link py-3"
                                         data-partner-row
                                         data-partner-id="{{ $item['id'] }}"
-                                        data-edit-href="{{ $page->baseUrl }}/profile/edit/?id={{ urlencode($item['id']) }}"
+                                        data-edit-href="{{ site_href($page, '/profile/edit') }}?id={{ urlencode($item['id']) }}"
                                         data-status="{{ $item['status'] }}"
                                         data-country="{{ $item['country'] }}"
                                         data-identity="{{ $identity }}"
@@ -211,7 +211,7 @@ title: 夥伴管理
                                         </div>
                                         <div class="w-20 shrink-0 inline-flex items-center justify-end" data-partner-actions>
                                             <a
-                                                href="{{ $page->baseUrl }}/profile/edit/?id={{ urlencode($item['id']) }}"
+                                                href="{{ site_href($page, '/profile/edit') }}?id={{ urlencode($item['id']) }}"
                                                 class="icon-action"
                                                 data-requires="profile.manage"
                                                 aria-label="編輯 {{ $item['company'] }}"
@@ -374,7 +374,7 @@ title: 夥伴管理
             'levels' => $levelLabels,
             'identities' => $identityLabels,
             'identityFilters' => $identityFilters,
-            'editUrl' => rtrim($page->baseUrl, '/') . '/profile/edit/',
+            'editUrl' => site_href($page, '/profile/edit'),
         ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
     </script>
 @endsection

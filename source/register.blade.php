@@ -13,7 +13,7 @@ cardMaxWidth: 800px
     <form
         class="self-stretch flex flex-col items-start gap-8"
         data-partner-register-form
-        data-login-url="{{ $page->baseUrl }}/login/"
+        data-login-url="{{ site_href($page, '/login') }}"
         novalidate
     >
         <div class="form-field gap-1">
@@ -232,12 +232,12 @@ cardMaxWidth: 800px
                 </p>
                 <p class="text-cb3 text-gray3">請等待原廠審核。審核通過後即可使用登入帳號。</p>
             </div>
-            <a href="{{ $page->baseUrl }}/login/" class="btn-primary w-full h-11">返回登入</a>
+            <a href="{{ site_href($page, '/login') }}" class="btn-primary w-full h-11">返回登入</a>
         </div>
 
         <div class="self-stretch inline-flex justify-center items-center gap-1" data-partner-register-login-link>
             <span class="text-cb3 text-gray4">已有帳號？</span>
-            <a href="{{ $page->baseUrl }}/login/" class="auth-link underline">返回登入</a>
+            <a href="{{ site_href($page, '/login') }}" class="auth-link underline">返回登入</a>
         </div>
     </form>
 @endsection

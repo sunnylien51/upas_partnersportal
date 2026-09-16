@@ -11,7 +11,7 @@ title: 重設密碼
 
     <form
         class="self-stretch flex flex-col items-start gap-8"
-        action="{{ $page->baseUrl }}/login/"
+        action="{{ site_href($page, '/login') }}"
         method="get"
         data-reset-password-form
     >
@@ -52,10 +52,10 @@ title: 重設密碼
         <div class="self-stretch flex flex-col items-start gap-5">
             <button type="submit" class="btn-primary w-full h-11">確認重設</button>
 
-            <a href="{{ $page->baseUrl }}/login/" class="btn-secondary w-full">返回登入</a>
+            <a href="{{ site_href($page, '/login') }}" class="btn-secondary w-full">返回登入</a>
 
             <p class="text-cb3 text-gray4">若連結已過期，請重新申請
-                <a href="{{ $page->baseUrl }}/forgot-password/" class="auth-link">忘記密碼</a>。
+                <a href="{{ site_href($page, '/forgot-password') }}" class="auth-link">忘記密碼</a>。
             </p>
         </div>
     </form>

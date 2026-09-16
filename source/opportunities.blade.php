@@ -80,7 +80,7 @@ title: 商機中心
                 {{-- 右側：匯出 Excel、新增商機（僅總管理者） --}}
                 <div class="flex flex-wrap items-center gap-2">
                     <button type="button" class="btn-secondary" data-requires="opportunity.export" data-opportunity-export>匯出 Excel</button>
-                    <a href="{{ $page->baseUrl }}/opportunities/create/" class="btn-primary" data-requires="opportunity.create">
+                    <a href="{{ site_href($page, '/opportunities/create') }}" class="btn-primary" data-requires="opportunity.create">
                         <i data-lucide="plus" class="w-4 h-4"></i>
                         <span>新增商機</span>
                     </a>
@@ -191,10 +191,10 @@ title: 商機中心
                                         <div class="w-32 shrink-0 inline-flex items-center justify-end gap-1" data-opp-actions>
                                             <a
                                                 href="{{ $item['status'] === 'draft'
-                                                    ? $page->baseUrl . '/opportunities/create/?draft=' . urlencode($item['id'])
+                                                    ? site_href($page, '/opportunities/create') . '?draft=' . urlencode($item['id'])
                                                     : ($item['status'] === 'rejected'
-                                                        ? $page->baseUrl . '/opportunities/create/?id=' . urlencode($item['id'])
-                                                        : $page->baseUrl . '/opportunities/review/?id=' . urlencode($item['id'])) }}"
+                                                        ? site_href($page, '/opportunities/create') . '?id=' . urlencode($item['id'])
+                                                        : site_href($page, '/opportunities/review') . '?id=' . urlencode($item['id'])) }}"
                                                 class="icon-action"
                                                 data-opp-edit-action
                                                 @if ($item['status'] === 'draft') data-requires="opportunity.create" @endif
@@ -260,9 +260,9 @@ title: 商機中心
     </script>
     <script type="application/json" id="opportunity-list-meta">
         {!! json_encode([
-            'reviewUrl' => rtrim($page->baseUrl, '/') . '/opportunities/review/',
-            'createUrl' => rtrim($page->baseUrl, '/') . '/opportunities/create/',
-            'renewUrl' => rtrim($page->baseUrl, '/') . '/opportunities/renew/',
+            'reviewUrl' => site_href($page, '/opportunities/review'),
+            'createUrl' => site_href($page, '/opportunities/create'),
+            'renewUrl' => site_href($page, '/opportunities/renew'),
             'partner' => $page->partner,
             'statusLabels' => $statusLabels,
             'statusIcons' => $statusIcons,

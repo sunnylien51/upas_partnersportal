@@ -15,7 +15,7 @@ title: 概覽
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                 @foreach ($page->overviewModules as $module)
-                    <a href="{{ $page->baseUrl }}{{ rtrim($module['path'], '/') }}/" class="group self-stretch min-h-[13rem] p-6 bg-white rounded-2xl shadow-card inline-flex flex-col items-end gap-3 overflow-hidden transition-[box-shadow] duration-300 hover:shadow-[0px_0px_40px_0px_rgba(0,0,0,0.08)]" data-nav-path="{{ $module['path'] }}" data-overview-module>
+                    <a href="{{ site_href($page, $module['path']) }}" class="group self-stretch min-h-[13rem] p-6 bg-white rounded-2xl shadow-card inline-flex flex-col items-end gap-3 overflow-hidden transition-[box-shadow] duration-300 hover:shadow-[0px_0px_40px_0px_rgba(0,0,0,0.08)]" data-nav-path="{{ $module['path'] }}" data-overview-module>
                         <div class="self-stretch pb-3 border-b border-gray1 inline-flex items-center gap-3">
                             <span class="section-accent" aria-hidden="true"></span>
                             <h2 class="text-ch5 text-gray5">{{ $module['label'] }}</h2>
