@@ -68,6 +68,9 @@ function asyncJigsawBuildPlugin() {
 }
 
 export default defineConfig({
+    build: {
+        assetsDir: '',
+    },
     server: {
         host: true,
         port: 5173,
@@ -89,6 +92,9 @@ export default defineConfig({
                 'source/_assets/css/main.css',
             ],
             refresh: false,
+            outDir: 'source/static',
+            publicDirectory: 'source',
+            buildDirectory: 'static',
         }),
         asyncJigsawBuildPlugin(),
     ],

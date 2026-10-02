@@ -15,16 +15,39 @@ title: 商機中心
         'tw' => '台灣經銷商',
         'overseas' => '海外經銷商',
     ];
+    $salesNameById = [];
+    foreach ($page->partners ?? [] as $partner) {
+        if (!empty($partner['id'])) {
+            $salesNameById[$partner['id']] = $partner['name'] ?? '';
+        }
+    }
+    // 承接業務以商機 oem_sales_id 為準（與 opportunity-flow.js opportunitySalesName 一致）
+    $salesNameByOpportunity = [];
+    $salesFilterNames = [];
+    foreach ($page->opportunities ?? [] as $oppItem) {
+        $salesId = trim((string) ($oppItem['oem_sales_id'] ?? ''));
+        if ($salesId !== '') {
+            $name = trim((string) ($salesNameById[$salesId] ?? $salesId));
+        } else {
+            $name = ($oppItem['status'] ?? '') === 'draft' ? '' : '待指派';
+        }
+        $salesNameByOpportunity[$oppItem['id']] = $name;
+        if ($name !== '') {
+            $salesFilterNames[$name] = $name;
+        }
+    }
+    $salesFilterNames = array_values($salesFilterNames);
+    sort($salesFilterNames, SORT_NATURAL);
 @endphp
 
 @section('body')
     <div class="page-body">
         <div class="content-wrapper">
 
-            {{-- ========== 工具列：搜尋、狀態篩選｜匯出、新增商機 ========== --}}
+            {{-- ========== 工具列：搜尋、狀態下拉｜匯出、新增商機 ========== --}}
             <div class="self-stretch flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
-                {{-- 左側：搜尋 + 狀態篩選 --}}
-                <div class="flex items-center gap-2 min-w-0">
+                {{-- 左側：搜尋 + 狀態、承接業務下拉 --}}
+                <div class="flex flex-wrap items-center gap-2 min-w-0">
                     <label class="search-field search-bar w-56">
                         <i data-lucide="search" class="w-3.5 h-3.5 text-gray3 shrink-0"></i>
                         <span class="sr-only">搜尋案件/客戶</span>
@@ -34,45 +57,31 @@ title: 商機中心
                         </button>
                     </label>
 
-                    <div class="filter-dropdown shrink-0" data-filter-dropdown>
-                        <button type="button" class="filter-trigger" data-filter-trigger aria-haspopup="dialog" aria-expanded="false" aria-controls="opportunity-filter-panel">
-                            <span class="text-cb3 text-gray3 line-clamp-1">狀態篩選</span>
-                            <span class="relative size-8 bg-gray1 rounded-lg inline-flex items-center justify-center">
-                                <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5 text-gray3"></i>
-                                <span class="absolute top-1.5 right-1.5 size-1.5 rounded-full bg-brand2" data-filter-dot hidden></span>
-                            </span>
+                    <div class="form-select w-44 shrink-0" data-form-select data-opp-status-filter>
+                        <input type="hidden" value="" data-form-select-value>
+                        <button type="button" class="form-select-trigger" data-form-select-trigger aria-haspopup="listbox" aria-expanded="false">
+                            <span class="is-placeholder" data-form-select-label>狀態</span>
+                            <i data-lucide="chevron-down" class="w-4 h-4 text-gray4"></i>
                         </button>
+                        <div class="form-select-menu" data-form-select-menu hidden role="listbox">
+                            <button type="button" class="form-select-option is-selected" role="option" data-form-select-option data-value="" data-label="狀態">全部</button>
+                            @foreach ($page->opportunityStatuses as $option)
+                                <button type="button" class="form-select-option" role="option" data-form-select-option data-value="{{ $option['value'] }}" data-label="{{ $option['label'] }}">{{ $option['label'] }}</button>
+                            @endforeach
+                        </div>
+                    </div>
 
-                        <div id="opportunity-filter-panel" class="filter-panel" data-filter-panel hidden role="dialog" aria-label="篩選條件">
-                            <div class="self-stretch px-5 py-3 border-b border-gray1">
-                                <p class="text-cb3 text-gray5">篩選條件</p>
-                            </div>
-
-                            <div class="self-stretch px-5 py-4 flex flex-col gap-4">
-                                @foreach ($page->opportunityFilters as $group)
-                                    <div class="self-stretch flex flex-col items-start gap-2" data-filter-group="{{ $group['key'] }}">
-                                        <p class="text-cb3 text-gray4">{{ $group['label'] }}</p>
-                                        <div class="self-stretch inline-flex justify-start items-start gap-2 flex-wrap content-start">
-                                            @foreach ($group['options'] as $option)
-                                                <button
-                                                    type="button"
-                                                    class="filter-chip {{ $option['value'] === 'all' ? 'is-selected' : '' }}"
-                                                    data-filter-chip
-                                                    data-value="{{ $option['value'] }}"
-                                                    aria-pressed="{{ $option['value'] === 'all' ? 'true' : 'false' }}"
-                                                >
-                                                    {{ $option['label'] }}
-                                                </button>
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-
-                            <div class="self-stretch px-4 py-3 border-t border-gray1 inline-flex justify-end items-center gap-2.5">
-                                <button type="button" class="px-6 py-2 bg-white rounded-[8px] outline outline-1 outline-offset-[-1px] outline-gray1 text-cb3 text-gray4 transition-colors hover:text-gray5 hover:outline-gray2" data-filter-clear>清除條件</button>
-                                <button type="button" class="px-6 py-2 bg-gray5 rounded-[8px] text-cb3 text-white transition-colors hover:bg-gray5/90" data-filter-apply>套用篩選</button>
-                            </div>
+                    <div class="form-select w-44 shrink-0" data-form-select data-opp-sales-filter>
+                        <input type="hidden" value="" data-form-select-value>
+                        <button type="button" class="form-select-trigger" data-form-select-trigger aria-haspopup="listbox" aria-expanded="false">
+                            <span class="is-placeholder" data-form-select-label>承接業務</span>
+                            <i data-lucide="chevron-down" class="w-4 h-4 text-gray4"></i>
+                        </button>
+                        <div class="form-select-menu" data-form-select-menu hidden role="listbox">
+                            <button type="button" class="form-select-option is-selected" role="option" data-form-select-option data-value="" data-label="承接業務">全部</button>
+                            @foreach ($salesFilterNames as $name)
+                                <button type="button" class="form-select-option" role="option" data-form-select-option data-value="{{ $name }}" data-label="{{ $name }}">{{ $name }}</button>
+                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -88,17 +97,22 @@ title: 商機中心
             </div>
 
             {{-- ========== 統計卡：進行中 / 審核中 / 即將到期（依可見範圍重算） ========== --}}
-            <div class="self-stretch px-6 py-4 bg-white rounded-2xl shadow-card flex flex-col md:flex-row md:items-stretch gap-4 md:gap-7">
+            <div class="self-stretch px-6 py-4 bg-white rounded-2xl shadow-card grid grid-cols-2 md:flex md:flex-row md:items-stretch md:gap-7">
                 @foreach ($page->opportunityStats as $index => $stat)
                     @php
                         $statKeys = ['active', 'reviewing', 'draft', 'expiring'];
                         $statKey = $statKeys[$index] ?? 'active';
+                        $mobileFrame = [
+                            0 => 'pr-4 pb-4 border-r border-b border-gray1',
+                            1 => 'pl-4 pb-4 border-b border-gray1',
+                            2 => 'pr-4 pt-4 border-r border-gray1',
+                            3 => 'pl-4 pt-4',
+                        ][$index] ?? '';
                     @endphp
                     @if ($index > 0)
                         <div class="hidden md:block w-px self-stretch bg-gray1 shrink-0" aria-hidden="true"></div>
-                        <div class="md:hidden h-px w-full bg-gray1" aria-hidden="true"></div>
                     @endif
-                    <div class="flex-1 flex flex-col items-start gap-2" data-opp-stat="{{ $statKey }}">
+                    <div class="flex-1 flex flex-col items-start gap-2 md:border-0 md:p-0 {{ $mobileFrame }}" data-opp-stat="{{ $statKey }}">
                         <p class="text-cb3 text-gray4">{{ $stat['label'] }}</p>
                         <div class="self-stretch inline-flex justify-end items-baseline gap-1">
                             <span class="font-en font-semibold text-[48px] leading-none tracking-[3px] @if ($stat['tone'] === 'warning') text-brand2 @elseif ($stat['tone'] === 'danger') text-red @else text-gray5 @endif" data-opp-stat-count>{{ $stat['count'] }}</span>
@@ -112,13 +126,14 @@ title: 商機中心
             <div class="list-card">
                 <div class="list-card-body">
                     <div class="self-stretch overflow-x-auto">
-                        <div class="min-w-[800px]">
+                        <div class="min-w-[920px]">
 
                             {{-- 表頭 --}}
                             <div class="list-head">
                                 <div class="w-36 text-cb3 text-gray4">編號</div>
                                 <div class="flex-1 text-cb3 text-gray4">客戶</div>
-                                <div class="w-32 text-cb3 text-gray4">所屬</div>
+                                <div class="w-32 text-cb3 text-gray4">身份</div>
+                                <div class="w-28 text-cb3 text-gray4">承接業務</div>
                                 <div class="w-40 text-cb3 text-gray4">狀態</div>
                                 <div class="w-28 text-cb3 text-gray4">保護期</div>
                                 <div class="w-32 text-cb3 text-gray4 text-right pr-1">動作</div>
@@ -135,6 +150,7 @@ title: 商機中心
                                                 break;
                                             }
                                         }
+                                        $salesName = $salesNameByOpportunity[$item['id']] ?? '';
                                     @endphp
                                     <div
                                         class="list-row py-2"
@@ -145,11 +161,13 @@ title: 商機中心
                                         data-status="{{ $item['status'] }}"
                                         data-created-by="{{ $item['created_by'] ?? '' }}"
                                         data-oem-sales-id="{{ $item['oem_sales_id'] ?? '' }}"
-                                        data-search="{{ $item['id'] }} {{ $item['customer'] }} {{ $dealerLabels[$item['dealer']] ?? '' }}"
+                                        data-sales-name="{{ $salesName }}"
+                                        data-search="{{ $item['id'] }} {{ $item['customer'] }} {{ $dealerLabels[$item['dealer']] ?? '' }} {{ $salesName }}"
                                     >
                                         <div class="w-36 text-eb2 text-gray5 uppercase">{{ $item['id'] }}</div>
                                         <div class="flex-1 text-cb3 text-gray5" data-opp-customer>{{ $item['customer'] }}</div>
                                         <div class="w-32 shrink-0 text-cb3 text-gray5" data-opp-dealer>{{ $dealerLabels[$item['dealer']] ?? '—' }}</div>
+                                        <div class="w-28 shrink-0 text-cb3 text-gray5 truncate" data-opp-sales>{{ $salesName !== '' ? $salesName : '—' }}</div>
 
                                         {{-- 狀態：同一元件；一般使用者加 is-readonly（見 main.js） --}}
                                         <div class="w-40 shrink-0 flex items-center">

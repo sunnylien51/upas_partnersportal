@@ -36,6 +36,29 @@ const DEFAULT_DEALER_LABELS = {
 };
 
 const RENEWAL_DAYS = 90;
+const SUBMIT_REVIEW_NOTICE = '原廠將於3天內於系統內通知審核結果，請登入系統查看。';
+
+function showSubmitReviewNotice(title = '已送出，商機進入審核中') {
+    try {
+        const result = showAppConfirm({
+            title,
+            message: SUBMIT_REVIEW_NOTICE,
+            confirmLabel: '確定',
+            hideCancel: true,
+        });
+        if (result && typeof result.then === 'function') {
+            return result.catch(() => {
+                window.alert(SUBMIT_REVIEW_NOTICE);
+            });
+        }
+    } catch (error) {
+        window.alert(SUBMIT_REVIEW_NOTICE);
+        return Promise.resolve();
+    }
+
+    window.alert(SUBMIT_REVIEW_NOTICE);
+    return Promise.resolve();
+}
 
 function showAppToast(message, tone = 'default') {
     if (typeof app().showAppToast === 'function') {
@@ -220,6 +243,42 @@ function createOpportunityId(date = new Date()) {
     return `${prefix}${String(next).padStart(3, '0')}`;
 }
 
+function opportunityIdSortValue(id) {
+    const text = String(id || '');
+    const official = text.match(/^N(\d+)/i);
+    if (official) {
+        return Number(official[1]);
+    }
+    const draft = text.match(/^DRAFT-(\d+)/i);
+    if (draft) {
+        return Number(draft[1]);
+    }
+    return 0;
+}
+
+function sortOpportunityListRows(list) {
+    if (!list) {
+        return;
+    }
+
+    const empty = list.querySelector('[data-filter-empty]');
+    const rows = [...list.querySelectorAll('[data-opp-row]')];
+    rows.sort((a, b) => {
+        const byId = opportunityIdSortValue(b.dataset.oppId) - opportunityIdSortValue(a.dataset.oppId);
+        if (byId !== 0) {
+            return byId;
+        }
+        return String(b.dataset.oppId || '').localeCompare(String(a.dataset.oppId || ''), 'en');
+    });
+    rows.forEach((row) => {
+        if (empty) {
+            list.insertBefore(row, empty);
+        } else {
+            list.appendChild(row);
+        }
+    });
+}
+
 function readOpportunityStore() {
     return readJsonMap(OPPORTUNITY_STORE_KEY);
 }
@@ -267,8 +326,70 @@ function setRowDealerUi(row, dealer) {
     }
 }
 
-function opportunitySearchText(id, customer, dealer) {
-    return `${id} ${customer || ''} ${getDealerLabel(dealer)}`;
+function opportunitySearchText(id, customer, dealer, salesName = '') {
+    return `${id} ${customer || ''} ${getDealerLabel(dealer)} ${salesName || ''}`.trim();
+}
+
+const UNASSIGNED_SALES_LABEL = '待指派';
+
+// 承接業務以商機的 oem_sales_id 為準；未指派的送審商機顯示「待指派」
+function opportunitySalesName(record) {
+    if (!record) {
+        return '';
+    }
+
+    const salesId = String(record.oem_sales_id || '').trim();
+    if (salesId) {
+        const name = String(getPartnersById().get(salesId)?.name || '').trim();
+        return name || String(record.review?.salesLabel || '').trim() || salesId;
+    }
+
+    return record.status === 'draft' ? '' : UNASSIGNED_SALES_LABEL;
+}
+
+function ensureSalesFilterOption(name) {
+    const select = document.querySelector('[data-opp-sales-filter]');
+    if (!select || !name) {
+        return;
+    }
+
+    const menu = select._formMenu || select.querySelector('[data-form-select-menu]');
+    if (!menu || menu.querySelector(`[data-form-select-option][data-value="${CSS.escape(name)}"]`)) {
+        return;
+    }
+
+    const option = document.createElement('button');
+    option.type = 'button';
+    option.className = 'form-select-option';
+    option.setAttribute('role', 'option');
+    option.setAttribute('data-form-select-option', '');
+    option.dataset.value = name;
+    option.dataset.label = name;
+    option.textContent = name;
+    option.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (typeof app().setFormSelectValue === 'function') {
+            app().setFormSelectValue(select, option);
+        }
+        if (typeof app().closeFormSelects === 'function') {
+            app().closeFormSelects();
+        }
+    });
+    menu.appendChild(option);
+}
+
+function setRowSalesUi(row, record) {
+    const name = opportunitySalesName(record);
+    row.dataset.salesName = name;
+    ensureSalesFilterOption(name);
+
+    const salesEl = row.querySelector('[data-opp-sales]');
+    if (!salesEl) {
+        return;
+    }
+
+    salesEl.textContent = name || '—';
 }
 
 function getStatusLabels() {
@@ -357,6 +478,26 @@ function getPreviewActor() {
     };
 }
 
+function previewActorKey(actor = getPreviewActor()) {
+    const partnerId = String(actor?.partnerId || '').trim();
+    if (partnerId) {
+        return partnerId;
+    }
+
+    return (actor?.identity || actor?.roleKey) === 'admin' ? 'admin' : '';
+}
+
+function isDraftCreator(record, actor = getPreviewActor()) {
+    const createdBy = String(record?.created_by || '').trim();
+    const myId = previewActorKey(actor);
+    if (createdBy) {
+        return createdBy === myId;
+    }
+
+    // 舊暫存可能沒寫 created_by；僅總管自己存的才看得到
+    return (actor?.identity || '') === 'admin';
+}
+
 function isDealerIdentity(identity) {
     return identity === 'dealer_tw' || identity === 'dealer_overseas';
 }
@@ -405,12 +546,17 @@ function canViewOpportunity(record, actor = getPreviewActor(), partnersById = ge
         return false;
     }
 
+    // 暫存只留在新增者帳號；送出審核後才依身分權限可見
+    if (record.status === 'draft') {
+        return isDraftCreator(record, actor);
+    }
+
     const identity = actor?.identity || 'admin';
     if (identity === 'admin') {
         return true;
     }
 
-    const myId = String(actor?.partnerId || '').trim();
+    const myId = previewActorKey(actor);
     if (!myId) {
         return false;
     }
@@ -422,30 +568,13 @@ function canViewOpportunity(record, actor = getPreviewActor(), partnersById = ge
         return createdBy === myId;
     }
 
+    // 經銷與業務不綁定；內部人員只看自己新增的，或商機承接業務是自己的
     if (identity === 'oem_sales') {
-        if (oemSalesId === myId || createdBy === myId) {
-            return true;
-        }
-        const creator = partnersById.get(createdBy);
-        return Boolean(
-            creator
-            && isDealerIdentity(creator.identity)
-            && String(creator.oem_sales_id || '') === myId
-            && creator.status === 'approved'
-        );
+        return oemSalesId === myId || createdBy === myId;
     }
 
     if (identity === 'oem_manager') {
         if (createdBy === myId || oemSalesId === myId) {
-            return true;
-        }
-        const creator = partnersById.get(createdBy);
-        if (
-            creator
-            && isDealerIdentity(creator.identity)
-            && String(creator.oem_sales_id || '') === myId
-            && creator.status === 'approved'
-        ) {
             return true;
         }
 
@@ -589,18 +718,44 @@ function syncOpportunityStats() {
     });
 }
 
-function defaultOemSalesIdForActor(actor = getPreviewActor(), partnersById = getPartnersById()) {
+function isOemStaffIdentity(identity) {
+    return identity === 'oem_sales' || identity === 'oem_manager';
+}
+
+// 經銷新增的商機一律待總管指派；內部人員預設自己承接
+function defaultOemSalesIdForActor(actor = getPreviewActor()) {
     const myId = String(actor.partnerId || '').trim();
-    if (!myId) {
-        return '';
-    }
-    if (actor.identity === 'oem_sales' || actor.identity === 'oem_manager') {
-        return myId;
-    }
+    return myId && isOemStaffIdentity(actor.identity) ? myId : '';
+}
+
+// 經銷不能決定承接業務：沿用既有指派；內部人員／總管以表單選擇為準
+function resolveFormOemSalesId(formData, existing, actor = getPreviewActor()) {
+    const existingId = String(existing?.oem_sales_id || '').trim();
     if (isDealerIdentity(actor.identity)) {
-        return String(partnersById.get(myId)?.oem_sales_id || '').trim();
+        return existingId;
     }
-    return '';
+    const fields = formData?.fields || {};
+    if (Object.prototype.hasOwnProperty.call(fields, 'oem_sales_id')) {
+        return String(fields.oem_sales_id || '').trim();
+    }
+    return existingId || defaultOemSalesIdForActor(actor);
+}
+
+// 新增／暫存／補件表單的承接業務：經銷看不到此區；assignedId 未給時套用身分預設，null 只切換顯示
+function syncOpportunityOemSalesField(form, assignedId) {
+    const section = form?.querySelector('[data-opp-oem-section]');
+    if (!section) {
+        return;
+    }
+
+    const actor = getPreviewActor();
+    section.hidden = isDealerIdentity(actor.identity);
+    if (section.hidden || assignedId === null) {
+        return;
+    }
+
+    const value = assignedId !== undefined ? assignedId : defaultOemSalesIdForActor(actor);
+    setFormSelectByValue(section.querySelector('[data-opp-oem-sales-select]'), value || '');
 }
 
 function denyOpportunityAccess(listUrl) {
@@ -622,7 +777,7 @@ function exportVisibleOpportunities() {
         return;
     }
 
-    const headers = ['編號', '客戶', '所屬', '狀態', '保護期', '建立者', '原廠業務'];
+    const headers = ['編號', '客戶', '身份', '狀態', '保護期', '建立者', '承接業務'];
     const lines = [headers.join(',')];
     const dealerLabels = getDealerLabels();
 
@@ -634,7 +789,7 @@ function exportVisibleOpportunities() {
             record.statusLabel || getStatusLabel(record.status) || record.status || '',
             protectionForStatus(record.status, record.protection),
             record.created_by || '',
-            record.oem_sales_id || '',
+            opportunitySalesName(record),
         ].map((value) => `"${String(value).replace(/"/g, '""')}"`);
         lines.push(cells.join(','));
     });
@@ -1006,37 +1161,92 @@ function applyOpportunityFormData(form, payload) {
     setFileUploadValue(data.attachment || payload.attachment || null, form);
 }
 
+function isOpportunityFieldHidden(el) {
+    if (!el) {
+        return true;
+    }
+
+    if (el.closest('[data-create-review-edit], [data-create-review-result]')) {
+        return true;
+    }
+
+    let node = el;
+    while (node && node !== document.documentElement) {
+        if (node.hasAttribute?.('hidden')) {
+            return true;
+        }
+
+        if (node.nodeType === 1) {
+            const style = window.getComputedStyle(node);
+            if (style.display === 'none' || style.visibility === 'hidden') {
+                return true;
+            }
+        }
+
+        node = node.parentElement;
+    }
+
+    return false;
+}
+
+function opportunityFieldLabel(el) {
+    const root = el.closest('.form-field')
+        || el.closest('[data-product-row]')
+        || el.closest('label')
+        || el;
+    const label = root.querySelector('.form-label');
+    if (label) {
+        return String(label.innerText || '').replace(/\*/g, '').replace(/\s+/g, ' ').trim();
+    }
+    if (el.closest('[data-product-row]')) {
+        return '專案產品／U數';
+    }
+    return '';
+}
+
 function validateOpportunityForm(form) {
-    let valid = true;
+    const missing = [];
     form.querySelectorAll('.form-error').forEach((el) => el.classList.remove('form-error'));
 
+    const addMissing = (el) => {
+        const label = opportunityFieldLabel(el);
+        if (label && !missing.includes(label)) {
+            missing.push(label);
+        }
+    };
+
     form.querySelectorAll('input[required], textarea[required]').forEach((field) => {
-        if (field.classList.contains('is-readonly')) {
+        if (field.classList.contains('is-readonly') || field.type === 'hidden' || isOpportunityFieldHidden(field)) {
             return;
         }
 
         if (!String(field.value || '').trim()) {
             field.classList.add('form-error');
-            valid = false;
+            addMissing(field);
         }
     });
 
     form.querySelectorAll('[data-form-select][data-required]').forEach((select) => {
+        if (isOpportunityFieldHidden(select) || select.closest('[data-create-review-edit]')) {
+            return;
+        }
+
         const hidden = select.querySelector('[data-form-select-value]');
         const trigger = select.querySelector('[data-form-select-trigger]');
         if (hidden && !String(hidden.value || '').trim()) {
             if (trigger) {
                 trigger.classList.add('form-error');
             }
-            valid = false;
+            addMissing(select);
         }
     });
 
-    return valid;
+    form._opportunityMissing = missing;
+    return missing.length === 0;
 }
 
 function focusFirstOpportunityError(form) {
-    const firstError = form.querySelector('.form-error');
+    const firstError = [...form.querySelectorAll('.form-error')].find((el) => !isOpportunityFieldHidden(el));
     if (!firstError) {
         return;
     }
@@ -1085,8 +1295,8 @@ function formDataToRecord(formData, options = {}) {
         booking_code: options.booking_code || id,
         dealer: options.dealer || 'tw',
         protection: options.protection || '-',
-        created_by: options.created_by || actor.partnerId || '',
-        oem_sales_id: options.oem_sales_id || defaultOemSalesIdForActor(actor) || '',
+        created_by: options.created_by || previewActorKey(actor),
+        oem_sales_id: options.oem_sales_id !== undefined ? options.oem_sales_id : defaultOemSalesIdForActor(actor),
         review: options.review !== undefined ? options.review : null,
         form: formData,
         local: true,
@@ -1191,14 +1401,18 @@ function positionRowMoreMenu(trigger, menu) {
     menu.style.top = `${Math.round(top)}px`;
 }
 
+function canCloseOpportunity() {
+    return typeof app().roleCan === 'function' && app().roleCan('opportunity.close');
+}
+
 function getRowMoreActions(status) {
     const canCreate = typeof app().roleCan === 'function' ? app().roleCan('opportunity.create') : false;
     const canActions = typeof app().roleCan === 'function' ? app().roleCan('opportunity.actions') : false;
-    // 續期／取消：有建立權限的一般使用者也可；結案：僅總管理者 + 已到期
+    // 續期／取消：有建立權限的一般使用者也可；結案：僅總管理者可見
     const canManageOwn = canCreate || canActions;
+    const canClose = canCloseOpportunity();
 
-    // 四個動作固定顯示；不可用時 gray 禁用（進入詳情／編輯由列上鉛筆負責）
-    return [
+    const actions = [
         {
             action: 'delete-draft',
             label: '刪除',
@@ -1212,20 +1426,26 @@ function getRowMoreActions(status) {
             icon: 'refresh-cw',
             enabled: (status === 'approved' || status === 'expiring') && canManageOwn,
         },
-        {
+    ];
+
+    if (canClose) {
+        actions.push({
             action: 'close',
             label: '結案',
             icon: 'circle-check',
-            enabled: status === 'expired' && canActions,
-        },
-        {
-            action: 'cancel',
-            label: '取消商機',
-            icon: 'ban',
-            danger: true,
-            enabled: ['approved', 'expiring', 'reviewing', 'rejected'].includes(status) && canManageOwn,
-        },
-    ];
+            enabled: status === 'expired',
+        });
+    }
+
+    actions.push({
+        action: 'cancel',
+        label: '取消商機',
+        icon: 'ban',
+        danger: true,
+        enabled: ['approved', 'expiring', 'reviewing', 'rejected'].includes(status) && canManageOwn,
+    });
+
+    return actions;
 }
 
 function buildRowMoreMenuHtml(status) {
@@ -1299,7 +1519,7 @@ async function handleRowMoreAction(row, action) {
     }
 
     if (action === 'close') {
-        const canClose = typeof app().roleCan === 'function' && app().roleCan('opportunity.actions');
+        const canClose = canCloseOpportunity();
         if (!canClose || row.dataset.status !== 'expired') {
             showAppToast('僅總管理者可對已到期商機結案', 'error');
             return;
@@ -1600,7 +1820,7 @@ function buildOpportunityListRow(record) {
     row.dataset.dealer = record.dealer || 'tw';
     row.dataset.amount = String(record.amountValue || 0);
     row.dataset.status = status;
-    row.dataset.search = opportunitySearchText(record.id, record.customer_company, record.dealer);
+    row.dataset.search = opportunitySearchText(record.id, record.customer_company, record.dealer, opportunitySalesName(record));
     row.dataset.createdBy = record.created_by || '';
     row.dataset.oemSalesId = record.oem_sales_id || '';
     row.dataset.localRecord = 'true';
@@ -1613,6 +1833,7 @@ function buildOpportunityListRow(record) {
         <div class="w-36 text-eb2 text-gray5 uppercase">${record.id}</div>
         <div class="flex-1 text-cb3 text-gray5" data-opp-customer></div>
         <div class="w-32 shrink-0 text-cb3 text-gray5" data-opp-dealer>${getDealerLabel(record.dealer)}</div>
+        <div class="w-28 shrink-0 text-cb3 text-gray5 truncate" data-opp-sales>—</div>
         <div class="w-40 shrink-0 flex items-center">
             <div class="status-select" data-status-select>
                 <button type="button" class="status-trigger status-${status}" data-status-trigger aria-haspopup="listbox" aria-expanded="false">
@@ -1643,6 +1864,7 @@ function buildOpportunityListRow(record) {
     if (customerEl) {
         customerEl.textContent = record.customer_company || record.id;
     }
+    setRowSalesUi(row, record);
 
     const select = row.querySelector('[data-status-select]');
     const menu = row.querySelector('[data-status-menu]');
@@ -1713,7 +1935,7 @@ function buildDraftOpportunityRow(draft) {
     row.dataset.dealer = draft.dealer || 'tw';
     row.dataset.amount = '0';
     row.dataset.status = 'draft';
-    row.dataset.search = opportunitySearchText(draft.id, label, draft.dealer || 'tw');
+    row.dataset.search = opportunitySearchText(draft.id, label, draft.dealer || 'tw', opportunitySalesName(draft));
     row.dataset.createdBy = draft.created_by || '';
     row.dataset.oemSalesId = draft.oem_sales_id || '';
     row.dataset.localDraft = 'true';
@@ -1722,6 +1944,7 @@ function buildDraftOpportunityRow(draft) {
         <div class="w-36 text-eb2 text-gray5 uppercase">${draft.id}</div>
         <div class="flex-1 text-cb3 text-gray5" data-opp-customer></div>
         <div class="w-32 shrink-0 text-cb3 text-gray5" data-opp-dealer>${getDealerLabel('tw')}</div>
+        <div class="w-28 shrink-0 text-cb3 text-gray5 truncate" data-opp-sales>—</div>
         <div class="w-40 shrink-0 flex items-center">
             <div class="status-select is-readonly" data-status-select>
                 <button type="button" class="status-trigger status-draft" data-status-trigger aria-haspopup="listbox" aria-expanded="false" aria-disabled="true">
@@ -1751,6 +1974,7 @@ function buildDraftOpportunityRow(draft) {
     if (customerEl) {
         customerEl.textContent = label;
     }
+    setRowSalesUi(row, draft);
     return row;
 }
 
@@ -1785,12 +2009,13 @@ function syncOpportunityListUi() {
             }
             row.dataset.amount = String(record.amountValue || 0);
             setRowDealerUi(row, record.dealer || row.dataset.dealer || 'tw');
-            row.dataset.search = opportunitySearchText(id, record.customer_company, row.dataset.dealer);
+            row.dataset.search = opportunitySearchText(id, record.customer_company, row.dataset.dealer, opportunitySalesName(record));
             const protection = row.querySelector('[data-opp-protection]');
             if (protection) {
                 protection.textContent = protectionForStatus(record.status || row.dataset.status, record.protection);
             }
             setRowStatusUi(row, record.status || row.dataset.status, record.statusLabel);
+            setRowSalesUi(row, record);
         }
 
         if (row.dataset.status === 'draft' && drafts[id]) {
@@ -1799,7 +2024,8 @@ function syncOpportunityListUi() {
             if (customerEl) {
                 customerEl.textContent = label;
             }
-            row.dataset.search = opportunitySearchText(id, label, row.dataset.dealer || 'tw');
+            row.dataset.search = opportunitySearchText(id, label, row.dataset.dealer || 'tw', opportunitySalesName(drafts[id]));
+            setRowSalesUi(row, drafts[id]);
         }
 
         ensureRowMoreShell(row);
@@ -1845,6 +2071,7 @@ function syncOpportunityListUi() {
         }
     });
 
+    sortOpportunityListRows(list);
     bindAllRowMoreMenus(list);
     bindOpportunityExport();
     syncOpportunityVisibility();
@@ -1893,9 +2120,9 @@ function renderReviewProductRows(formData) {
     const units = Array.isArray(formData?.units) ? formData.units : [];
 
     host.innerHTML = products.map((product, index) => `
-        <div class="self-stretch inline-flex items-center gap-3" data-review-product-row>
-            <input type="text" class="form-input flex-1 min-w-0 is-readonly" data-review-product value="${String(product || '—').replace(/"/g, '&quot;')}" readonly tabindex="-1">
-            <input type="text" class="form-input w-48 shrink-0 is-readonly" data-review-units value="${String(units[index] || '—').replace(/"/g, '&quot;')}" readonly tabindex="-1">
+        <div class="self-stretch flex flex-col md:flex-row md:items-center gap-3" data-review-product-row>
+            <input type="text" class="form-input w-full min-w-0 md:flex-1 is-readonly" data-review-product value="${String(product || '—').replace(/"/g, '&quot;')}" readonly tabindex="-1">
+            <input type="text" class="form-input w-full md:w-48 shrink-0 is-readonly" data-review-units value="${String(units[index] || '—').replace(/"/g, '&quot;')}" readonly tabindex="-1">
         </div>
     `).join('');
 }
@@ -1959,7 +2186,7 @@ function renderReviewPage(record) {
     }
 
     setReviewField('source', sourceLabels[formData.source] || formData.source || '—');
-    setReviewField('oem_sales', fields.oem_sales || formData.oem_sales || '—');
+    setReviewField('oem_sales', opportunitySalesName(record) || '—');
     setReviewField(
         'reporter_dealer',
         `${page.dataset.partnerCompany || '經銷商'}／${page.dataset.partnerContact || ''}`
@@ -2070,7 +2297,7 @@ function renderReviewPage(record) {
             } else if (isEditing) {
                 hint.textContent = '修改後送出，會依新的審核結果更新案件狀態。';
             } else {
-                hint.textContent = '僅總管理者可操作。選擇審核結果後會更新商機狀態；指派原廠業務後，該筆會出現在對應業務帳號。';
+                hint.textContent = '僅總管理者可操作。審核通過需指派承接業務；指派後該筆會出現在承接業務與其主管的帳號。';
             }
         }
     }
@@ -2088,18 +2315,20 @@ function renderReviewPage(record) {
             if (record.review?.result) {
                 setFormSelectByValue(resultSelect, record.review.result);
             }
-            if (record.review?.sales) {
-                setFormSelectByValue(salesSelect, record.review.sales);
-            }
             if (note) {
                 note.value = record.review?.note || '';
             }
         } else {
             clearFormSelect(resultSelect, '請選擇審核結果');
-            clearFormSelect(salesSelect, '請選擇派發業務');
             if (note) {
                 note.value = '';
             }
+        }
+
+        if (record.oem_sales_id) {
+            setFormSelectByValue(salesSelect, record.oem_sales_id);
+        } else {
+            clearFormSelect(salesSelect, '請選擇承接業務');
         }
     }
 
@@ -2273,26 +2502,28 @@ function initReviewPage() {
         const resultValue = resultSelect?.querySelector('[data-form-select-value]')?.value || '';
         const salesValue = salesSelect?.querySelector('[data-form-select-value]')?.value || '';
 
+        const resultOption = (resultSelect?._formMenu || resultSelect?.querySelector('[data-form-select-menu]'))
+            ?.querySelector(`[data-form-select-option][data-value="${CSS.escape(resultValue)}"]`);
+        const salesOption = salesValue
+            ? (salesSelect?._formMenu || salesSelect?.querySelector('[data-form-select-menu]'))
+                ?.querySelector(`[data-form-select-option][data-value="${CSS.escape(salesValue)}"]`)
+            : null;
+
         let valid = true;
         if (!resultValue) {
             resultSelect?.querySelector('[data-form-select-trigger]')?.classList.add('form-error');
             valid = false;
         }
-        if (!salesValue) {
+        if (!salesValue && (resultOption?.dataset.status || 'approved') === 'approved') {
             salesSelect?.querySelector('[data-form-select-trigger]')?.classList.add('form-error');
             valid = false;
         }
 
         if (!valid) {
-            showAppToast('請完成必填的審核欄位', 'error');
+            showAppToast(resultValue ? '審核通過需指派承接業務' : '請完成必填的審核欄位', 'error');
             focusFirstOpportunityError(form);
             return;
         }
-
-        const resultOption = (resultSelect?._formMenu || resultSelect?.querySelector('[data-form-select-menu]'))
-            ?.querySelector(`[data-form-select-option][data-value="${CSS.escape(resultValue)}"]`);
-        const salesOption = (salesSelect?._formMenu || salesSelect?.querySelector('[data-form-select-menu]'))
-            ?.querySelector(`[data-form-select-option][data-value="${CSS.escape(salesValue)}"]`);
 
         const nextStatus = resultOption?.dataset.status || 'approved';
         const nextStatusLabel = resultOption?.dataset.statusLabel || getStatusLabel(nextStatus);
@@ -2323,6 +2554,7 @@ function initReviewPage() {
             statusLabel: nextStatusLabel,
             protection: protectionForStatus(nextStatus, nextProtection),
             renewal: nextRenewal,
+            oem_sales_id: salesValue,
             review: {
                 result: resultValue,
                 resultLabel,
@@ -2443,8 +2675,9 @@ function showCreateReviewResult(review, status, recordId = '') {
         if (review.result) {
             setFormSelectByValue(resultSelect, review.result);
         }
-        if (review.sales) {
-            setFormSelectByValue(salesSelect, review.sales);
+        const assignedSalesId = getOpportunityById(id)?.oem_sales_id || '';
+        if (assignedSalesId) {
+            setFormSelectByValue(salesSelect, assignedSalesId);
         }
         if (noteInput) {
             noteInput.value = review.note || '';
@@ -2457,16 +2690,21 @@ function showCreateReviewResult(review, status, recordId = '') {
 
     panel.hidden = false;
     if (hint) {
-        hint.hidden = status !== 'rejected';
+        hint.hidden = status !== 'rejected' || showEditReview;
     }
     if (editPanel) {
         editPanel.hidden = true;
     }
     if (asideHint) {
         asideHint.hidden = false;
+        if (status === 'rejected') {
+            asideHint.textContent = showEditReview
+                ? '可查看退回原因，並以「修改審核」更新審核結果。'
+                : '請依審核備註修正資料後再次確認送出，送出後會回到「審核中」。';
+        }
     }
     if (submitBtn) {
-        submitBtn.hidden = false;
+        submitBtn.hidden = showEditReview;
     }
     if (saveDraftBtn) {
         saveDraftBtn.hidden = status === 'rejected';
@@ -2506,24 +2744,26 @@ function applyCreateReviewUpdate(recordId) {
     const resultValue = resultSelect?.querySelector('[data-form-select-value]')?.value || '';
     const salesValue = salesSelect?.querySelector('[data-form-select-value]')?.value || '';
 
+    const resultOption = (resultSelect?._formMenu || resultSelect?.querySelector('[data-form-select-menu]'))
+        ?.querySelector(`[data-form-select-option][data-value="${CSS.escape(resultValue)}"]`);
+    const salesOption = salesValue
+        ? (salesSelect?._formMenu || salesSelect?.querySelector('[data-form-select-menu]'))
+            ?.querySelector(`[data-form-select-option][data-value="${CSS.escape(salesValue)}"]`)
+        : null;
+
     let valid = true;
     if (!resultValue) {
         resultSelect?.querySelector('[data-form-select-trigger]')?.classList.add('form-error');
         valid = false;
     }
-    if (!salesValue) {
+    if (!salesValue && (resultOption?.dataset.status || 'approved') === 'approved') {
         salesSelect?.querySelector('[data-form-select-trigger]')?.classList.add('form-error');
         valid = false;
     }
     if (!valid) {
-        showAppToast('請完成必填的審核欄位', 'error');
+        showAppToast(resultValue ? '審核通過需指派承接業務' : '請完成必填的審核欄位', 'error');
         return;
     }
-
-    const resultOption = (resultSelect?._formMenu || resultSelect?.querySelector('[data-form-select-menu]'))
-        ?.querySelector(`[data-form-select-option][data-value="${CSS.escape(resultValue)}"]`);
-    const salesOption = (salesSelect?._formMenu || salesSelect?.querySelector('[data-form-select-menu]'))
-        ?.querySelector(`[data-form-select-option][data-value="${CSS.escape(salesValue)}"]`);
 
     const nextStatus = resultOption?.dataset.status || 'approved';
     const nextStatusLabel = resultOption?.dataset.statusLabel || getStatusLabel(nextStatus);
@@ -2540,6 +2780,7 @@ function applyCreateReviewUpdate(recordId) {
         status: nextStatus,
         statusLabel: nextStatusLabel,
         protection: protectionForStatus(nextStatus, nextProtection),
+        oem_sales_id: salesValue,
         review: {
             result: resultValue,
             resultLabel,
@@ -2573,6 +2814,7 @@ function initOpportunityForm() {
     const asideHint = document.querySelector('[data-create-aside-hint]');
     const saveDraftBtn = opportunityForm.querySelector('[data-save-draft]');
     const submitLabel = opportunityForm.querySelector('[data-create-submit-label]');
+    const cancelLink = opportunityForm.querySelector('[data-create-cancel]');
 
     function syncTitles(mode, id) {
         if (mode === 'draft') {
@@ -2598,6 +2840,9 @@ function initOpportunityForm() {
             }
             document.querySelector('[data-create-update-review]')?.setAttribute('hidden', '');
             document.querySelector('[data-create-cancel-edit-review]')?.setAttribute('hidden', '');
+            if (cancelLink) {
+                cancelLink.textContent = '取消編輯';
+            }
             return;
         }
 
@@ -2611,14 +2856,23 @@ function initOpportunityForm() {
             if (asideTitle) {
                 asideTitle.textContent = '退回補件';
             }
+            const canReview = typeof app().roleCan === 'function' && app().roleCan('opportunity.review');
             if (asideHint) {
-                asideHint.textContent = '請依審核備註修正資料後再次確認送出，送出後會回到「審核中」。';
+                asideHint.textContent = canReview
+                    ? '可查看退回原因，並以「修改審核」更新審核結果。'
+                    : '請依審核備註修正資料後再次確認送出，送出後會回到「審核中」。';
             }
             if (submitLabel) {
                 submitLabel.textContent = '再次送出';
+                if (canReview) {
+                    submitLabel.hidden = true;
+                }
             }
             if (saveDraftBtn) {
                 saveDraftBtn.hidden = true;
+            }
+            if (cancelLink) {
+                cancelLink.textContent = '取消編輯';
             }
         }
     }
@@ -2637,6 +2891,7 @@ function initOpportunityForm() {
         if (existing) {
             applyOpportunityFormData(opportunityForm, existing);
         }
+        syncOpportunityOemSalesField(opportunityForm, existing ? existing.oem_sales_id || '' : undefined);
         syncTitles('draft', activeDraftId);
     } else if (activeRecordId) {
         const record = getOpportunityById(activeRecordId);
@@ -2660,6 +2915,7 @@ function initOpportunityForm() {
         }
 
         applyOpportunityFormData(opportunityForm, catalogFormFallback(record));
+        syncOpportunityOemSalesField(opportunityForm, record.oem_sales_id || '');
         showCreateReviewResult(record.review, record.status, activeRecordId);
         syncTitles('resubmit', activeRecordId);
 
@@ -2693,7 +2949,10 @@ function initOpportunityForm() {
         }
         document.querySelector('[data-create-update-review]')?.setAttribute('hidden', '');
         document.querySelector('[data-create-cancel-edit-review]')?.setAttribute('hidden', '');
+        syncOpportunityOemSalesField(opportunityForm);
     }
+
+    document.addEventListener('upas:rolechange', () => syncOpportunityOemSalesField(opportunityForm, null));
 
     if (saveDraftBtn) {
         saveDraftBtn.addEventListener('click', () => {
@@ -2708,8 +2967,8 @@ function initOpportunityForm() {
                 id: activeDraftId,
                 status: 'draft',
                 updatedAt: new Date().toISOString(),
-                created_by: existingDraft?.created_by || actor.partnerId || '',
-                oem_sales_id: existingDraft?.oem_sales_id || defaultOemSalesIdForActor(actor) || '',
+                created_by: existingDraft?.created_by || previewActorKey(actor),
+                oem_sales_id: resolveFormOemSalesId(data, existingDraft, actor),
                 dealer: existingDraft?.dealer || (isDealerIdentity(actor.identity)
                     ? (actor.identity === 'dealer_overseas' ? 'overseas' : 'tw')
                     : 'oem'),
@@ -2727,49 +2986,58 @@ function initOpportunityForm() {
         });
     }
 
+    opportunityForm.noValidate = true;
+
+    async function submitOpportunityWithoutValidation() {
+        try {
+            const data = collectOpportunityFormData(opportunityForm);
+            const existing = activeRecordId ? getOpportunityById(activeRecordId) : null;
+            const actor = getPreviewActor();
+            const record = formDataToRecord(data, {
+                id: activeRecordId || undefined,
+                status: 'reviewing',
+                amount: existing?.amount || '-',
+                amountValue: existing?.amountValue || 0,
+                dealer: existing?.dealer || (isDealerIdentity(actor.identity)
+                    ? (actor.identity === 'dealer_overseas' ? 'overseas' : 'tw')
+                    : 'oem'),
+                protection: existing?.protection || '-',
+                booking_code: existing?.booking_code || activeRecordId || undefined,
+                review: existing?.review || null,
+                created_by: existing?.created_by || previewActorKey(actor),
+                oem_sales_id: resolveFormOemSalesId(data, existing, actor),
+            });
+
+            upsertOpportunity(record);
+
+            if (activeDraftId) {
+                removeOpportunityDraft(activeDraftId);
+            }
+        } catch (error) {
+            console.warn(error);
+        }
+
+        await showSubmitReviewNotice(
+            activeRecordId ? '已再次送出，商機回到審核中' : '已送出，商機進入審核中',
+        );
+        window.location.href = opportunityForm.dataset.listUrl
+            || opportunityForm.dataset.cancelUrl
+            || '/opportunities/';
+    }
+
     opportunityForm.addEventListener('submit', (event) => {
         event.preventDefault();
+        event.stopPropagation();
+        submitOpportunityWithoutValidation();
+    });
 
-        if (opportunityForm.dataset.createReviewEditing === '1') {
+    submitLabel?.addEventListener('click', (event) => {
+        if (window.__upasSubmitNoticeShown) {
             return;
         }
-
-        if (!validateOpportunityForm(opportunityForm)) {
-            focusFirstOpportunityError(opportunityForm);
-            showAppToast('請先完成必填欄位', 'error');
-            return;
-        }
-
-        const data = collectOpportunityFormData(opportunityForm);
-        const existing = activeRecordId ? getOpportunityById(activeRecordId) : null;
-        const actor = getPreviewActor();
-        const record = formDataToRecord(data, {
-            id: activeRecordId || undefined,
-            status: 'reviewing',
-            amount: existing?.amount || '-',
-            amountValue: existing?.amountValue || 0,
-            dealer: existing?.dealer || (isDealerIdentity(actor.identity)
-                ? (actor.identity === 'dealer_overseas' ? 'overseas' : 'tw')
-                : 'oem'),
-            protection: existing?.protection || '-',
-            booking_code: existing?.booking_code || activeRecordId || undefined,
-            review: existing?.review || null,
-            created_by: existing?.created_by || actor.partnerId || '',
-            oem_sales_id: existing?.oem_sales_id || defaultOemSalesIdForActor(actor) || '',
-        });
-
-        upsertOpportunity(record);
-
-        if (activeDraftId) {
-            removeOpportunityDraft(activeDraftId);
-        }
-
-        showAppToast(activeRecordId ? '已再次送出，商機回到審核中' : '已送出，商機進入審核中', 'success');
-        window.setTimeout(() => {
-            window.location.href = opportunityForm.dataset.listUrl
-                || opportunityForm.dataset.cancelUrl
-                || '/opportunities/';
-        }, 500);
+        event.preventDefault();
+        event.stopPropagation();
+        submitOpportunityWithoutValidation();
     });
 }
 
@@ -2914,7 +3182,7 @@ function initRenewPage() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
-    form.addEventListener('submit', (event) => {
+    form.addEventListener('submit', async (event) => {
         event.preventDefault();
         if (!validateStepOne()) {
             setStep(1);
@@ -2940,10 +3208,8 @@ function initRenewPage() {
             },
         });
 
-        showAppToast('已送出續期申請，進入審核中', 'success');
-        window.setTimeout(() => {
-            window.location.href = listUrl;
-        }, 550);
+        await showSubmitReviewNotice('已送出續期申請，進入審核中');
+        window.location.href = listUrl;
     });
 }
 
@@ -2956,7 +3222,7 @@ document.querySelectorAll('[data-opp-row]').forEach((row) => {
     }
 });
 
-syncOpportunityListUi();
-initReviewPage();
-initOpportunityForm();
-initRenewPage();
+try { syncOpportunityListUi(); } catch (error) { console.warn(error); }
+try { initReviewPage(); } catch (error) { console.warn(error); }
+try { initOpportunityForm(); } catch (error) { console.warn(error); }
+try { initRenewPage(); } catch (error) { console.warn(error); }

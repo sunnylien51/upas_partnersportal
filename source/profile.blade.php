@@ -56,26 +56,10 @@ title: 夥伴管理
         return in_array($identity, ['dealer_tw', 'dealer_overseas'], true);
     };
 
-    $oemSalesListDisplay = function ($item) use ($isDealerIdentity, $partners) {
-        $requested = trim((string) ($item['oem_sales'] ?? ''));
-        $boundId = trim((string) ($item['oem_sales_id'] ?? ''));
-        $status = $item['status'] ?? '';
-        $identity = $item['identity'] ?? '';
-
-        if ($status === 'approved' && $isDealerIdentity($identity) && $boundId !== '') {
-            foreach ($partners as $candidate) {
-                if (($candidate['id'] ?? '') === $boundId) {
-                    return $candidate['name'] ?? ($requested !== '' ? $requested : $boundId);
-                }
-            }
-            return $requested !== '' ? $requested : $boundId;
-        }
-
-        if ($requested !== '') {
-            return '申請：' . $requested;
-        }
-
-        return '—';
+    // 主要業務窗口只是參考文字，不影響商機歸屬
+    $oemSalesListDisplay = function ($item) {
+        $contact = trim((string) ($item['oem_sales'] ?? ''));
+        return $contact !== '' ? $contact : '—';
     };
 @endphp
 
@@ -129,6 +113,7 @@ title: 夥伴管理
                 </div>
 
                 <div class="flex flex-wrap items-center gap-2">
+                    <a href="{{ site_href($page, '/profile/relations') }}" class="btn-secondary" data-requires="profile.manage">組織關係</a>
                     <a href="{{ site_href($page, '/profile/create') }}" class="btn-primary" data-requires="profile.manage">新增帳號</a>
                     <button type="button" class="btn-secondary" data-requires="profile.manage" data-partner-export>匯出 Excel</button>
                 </div>
@@ -157,7 +142,7 @@ title: 夥伴管理
                             <div class="list-head">
                                 <div class="flex-[1.3] min-w-[12rem] text-cb3 text-gray4">公司資料</div>
                                 <div class="w-36 text-cb3 text-gray4">身分權限</div>
-                                <div class="w-28 text-cb3 text-gray4">原廠業務</div>
+                                <div class="w-28 text-cb3 text-gray4">主要業務窗口</div>
                                 <div class="flex-1 min-w-[10rem] text-cb3 text-gray4">申請人</div>
                                 <div class="flex-[1.2] min-w-[12rem] text-cb3 text-gray4">聯絡方式</div>
                                 <div class="w-20 text-cb3 text-gray4">狀態</div>
@@ -337,7 +322,7 @@ title: 夥伴管理
                         <p class="text-cb3 text-gray5" data-partner-preview-country>—</p>
                     </div>
                     <div class="flex flex-col">
-                        <p class="text-cb4 text-brand2">原廠業務</p>
+                        <p class="text-cb4 text-brand2">主要業務窗口</p>
                         <p class="text-cb3 text-gray5" data-partner-preview-oem-sales>—</p>
                     </div>
                     <div class="flex flex-col">

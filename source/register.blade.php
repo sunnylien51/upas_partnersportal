@@ -18,19 +18,17 @@ cardMaxWidth: 800px
     >
         <div class="form-field gap-1">
             <label for="register-oem-sales" class="form-label">
-                <span class="text-red">*</span>
-                <span>原廠業務姓名</span>
+                <span>主要業務窗口</span>
             </label>
             <input
                 id="register-oem-sales"
                 type="text"
                 name="oem_sales"
                 class="form-input"
-                placeholder="填寫目前所屬業務窗口姓名"
+                placeholder="選填，目前聯繫的原廠業務姓名"
                 autocomplete="off"
-                required
             >
-            <p class="text-cb3 text-gray3">僅供審核參考，正式綁定需待後台核准後指定。</p>
+            <p class="text-cb3 text-gray3">僅供參考，不影響商機歸屬。</p>
         </div>
 
         <div class="self-stretch flex flex-col items-start gap-4">
@@ -50,7 +48,7 @@ cardMaxWidth: 800px
                         type="text"
                         name="company"
                         class="form-input"
-                        placeholder="請輸入公司名稱"
+                        placeholder="請輸入完整公司名稱"
                         autocomplete="organization"
                         required
                     >

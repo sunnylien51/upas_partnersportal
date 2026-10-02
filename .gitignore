@@ -27,4 +27,4 @@ hot
 /build_staging/
 /build_production/
 /cache/
-/source/assets/build/
+/source/static/

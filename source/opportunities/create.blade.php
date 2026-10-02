@@ -8,6 +8,7 @@ title: 新增商機
     foreach ($page->opportunityStatuses as $statusOption) {
         $statusLabels[$statusOption['value']] = $statusOption['label'];
     }
+    $oemStaffOptions = oem_staff_options($page);
 @endphp
 
 @section('body')
@@ -68,19 +69,32 @@ title: 新增商機
                                 </div>
                             </section>
 
-                            <section class="card-panel flex-1 gap-4">
+                            {{-- 經銷不選承接業務，由總管審核時指派；JS 依身分隱藏 --}}
+                            <section class="card-panel flex-1 gap-4" data-opp-oem-section>
                                 <div class="self-stretch inline-flex items-center gap-3">
                                     <span class="section-accent" aria-hidden="true"></span>
                                     <h2 class="text-ch5 text-gray5">原廠負責資訊</h2>
                                 </div>
 
-                                <label class="form-field">
+                                <div class="form-field">
                                     <span class="form-label">
-                                        <span class="text-red">*</span>
-                                        <span>原廠所屬業務</span>
+                                        <span>承接業務</span>
                                     </span>
-                                    <input type="text" name="oem_sales" class="form-input" placeholder="請輸入業務姓名" required>
-                                </label>
+                                    <div class="form-select" data-form-select data-opp-oem-sales-select>
+                                        <input type="hidden" name="oem_sales_id" value="" data-form-select-value>
+                                        <button type="button" class="form-select-trigger" data-form-select-trigger aria-haspopup="listbox" aria-expanded="false">
+                                            <span class="is-placeholder" data-form-select-label>待指派</span>
+                                            <i data-lucide="chevron-down" class="w-4 h-4 text-gray4 shrink-0"></i>
+                                        </button>
+                                        <div class="form-select-menu" data-form-select-menu hidden role="listbox">
+                                            <button type="button" class="form-select-option" role="option" data-form-select-option data-value="" data-label="待指派">待指派（由總管理者審核時指派）</button>
+                                            @foreach ($oemStaffOptions as $staff)
+                                                <button type="button" class="form-select-option" role="option" data-form-select-option data-value="{{ $staff['value'] }}" data-label="{{ $staff['label'] }}">{{ $staff['label'] }}</button>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                    <p class="text-cb3 text-gray3">原廠業務預設為自己；承接業務決定此商機出現在哪位業務名下。</p>
+                                </div>
                             </section>
                         </div>
 
@@ -158,7 +172,7 @@ title: 新增商機
                                     <div class="form-select" data-form-select data-required>
                                         <input type="hidden" name="customer_relation" value="" data-form-select-value>
                                         <button type="button" class="form-select-trigger" data-form-select-trigger aria-haspopup="listbox" aria-expanded="false">
-                                            <span class="is-placeholder" data-form-select-label>第一次接洽 / 多次接洽(未成交) / 其他</span>
+                                            <span class="is-placeholder" data-form-select-label>請選擇客戶關係</span>
                                             <i data-lucide="chevron-down" class="w-4 h-4 text-gray4 shrink-0"></i>
                                         </button>
                                         <div class="form-select-menu" data-form-select-menu hidden role="listbox">
@@ -174,7 +188,6 @@ title: 新增商機
                                 @foreach ($page->opportunityKeyManFields as $field)
                                     <label class="form-field {{ $field['name'] === 'keyman_email' ? 'md:col-span-2' : '' }}">
                                         <span class="form-label">
-                                            <span class="text-red">*</span>
                                             <span>{{ $field['label'] }}</span>
                                         </span>
                                         <input
@@ -182,7 +195,6 @@ title: 新增商機
                                             name="{{ $field['name'] }}"
                                             class="form-input"
                                             placeholder="{{ $field['placeholder'] }}"
-                                            required
                                         >
                                     </label>
                                 @endforeach
@@ -326,7 +338,7 @@ title: 新增商機
                                         <span class="text-red">*</span>
                                         <span>審核結果</span>
                                     </span>
-                                    <div class="form-select" data-form-select data-required data-create-review-result-select>
+                                    <div class="form-select" data-form-select data-create-review-result-select>
                                         <input type="hidden" name="create_review_result" value="" data-form-select-value>
                                         <button type="button" class="form-select-trigger" data-form-select-trigger aria-haspopup="listbox" aria-expanded="false">
                                             <span class="is-placeholder" data-form-select-label>請選擇審核結果</span>
@@ -361,17 +373,16 @@ title: 新增商機
 
                                 <div class="form-field" data-create-review-sales-field>
                                     <span class="form-label">
-                                        <span class="text-red">*</span>
-                                        <span>原廠業務</span>
+                                        <span>承接業務</span>
                                     </span>
-                                    <div class="form-select" data-form-select data-required data-create-review-sales-select>
+                                    <div class="form-select" data-form-select data-create-review-sales-select>
                                         <input type="hidden" name="create_assigned_sales" value="" data-form-select-value>
                                         <button type="button" class="form-select-trigger" data-form-select-trigger aria-haspopup="listbox" aria-expanded="false">
-                                            <span class="is-placeholder" data-form-select-label>請選擇派發業務</span>
+                                            <span class="is-placeholder" data-form-select-label>請選擇承接業務</span>
                                             <i data-lucide="chevron-down" class="w-4 h-4 text-gray4 shrink-0"></i>
                                         </button>
                                         <div class="form-select-menu" data-form-select-menu hidden role="listbox">
-                                            @foreach ($page->opportunityOemSalesOptions as $sales)
+                                            @foreach ($oemStaffOptions as $sales)
                                                 <button
                                                     type="button"
                                                     class="form-select-option"
@@ -399,10 +410,10 @@ title: 新增商機
                             </div>
 
                             <div class="self-stretch flex flex-col gap-3 pt-1">
-                                <button type="submit" class="btn-primary w-full h-11" data-create-submit-label>確認送出</button>
+                                <button type="button" class="btn-primary w-full h-11" data-create-submit-label>確認送出</button>
                                 <button type="button" class="btn-secondary w-full h-11" data-create-edit-review hidden>修改審核</button>
                                 <button type="button" class="btn-primary w-full h-11" data-create-update-review hidden>更新審核結果</button>
-                                <button type="button" class="btn-secondary w-full h-11" data-create-cancel-edit-review hidden>取消修改</button>
+                                <button type="button" class="btn-secondary w-full h-11" data-create-cancel-edit-review hidden>取消編輯</button>
                                 <button type="button" class="btn-secondary w-full h-11" data-save-draft>儲存暫存檔</button>
                                 <a href="{{ site_href($page, '/opportunities') }}" class="btn-secondary w-full h-11" data-create-cancel>取消</a>
                             </div>
@@ -428,3 +439,47 @@ title: 新增商機
         {!! json_encode($statusLabels, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
     </script>
 @endsection
+
+@push('scripts')
+<script>
+(function () {
+    var NOTICE = '原廠將於3天內於系統內通知審核結果，請登入系統查看。';
+    var form = document.querySelector('[data-opportunity-form]');
+    if (!form || window.__upasSubmitNoticeBound) {
+        return;
+    }
+    window.__upasSubmitNoticeBound = true;
+
+    function showNotice() {
+        if (document.querySelector('[data-submit-review-notice]')) {
+            return;
+        }
+        window.__upasSubmitNoticeShown = true;
+        var host = document.createElement('div');
+        host.setAttribute('data-submit-review-notice', '');
+        host.setAttribute('role', 'dialog');
+        host.setAttribute('aria-modal', 'true');
+        host.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:rgba(23,23,23,.45);padding:24px;';
+        host.innerHTML = '<div style="width:100%;max-width:28rem;background:#fff;border-radius:14px;padding:24px;box-shadow:0 12px 40px rgba(0,0,0,.12);">'
+            + '<p style="font-size:16px;font-weight:600;margin:0 0 8px;color:#171717;">已送出，商機進入審核中</p>'
+            + '<p style="font-size:14px;color:#666;line-height:1.7;margin:0 0 20px;">' + NOTICE + '</p>'
+            + '<button type="button" class="btn-primary w-full h-11" data-notice-ok>確定</button>'
+            + '</div>';
+        document.body.appendChild(host);
+        host.querySelector('[data-notice-ok]').addEventListener('click', function () {
+            window.location.href = form.getAttribute('data-list-url') || 'opportunities/';
+        });
+    }
+
+    document.addEventListener('click', function (event) {
+        var btn = event.target.closest('[data-create-submit-label]');
+        if (!btn || !form.contains(btn)) {
+            return;
+        }
+        event.preventDefault();
+        event.stopPropagation();
+        showNotice();
+    }, true);
+})();
+</script>
+@endpush

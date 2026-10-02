@@ -306,63 +306,27 @@ document.addEventListener('keydown', (event) => {
     }
 });
 
-/* ---------- 商機篩選下拉 ---------- */
-const FILTER_DEFAULTS = {
-    dealer: 'all',
-    status: 'all',
-};
-
-const filterDropdown = document.querySelector('[data-filter-dropdown]');
-const filterTrigger = filterDropdown?.querySelector('[data-filter-trigger]');
-const filterPanel = filterDropdown?.querySelector('[data-filter-panel]');
-const filterDot = filterDropdown?.querySelector('[data-filter-dot]');
+/* ---------- 商機狀態下拉篩選 ---------- */
 const filterEmpty = document.querySelector('[data-filter-empty]');
 const searchInput = document.querySelector('[data-search-input]');
+const statusFilter = document.querySelector('[data-opp-status-filter] [data-form-select-value]');
+const salesFilter = document.querySelector('[data-opp-sales-filter] [data-form-select-value]');
 
-let draftFilters = { ...FILTER_DEFAULTS };
-let appliedFilters = { ...FILTER_DEFAULTS };
-
-function syncFilterChips() {
-    if (!filterPanel) {
-        return;
-    }
-
-    filterPanel.querySelectorAll('[data-filter-group]').forEach((group) => {
-        const key = group.dataset.filterGroup;
-        const selected = draftFilters[key] || 'all';
-
-        group.querySelectorAll('[data-filter-chip]').forEach((chip) => {
-            const isSelected = chip.dataset.value === selected;
-            chip.classList.toggle('is-selected', isSelected);
-            chip.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
-        });
-    });
-}
-
-function syncFilterTriggerState() {
-    if (!filterDropdown) {
-        return;
-    }
-
-    const activeCount = Object.keys(FILTER_DEFAULTS).filter((key) => appliedFilters[key] !== 'all').length;
-    filterDropdown.classList.toggle('has-filters', activeCount > 0);
-
-    if (filterDot) {
-        filterDot.hidden = activeCount === 0;
-    }
-}
+function closeFilterDropdown() {}
 
 function applyOpportunityFilters() {
     const query = (searchInput?.value || '').trim().toLowerCase();
+    const status = statusFilter?.value || '';
+    const sales = salesFilter?.value || '';
     const rows = document.querySelectorAll('[data-opp-row]');
     let visibleCount = 0;
 
     rows.forEach((row) => {
         const visibilityOk = row.dataset.visibilityAllowed !== '0';
-        const dealerOk = appliedFilters.dealer === 'all' || row.dataset.dealer === appliedFilters.dealer;
-        const statusOk = appliedFilters.status === 'all' || row.dataset.status === appliedFilters.status;
+        const statusOk = !status || row.dataset.status === status;
+        const salesOk = !sales || (row.dataset.salesName || '') === sales;
         const searchOk = query.length === 0 || (row.dataset.search || '').toLowerCase().includes(query);
-        const visible = visibilityOk && dealerOk && statusOk && searchOk;
+        const visible = visibilityOk && statusOk && salesOk && searchOk;
 
         row.hidden = !visible;
         if (visible) {
@@ -373,131 +337,26 @@ function applyOpportunityFilters() {
     if (filterEmpty) {
         filterEmpty.hidden = visibleCount > 0 || rows.length === 0;
     }
-
-    syncFilterTriggerState();
 }
 
-function positionFilterPanel() {
-    if (!filterTrigger || !filterPanel) {
-        return;
-    }
+statusFilter?.addEventListener('change', applyOpportunityFilters);
+salesFilter?.addEventListener('change', applyOpportunityFilters);
 
-    const rect = filterTrigger.getBoundingClientRect();
-    const gap = 8;
-    const panelWidth = Math.min(766, window.innerWidth - 24);
-    const panelHeight = filterPanel.offsetHeight || 420;
-    let top = rect.bottom + gap;
-    let left = rect.left;
-
-    if (left + panelWidth > window.innerWidth - 12) {
-        left = Math.max(12, window.innerWidth - panelWidth - 12);
-    }
-
-    if (top + panelHeight > window.innerHeight - 12) {
-        top = Math.max(12, rect.top - panelHeight - gap);
-    }
-
-    filterPanel.style.position = 'fixed';
-    filterPanel.style.top = `${Math.round(top)}px`;
-    filterPanel.style.left = `${Math.round(left)}px`;
-    filterPanel.style.width = `${panelWidth}px`;
-}
-
-function closeFilterDropdown() {
-    if (!filterDropdown || !filterPanel || !filterTrigger) {
-        return;
-    }
-
-    if (!filterDropdown.classList.contains('is-open')) {
-        return;
-    }
-
-    draftFilters = { ...appliedFilters };
-    syncFilterChips();
-
-    filterDropdown.classList.remove('is-open');
-    filterTrigger.setAttribute('aria-expanded', 'false');
-    filterPanel.classList.remove('is-open');
-    filterPanel.hidden = true;
-    filterPanel.style.removeProperty('top');
-    filterPanel.style.removeProperty('left');
-    filterPanel.style.removeProperty('width');
-    filterPanel.style.removeProperty('position');
-
-    if (filterPanel._filterOwner) {
-        filterPanel._filterOwner.appendChild(filterPanel);
-    }
-}
-
-function openFilterDropdown() {
-    if (!filterDropdown || !filterPanel || !filterTrigger) {
-        return;
-    }
-
-    closeStatusSelects();
-    closeFormSelects();
-    draftFilters = { ...appliedFilters };
-    syncFilterChips();
-
-    document.body.appendChild(filterPanel);
-    filterPanel.hidden = false;
-    filterPanel.classList.add('is-open');
-    filterDropdown.classList.add('is-open');
-    filterTrigger.setAttribute('aria-expanded', 'true');
-    positionFilterPanel();
-}
-
-if (filterDropdown && filterTrigger && filterPanel) {
-    filterPanel._filterOwner = filterDropdown;
-
-    filterTrigger.addEventListener('click', (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-
-        if (filterDropdown.classList.contains('is-open')) {
-            closeFilterDropdown();
-            return;
-        }
-
-        openFilterDropdown();
-    });
-
-    filterPanel.addEventListener('click', (event) => {
-        event.stopPropagation();
-    });
-
-    filterPanel.querySelectorAll('[data-filter-group]').forEach((group) => {
-        group.querySelectorAll('[data-filter-chip]').forEach((chip) => {
-            chip.addEventListener('click', (event) => {
-                event.preventDefault();
-                draftFilters[group.dataset.filterGroup] = chip.dataset.value;
-                syncFilterChips();
-            });
-        });
-    });
-
-    const clearBtn = filterPanel.querySelector('[data-filter-clear]');
-    if (clearBtn) {
-        clearBtn.addEventListener('click', (event) => {
-            event.preventDefault();
-            draftFilters = { ...FILTER_DEFAULTS };
-            syncFilterChips();
-        });
-    }
-
-    const applyBtn = filterPanel.querySelector('[data-filter-apply]');
-    if (applyBtn) {
-        applyBtn.addEventListener('click', (event) => {
-            event.preventDefault();
-            appliedFilters = { ...draftFilters };
-            applyOpportunityFilters();
-            closeFilterDropdown();
-        });
-    }
-}
-
-/* ---------- 預覽身分權限：總管理者 / 一般使用者 ---------- */
+/* ---------- 預覽身分權限：客人看總管／非總管；工程師可開詳細身分 ---------- */
 const ROLE_STORAGE_KEY = 'upas-preview-role';
+const ROLE_MODE_KEY = 'upas-preview-role-mode';
+const SYSADMIN_STORAGE_KEY = 'upas-system-admins';
+const SYSADMIN_DELETED_KEY = 'upas-system-admins-deleted';
+const SYSADMIN_PREVIEW_KEY = 'upas-preview-sysadmin-id';
+const SIMPLE_NON_ADMIN_ROLE = 'dealer_tw';
+const NAV_CAPABILITIES = {
+    '/opportunities': ['opportunity.view', 'opportunity.create', 'opportunity.export', 'opportunity.actions'],
+    '/products': ['product.manage'],
+    '/training': ['training.manage'],
+    '/marketing': ['marketing.manage'],
+    '/support': ['support.create', 'support.manage'],
+    '/profile': ['profile.manage'],
+};
 const rolesConfigEl = document.getElementById('app-roles-config');
 let rolesConfig = {
     defaultRole: 'admin',
@@ -512,9 +371,43 @@ if (rolesConfigEl) {
     }
 }
 
+function readRolePreviewMode() {
+    const params = new URLSearchParams(window.location.search);
+    const fromQuery = params.get('roles');
+    if (fromQuery === 'full' || fromQuery === 'simple') {
+        localStorage.setItem(ROLE_MODE_KEY, fromQuery);
+        params.delete('roles');
+        const query = params.toString();
+        const nextUrl = `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`;
+        window.history.replaceState({}, '', nextUrl);
+        return fromQuery;
+    }
+
+    return localStorage.getItem(ROLE_MODE_KEY) === 'full' ? 'full' : 'simple';
+}
+
+function getRolePreviewMode() {
+    return document.body.dataset.previewRoleMode === 'full' ? 'full' : 'simple';
+}
+
+function setRolePreviewMode(mode) {
+    const next = mode === 'full' ? 'full' : 'simple';
+    localStorage.setItem(ROLE_MODE_KEY, next);
+    document.body.dataset.previewRoleMode = next;
+
+    document.querySelectorAll('[data-role-mode]').forEach((el) => {
+        el.hidden = el.dataset.roleMode !== next;
+    });
+
+    const badge = document.querySelector('[data-role-mode-badge]');
+    if (badge) {
+        badge.textContent = next === 'full' ? '工程師預覽' : '演示用';
+    }
+}
+
 function getPreviewRole() {
     const stored = localStorage.getItem(ROLE_STORAGE_KEY);
-    const legacyMap = { user: 'dealer_tw' };
+    const legacyMap = { user: SIMPLE_NON_ADMIN_ROLE };
     const resolved = legacyMap[stored] || stored;
     if (resolved && rolesConfig.roles[resolved]) {
         if (resolved !== stored) {
@@ -526,8 +419,104 @@ function getPreviewRole() {
     return rolesConfig.defaultRole || 'admin';
 }
 
+function readJsonSeed(id) {
+    const el = document.getElementById(id);
+    if (!el) {
+        return [];
+    }
+    try {
+        const parsed = JSON.parse(el.textContent);
+        return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+        return [];
+    }
+}
+
+function readStoredJson(key) {
+    try {
+        const parsed = JSON.parse(localStorage.getItem(key) || '[]');
+        return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+        return [];
+    }
+}
+
+function capabilitiesFromNav(nav) {
+    const can = [];
+    (Array.isArray(nav) ? nav : []).forEach((path) => {
+        (NAV_CAPABILITIES[path] || []).forEach((capability) => {
+            if (!can.includes(capability)) {
+                can.push(capability);
+            }
+        });
+    });
+    return can;
+}
+
+function sanitizeSysadminNav(nav) {
+    const seen = new Set();
+    const next = [];
+    (Array.isArray(nav) ? nav : []).forEach((path) => {
+        if (!path || path === '/admins' || seen.has(path)) {
+            return;
+        }
+        seen.add(path);
+        next.push(path);
+    });
+    return next;
+}
+
+function readMergedSystemAdmins() {
+    const deleted = new Set(readStoredJson(SYSADMIN_DELETED_KEY).map(String));
+    const byId = new Map();
+
+    readJsonSeed('system-admins-seed').forEach((item) => {
+        const id = String(item?.id || '');
+        if (!id || deleted.has(id)) {
+            return;
+        }
+        byId.set(id, item);
+    });
+
+    readStoredJson(SYSADMIN_STORAGE_KEY).forEach((item) => {
+        const id = String(item?.id || '');
+        if (!id || deleted.has(id)) {
+            return;
+        }
+        byId.set(id, { ...(byId.get(id) || {}), ...item });
+    });
+
+    return [...byId.values()];
+}
+
+function getSysadminOverlay() {
+    const admins = readMergedSystemAdmins().filter((item) => (item.status || 'active') !== 'disabled');
+    const previewId = localStorage.getItem(SYSADMIN_PREVIEW_KEY);
+    const chosen = admins.find((item) => item.id === previewId) || admins[0];
+    if (!chosen) {
+        return null;
+    }
+
+    const nav = sanitizeSysadminNav(chosen.nav);
+    return {
+        nav,
+        can: capabilitiesFromNav(nav),
+        label: chosen.name ? `${chosen.name}（系統管理員）` : '系統管理員',
+    };
+}
+
+function getEffectiveRoleConfig(roleKey = getPreviewRole()) {
+    const base = rolesConfig.roles[roleKey] || null;
+    if (!base || roleKey !== 'sysadmin') {
+        return base;
+    }
+
+    const overlay = getSysadminOverlay();
+    return overlay ? { ...base, ...overlay } : base;
+}
+
 function getPreviewRoleConfig() {
-    return rolesConfig.roles[getPreviewRole()] || null;
+    return getEffectiveRoleConfig();
 }
 
 function getPreviewActor() {
@@ -541,13 +530,36 @@ function getPreviewActor() {
 }
 
 function roleCan(capability) {
-    const role = rolesConfig.roles[getPreviewRole()];
+    const role = getEffectiveRoleConfig();
     return Boolean(role && Array.isArray(role.can) && role.can.includes(capability));
 }
 
 function roleHasNav(path) {
-    const role = rolesConfig.roles[getPreviewRole()];
+    const role = getEffectiveRoleConfig();
     return Boolean(role && Array.isArray(role.nav) && role.nav.includes(path));
+}
+
+function getPreviewDisplayLabel(roleKey, role) {
+    if (getRolePreviewMode() === 'simple') {
+        return roleKey === 'admin' ? '總管理者' : '一般使用者';
+    }
+
+    return role.label || '';
+}
+
+function syncRoleSwitchButtons(roleKey) {
+    const isAdmin = roleKey === 'admin';
+
+    document.querySelectorAll('[data-role-switch]').forEach((button) => {
+        const group = button.dataset.roleGroup;
+        const active = group === 'admin'
+            ? isAdmin
+            : group === 'non_admin'
+                ? !isAdmin
+                : button.dataset.roleSwitch === roleKey;
+        button.classList.toggle('is-active', active);
+        button.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
 }
 
 function applyPreviewRole(roleKey) {
@@ -558,19 +570,16 @@ function applyPreviewRole(roleKey) {
     localStorage.setItem(ROLE_STORAGE_KEY, roleKey);
     document.body.dataset.previewRole = roleKey;
 
-    const role = rolesConfig.roles[roleKey];
+    const role = getEffectiveRoleConfig(roleKey) || rolesConfig.roles[roleKey];
+    const displayLabel = getPreviewDisplayLabel(roleKey, role);
 
-    document.querySelectorAll('[data-role-switch]').forEach((button) => {
-        const active = button.dataset.roleSwitch === roleKey;
-        button.classList.toggle('is-active', active);
-        button.setAttribute('aria-pressed', active ? 'true' : 'false');
-    });
+    syncRoleSwitchButtons(roleKey);
 
     document.querySelectorAll('[data-role-label]').forEach((label) => {
         if (label instanceof HTMLInputElement || label instanceof HTMLTextAreaElement) {
-            label.value = role.label;
+            label.value = displayLabel;
         } else {
-            label.textContent = role.label;
+            label.textContent = displayLabel;
         }
     });
 
@@ -586,6 +595,11 @@ function applyPreviewRole(roleKey) {
         element.classList.toggle('is-role-hidden', !allowed);
     });
 
+    const overviewCount = document.querySelectorAll('[data-overview-module]:not(.is-role-hidden)').length;
+    document.querySelectorAll('[data-overview-count]').forEach((el) => {
+        el.textContent = String(overviewCount);
+    });
+
     document.querySelectorAll('[data-status-select]').forEach((select) => {
         const canEdit = roleCan('opportunity.status.edit');
         select.classList.toggle('is-readonly', !canEdit);
@@ -597,12 +611,6 @@ function applyPreviewRole(roleKey) {
             }
         }
     });
-
-    const moduleCountEl = document.querySelector('[data-module-count]');
-    if (moduleCountEl) {
-        const visibleModules = document.querySelectorAll('[data-overview-module]:not([hidden])').length;
-        moduleCountEl.textContent = String(visibleModules);
-    }
 
     closeStatusSelects();
     closeFilterDropdown();
@@ -626,6 +634,28 @@ document.querySelectorAll('[data-role-switch]').forEach((button) => {
     });
 });
 
+document.querySelector('[data-role-mode-badge]')?.addEventListener('dblclick', (event) => {
+    event.preventDefault();
+    const next = getRolePreviewMode() === 'full' ? 'simple' : 'full';
+    setRolePreviewMode(next);
+    const role = getPreviewRole();
+    applyPreviewRole(next === 'simple' && role === 'sysadmin' ? 'admin' : role);
+});
+
+function previewSysadmin(adminId, options = {}) {
+    if (adminId) {
+        localStorage.setItem(SYSADMIN_PREVIEW_KEY, adminId);
+    }
+    localStorage.setItem(ROLE_MODE_KEY, 'full');
+    localStorage.setItem(ROLE_STORAGE_KEY, 'sysadmin');
+    if (options.applyNow === false) {
+        return;
+    }
+    setRolePreviewMode('full');
+    applyPreviewRole('sysadmin');
+}
+
+setRolePreviewMode(readRolePreviewMode());
 applyPreviewRole(getPreviewRole());
 
 document.querySelector('[data-account-form]')?.addEventListener('submit', (event) => {
@@ -691,29 +721,32 @@ function closeFormSelects(except) {
 function positionFormMenu(trigger, menu) {
     const rect = trigger.getBoundingClientRect();
     const gap = 6;
+    const viewportPadding = 12;
     const menuWidth = Math.round(rect.width);
 
     menu.style.position = 'fixed';
     menu.style.width = `${menuWidth}px`;
     menu.style.minWidth = `${menuWidth}px`;
     menu.style.maxWidth = `${menuWidth}px`;
-    menu.style.left = '0px';
+    menu.style.left = `${Math.round(rect.left)}px`;
     menu.style.top = '0px';
 
-    const menuHeight = menu.offsetHeight || 200;
+    const measured = menu.getBoundingClientRect();
+    const menuHeight = measured.height || menu.offsetHeight || 200;
+
     let top = rect.bottom + gap;
     let left = rect.left;
 
-    if (top + menuHeight > window.innerHeight - 12) {
-        top = Math.max(12, rect.top - menuHeight - gap);
+    if (top + menuHeight > window.innerHeight - viewportPadding) {
+        top = Math.max(viewportPadding, rect.top - menuHeight - gap);
     }
 
-    if (left + menuWidth > window.innerWidth - 12) {
-        left = Math.max(12, window.innerWidth - menuWidth - 12);
+    if (left + menuWidth > window.innerWidth - viewportPadding) {
+        left = Math.max(viewportPadding, window.innerWidth - menuWidth - viewportPadding);
     }
 
-    if (left < 12) {
-        left = 12;
+    if (left < viewportPadding) {
+        left = viewportPadding;
     }
 
     menu.style.top = `${Math.round(top)}px`;
@@ -1008,6 +1041,7 @@ function showAppConfirm({
     confirmLabel = '確認',
     cancelLabel = '取消',
     danger = false,
+    hideCancel = false,
 } = {}) {
     return new Promise((resolve) => {
         document.querySelector('[data-app-confirm-host]')?.remove();
@@ -1027,7 +1061,7 @@ function showAppConfirm({
                     ${message ? `<p class="app-confirm-message">${message}</p>` : ''}
                 </div>
                 <div class="app-confirm-actions">
-                    <button type="button" class="btn-secondary" data-app-confirm-dismiss>${cancelLabel}</button>
+                    ${hideCancel ? '' : `<button type="button" class="btn-secondary" data-app-confirm-dismiss>${cancelLabel}</button>`}
                     <button type="button" class="${danger ? 'btn-danger' : 'btn-primary'}" data-app-confirm-ok>${confirmLabel}</button>
                 </div>
             </div>
@@ -1043,7 +1077,7 @@ function showAppConfirm({
         const onKeyDown = (event) => {
             if (event.key === 'Escape') {
                 event.preventDefault();
-                finish(false);
+                finish(hideCancel);
             }
         };
 
@@ -1053,7 +1087,7 @@ function showAppConfirm({
                 return;
             }
             if (event.target.closest('[data-app-confirm-dismiss]')) {
-                finish(false);
+                finish(hideCancel);
             }
         });
 
@@ -1426,6 +1460,7 @@ window.upasApp = {
     getPreviewRoleConfig,
     getPreviewActor,
     applyPreviewRole,
+    previewSysadmin,
     getPreviewLocale,
     applyPreviewLocale,
     availableLocales,
@@ -1451,6 +1486,8 @@ import('./support-center.js');
 import('./faq-admin.js');
 import('./download-admin.js');
 import('./partner-list.js');
+import('./org-relations.js');
+import('./admin-list.js');
 import('./catalog-admin.js');
 import('./training-admin.js');
 

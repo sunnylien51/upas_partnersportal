@@ -1,12 +1,12 @@
 ---
-title: 經銷商登入
+title: 登入
 ---
 @extends('_layouts.auth')
 
 @section('body')
     <div class="self-stretch flex flex-col items-start gap-1">
-        <h1 class="text-ch4 text-gray5">經銷商登入</h1>
-        <p class="text-cb3 text-gray4">登入後可使用案件管理、行銷與技術資源等經銷商專屬功能</p>
+        <h1 class="text-ch4 text-gray5">登入</h1>
+        <p class="text-cb3 text-gray4">總管理者、系統管理員、原廠與經銷商使用同一入口。登入後依身分權限顯示可用功能。</p>
     </div>
 
     <form

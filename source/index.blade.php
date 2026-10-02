@@ -9,13 +9,13 @@ title: 概覽
         <div class="content-wrapper">
             <div class="flex flex-col items-start gap-1 pb-2">
                 <p class="text-ch4 text-gray5">您好~{{ $page->partner['company'] }}</p>
-                <p class="text-cb3 text-gray4">您可使用以下<span data-module-count>{{ count($page->overviewModules) }}</span>個功能區塊</p>
+                <p class="text-cb3 text-gray4">您可使用以下<span data-overview-count>{{ count($page->overviewModules) }}</span>個功能區塊</p>
             </div>
 
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                 @foreach ($page->overviewModules as $module)
-                    <a href="{{ site_href($page, $module['path']) }}" class="group self-stretch min-h-[13rem] p-6 bg-white rounded-2xl shadow-card inline-flex flex-col items-end gap-3 overflow-hidden transition-[box-shadow] duration-300 hover:shadow-[0px_0px_40px_0px_rgba(0,0,0,0.08)]" data-nav-path="{{ $module['path'] }}" data-overview-module>
+                    <a href="{{ site_href($page, $module['path']) }}" class="group self-stretch min-h-[13rem] p-6 bg-white rounded-2xl shadow-card inline-flex flex-col items-end gap-3 overflow-hidden transition-[box-shadow] duration-300 hover:shadow-[0px_0px_40px_0px_rgba(0,0,0,0.08)]" data-overview-module data-nav-path="{{ $module['path'] }}">
                         <div class="self-stretch pb-3 border-b border-gray1 inline-flex items-center gap-3">
                             <span class="section-accent" aria-hidden="true"></span>
                             <h2 class="text-ch5 text-gray5">{{ $module['label'] }}</h2>

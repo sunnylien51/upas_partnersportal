@@ -11,7 +11,6 @@ title: 新增帳號
         'identity' => '',
         'level' => '',
         'oem_sales' => '',
-        'oem_sales_id' => '',
         'manager_id' => '',
         'company' => '',
         'tax_id' => '',
@@ -44,16 +43,9 @@ title: 新增帳號
     $sampleStatus = $statusMap[$sample['status']] ?? ['value' => $sample['status'], 'label' => $sample['status']];
     $sampleCountry = $countryLabels[$sample['country']] ?? $sample['country'];
 
-    $oemSalesOptions = [];
     $oemManagerOptions = [];
     foreach ($partners as $item) {
-        if (($item['status'] ?? '') !== 'approved') {
-            continue;
-        }
-        if (($item['identity'] ?? '') === 'oem_sales') {
-            $oemSalesOptions[] = $item;
-        }
-        if (($item['identity'] ?? '') === 'oem_manager') {
+        if (($item['status'] ?? '') === 'approved' && ($item['identity'] ?? '') === 'oem_manager') {
             $oemManagerOptions[] = $item;
         }
     }
@@ -81,7 +73,6 @@ title: 新增帳號
                 novalidate
             >
                 <input type="hidden" name="applied_at" value="{{ $sample['applied_at'] }}">
-                <input type="hidden" name="oem_sales" value="">
 
                 <div class="review-layout">
                     <div class="review-main">
@@ -93,35 +84,6 @@ title: 新增帳號
                             </div>
 
                             <div class="self-stretch grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="form-field">
-                                    <span class="form-label">
-                                        <span class="text-red">*</span>
-                                        <span>狀態</span>
-                                    </span>
-                                    <div class="form-select" data-form-select data-required>
-                                        <input type="hidden" name="status" value="{{ $sample['status'] }}" data-form-select-value required>
-                                        <button type="button" class="form-select-trigger" data-form-select-trigger aria-haspopup="listbox" aria-expanded="false">
-                                            <span data-form-select-label>{{ $sampleStatus['label'] }}</span>
-                                            <i data-lucide="chevron-down" class="w-4 h-4 text-gray4"></i>
-                                        </button>
-                                        <div class="form-select-menu" data-form-select-menu hidden role="listbox">
-                                            @foreach ($page->partnerStatuses as $option)
-                                                <button
-                                                    type="button"
-                                                    class="form-select-option {{ $option['value'] === $sample['status'] ? 'is-selected' : '' }}"
-                                                    role="option"
-                                                    data-form-select-option
-                                                    data-value="{{ $option['value'] }}"
-                                                    data-label="{{ $option['label'] }}"
-                                                    @if ($option['value'] === $sample['status']) aria-selected="true" @endif
-                                                >
-                                                    {{ $option['label'] }}
-                                                </button>
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <div class="form-field">
                                     <span class="form-label">建立日期</span>
                                     <input type="text" class="form-input is-readonly" value="{{ $sample['applied_at'] }}" data-partner-applied readonly tabindex="-1">
@@ -180,38 +142,13 @@ title: 新增帳號
                                 </div>
                             </div>
 
-                            <div class="form-field" data-partner-oem-sales-field hidden>
+                            <label class="form-field" data-partner-oem-sales-field hidden>
                                 <span class="form-label">
-                                    <span class="text-red">*</span>
-                                    <span>綁定原廠業務</span>
+                                    <span>主要業務窗口</span>
                                 </span>
-                                <p class="text-cb3 text-gray3">一間經銷只綁一位業務；人事異動時再更改。</p>
-                                <div class="form-select" data-form-select data-partner-oem-sales-select>
-                                    <input type="hidden" name="oem_sales_id" value="" data-form-select-value>
-                                    <button type="button" class="form-select-trigger" data-form-select-trigger aria-haspopup="listbox" aria-expanded="false">
-                                        <span class="is-placeholder" data-form-select-label>請選擇原廠業務</span>
-                                        <i data-lucide="chevron-down" class="w-4 h-4 text-gray4"></i>
-                                    </button>
-                                    <div class="form-select-menu" data-form-select-menu hidden role="listbox">
-                                        <div class="form-select-options" data-form-select-options>
-                                            <button type="button" class="form-select-option is-selected" role="option" data-form-select-option data-value="" data-label="請選擇原廠業務">請選擇原廠業務</button>
-                                            @foreach ($oemSalesOptions as $option)
-                                                <button
-                                                    type="button"
-                                                    class="form-select-option"
-                                                    role="option"
-                                                    data-form-select-option
-                                                    data-value="{{ $option['id'] }}"
-                                                    data-label="{{ $option['name'] }}（{{ $option['id'] }}）"
-                                                    data-name="{{ $option['name'] }}"
-                                                >
-                                                    {{ $option['name'] }}（{{ $option['id'] }}）
-                                                </button>
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                                <p class="text-cb3 text-gray3">僅供參考；不影響商機歸屬，商機由總管理者審核時指派承接業務。</p>
+                                <input type="text" name="oem_sales" class="form-input" value="" placeholder="例如：林佳穎">
+                            </label>
 
                             <div class="form-field" data-partner-manager-field hidden>
                                 <span class="form-label">
@@ -347,6 +284,30 @@ title: 新增帳號
                                 </label>
                             </div>
                         </section>
+
+                        <section class="card-panel gap-4">
+                            <div class="self-stretch inline-flex items-center gap-3">
+                                <span class="section-accent" aria-hidden="true"></span>
+                                <h2 class="text-ch5 text-gray5">登入密碼</h2>
+                            </div>
+                            <p class="text-cb3 text-gray3">請設定初始密碼並告知對方，對方可用公司 E-mail 登入。</p>
+                            <div class="self-stretch grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <label class="form-field">
+                                    <span class="form-label">
+                                        <span class="text-red">*</span>
+                                        <span>登入密碼</span>
+                                    </span>
+                                    <input type="password" name="password" class="form-input" placeholder="請輸入登入密碼" autocomplete="new-password" required>
+                                </label>
+                                <label class="form-field">
+                                    <span class="form-label">
+                                        <span class="text-red">*</span>
+                                        <span>確認密碼</span>
+                                    </span>
+                                    <input type="password" name="password_confirmation" class="form-input" placeholder="請再次輸入密碼" autocomplete="new-password" required>
+                                </label>
+                            </div>
+                        </section>
                     </div>
 
                     <aside class="review-aside">
@@ -355,8 +316,36 @@ title: 新增帳號
                                 <span class="section-accent" aria-hidden="true"></span>
                                 <h2 class="text-ch5 text-gray5">建立帳號</h2>
                             </div>
+                            <div class="form-field self-stretch">
+                                <span class="form-label">
+                                    <span class="text-red">*</span>
+                                    <span>狀態</span>
+                                </span>
+                                <div class="form-select" data-form-select data-required>
+                                    <input type="hidden" name="status" value="{{ $sample['status'] }}" data-form-select-value required>
+                                    <button type="button" class="form-select-trigger" data-form-select-trigger aria-haspopup="listbox" aria-expanded="false">
+                                        <span data-form-select-label>{{ $sampleStatus['label'] }}</span>
+                                        <i data-lucide="chevron-down" class="w-4 h-4 text-gray4"></i>
+                                    </button>
+                                    <div class="form-select-menu" data-form-select-menu hidden role="listbox">
+                                        @foreach ($page->partnerStatuses as $option)
+                                            <button
+                                                type="button"
+                                                class="form-select-option {{ $option['value'] === $sample['status'] ? 'is-selected' : '' }}"
+                                                role="option"
+                                                data-form-select-option
+                                                data-value="{{ $option['value'] }}"
+                                                data-label="{{ $option['label'] }}"
+                                                @if ($option['value'] === $sample['status']) aria-selected="true" @endif
+                                            >
+                                                {{ $option['label'] }}
+                                            </button>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
                             <p class="text-cb3 text-gray3">
-                                儲存後會自動產生會員編號。可直接設為已核准並指定身分權限、等級與綁定。
+                                儲存後會自動產生會員編號。請將登入密碼告知對方。可直接設為已核准並指定身分權限、等級與綁定。
                             </p>
                             <div class="self-stretch inline-flex flex-col gap-2 pt-1">
                                 <button type="submit" class="btn-primary w-full h-11" data-requires="profile.manage">建立帳號</button>
@@ -376,9 +365,6 @@ title: 新增帳號
             'statuses' => $statusLabels,
             'levels' => $levelLabels,
             'identities' => $identityLabels,
-            'oemSalesOptions' => array_map(function ($item) {
-                return ['id' => $item['id'], 'name' => $item['name']];
-            }, $oemSalesOptions),
             'oemManagerOptions' => array_map(function ($item) {
                 return ['id' => $item['id'], 'name' => $item['name']];
             }, $oemManagerOptions),

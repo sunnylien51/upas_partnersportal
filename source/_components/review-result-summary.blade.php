@@ -18,7 +18,7 @@
         <span class="text-cb3 text-gray5 min-w-0 flex-1" {{ $statusBind }}>-</span>
     </div>
     <div class="review-result-row">
-        <span class="text-cb3 text-gray3 shrink-0">原廠業務</span>
+        <span class="text-cb3 text-gray3 shrink-0">承接業務</span>
         <span class="text-cb3 text-gray5 min-w-0 flex-1" {{ $salesBind }}>-</span>
     </div>
     <div class="review-result-row">

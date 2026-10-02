@@ -3,17 +3,17 @@
     $breadcrumbItems = $page->pageBreadcrumbs[$breadcrumbKey === '' ? '/' : $breadcrumbKey] ?? [];
 @endphp
 
-<header class="relative z-20 px-4 md:px-12 pt-8 pb-5">
-    <div class="flex items-center gap-2 min-w-0 pr-[11.5rem] md:pr-[18.5rem]">
-        <button id="sidebar-toggle" type="button" class="md:hidden p-2 -ml-1 text-gray5 shrink-0" aria-label="開啟選單" aria-controls="app-sidebar">
-            <i data-lucide="menu" class="w-5 h-5"></i>
-        </button>
-        <img src="{{ site_asset($page, 'images/yellow-slash-motif.svg') }}" alt="" class="w-3 h-6 shrink-0" aria-hidden="true" />
-        <h1 class="text-ch5 text-gray5 truncate">{{ $page->title ?? $page->siteName }}</h1>
+<header class="relative z-20 px-4 md:px-12 pt-5 md:pt-8 pb-5">
+    <div class="flex flex-col items-start gap-4 min-w-0 md:flex-row md:items-center md:gap-2 md:pr-[18.5rem]">
+        <span class="md:hidden size-12 shrink-0" aria-hidden="true"></span>
+        <div class="flex items-center gap-2 min-w-0 w-full md:w-auto">
+            <img src="{{ site_asset($page, 'images/yellow-slash-motif.svg') }}" alt="" class="w-3 h-6 shrink-0" aria-hidden="true" />
+            <h1 class="text-ch5 text-gray5 truncate">{{ $page->title ?? $page->siteName }}</h1>
+        </div>
     </div>
 
     @if (count($breadcrumbItems))
-        <nav class="breadcrumb mt-8 pr-[11.5rem] md:pr-[18.5rem]" aria-label="麵包屑">
+        <nav class="breadcrumb mt-8 md:pr-[18.5rem]" aria-label="麵包屑">
             <i data-lucide="home" class="breadcrumb-home"></i>
             <a href="{{ site_href($page, '/') }}" class="breadcrumb-link">首頁</a>
             @foreach ($breadcrumbItems as $item)
@@ -33,6 +33,10 @@
         </nav>
     @endif
 </header>
+
+<button id="sidebar-toggle" type="button" class="app-sidebar-toggle" aria-label="開啟選單" aria-controls="app-sidebar">
+    <i data-lucide="menu" class="w-4 h-4"></i>
+</button>
 
 <div class="app-user-fixed">
     <button type="button" class="size-12 bg-white rounded-2xl shadow-card border border-gray1 inline-flex items-center justify-center text-gray3 hover:text-gray5 transition-colors" aria-label="通知">

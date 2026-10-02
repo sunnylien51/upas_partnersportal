@@ -110,12 +110,12 @@ title: 商機審核
                                 <h2 class="text-ch5 text-gray5">原廠負責資訊</h2>
                             </div>
                             <div class="form-field">
-                                <span class="form-label"><span>原廠所屬業務</span></span>
+                                <span class="form-label"><span>承接業務</span></span>
                                 <input
                                     type="text"
                                     class="form-input is-readonly"
                                     data-review-field="oem_sales"
-                                    value="{{ $sampleFields['oem_sales'] ?? ($sampleForm['oem_sales'] ?? '—') }}"
+                                    value="{{ $sampleForm['oem_sales'] ?? '—' }}"
                                     readonly
                                     tabindex="-1"
                                 >
@@ -223,9 +223,9 @@ title: 商機審核
                                     }
                                 @endphp
                                 @foreach ($products as $index => $product)
-                                    <div class="self-stretch inline-flex items-center gap-3" data-review-product-row>
-                                        <input type="text" class="form-input flex-1 min-w-0 is-readonly" data-review-product value="{{ $product !== '' ? $product : '—' }}" readonly tabindex="-1">
-                                        <input type="text" class="form-input w-48 shrink-0 is-readonly" data-review-units value="{{ $units[$index] ?? '—' }}" readonly tabindex="-1">
+                                    <div class="self-stretch flex flex-col md:flex-row md:items-center gap-3" data-review-product-row>
+                                        <input type="text" class="form-input w-full min-w-0 md:flex-1 is-readonly" data-review-product value="{{ $product !== '' ? $product : '—' }}" readonly tabindex="-1">
+                                        <input type="text" class="form-input w-full md:w-48 shrink-0 is-readonly" data-review-units value="{{ $units[$index] ?? '—' }}" readonly tabindex="-1">
                                     </div>
                                 @endforeach
                             </div>
@@ -321,7 +321,7 @@ title: 商機審核
                         </div>
 
                         <p class="text-cb3 text-gray3" data-review-hint hidden>
-                            僅總管理者可操作。選擇審核結果後會更新商機狀態；指派原廠業務後，該筆會出現在對應業務帳號。
+                            僅總管理者可操作。審核通過需指派承接業務；指派後該筆會出現在承接業務與其主管的帳號。
                         </p>
 
                         <div class="form-field" data-review-result-field hidden>
@@ -364,17 +364,16 @@ title: 商機審核
 
                         <div class="form-field" data-review-sales-field hidden>
                             <span class="form-label">
-                                <span class="text-red">*</span>
-                                <span>原廠業務</span>
+                                <span>承接業務</span>
                             </span>
-                            <div class="form-select" data-form-select data-required>
+                            <div class="form-select" data-form-select>
                                 <input type="hidden" name="assigned_sales" value="" data-form-select-value>
                                 <button type="button" class="form-select-trigger" data-form-select-trigger aria-haspopup="listbox" aria-expanded="false">
-                                    <span class="is-placeholder" data-form-select-label>請選擇派發業務</span>
+                                    <span class="is-placeholder" data-form-select-label>請選擇承接業務</span>
                                     <i data-lucide="chevron-down" class="w-4 h-4 text-gray4 shrink-0"></i>
                                 </button>
                                 <div class="form-select-menu" data-form-select-menu hidden role="listbox">
-                                    @foreach ($page->opportunityOemSalesOptions as $sales)
+                                    @foreach (oem_staff_options($page) as $sales)
                                         <button
                                             type="button"
                                             class="form-select-option"
@@ -403,8 +402,8 @@ title: 商機審核
                         <div class="self-stretch flex flex-col gap-3 pt-1" data-review-actions>
                             <button type="submit" class="btn-primary w-full h-11" data-review-submit hidden>送出審核結果</button>
                             <button type="button" class="btn-primary w-full h-11" data-review-edit-btn hidden>修改審核</button>
-                            <button type="button" class="btn-secondary w-full h-11" data-review-cancel-edit hidden>取消修改</button>
-                            <a href="{{ site_href($page, '/opportunities') }}" class="btn-secondary w-full h-11" data-review-cancel>取消</a>
+                            <button type="button" class="btn-secondary w-full h-11" data-review-cancel-edit hidden>取消編輯</button>
+                            <a href="{{ site_href($page, '/opportunities') }}" class="btn-secondary w-full h-11" data-review-cancel>取消編輯</a>
                             <a
                                 href="#"
                                 class="btn-secondary w-full h-11"
