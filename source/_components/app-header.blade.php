@@ -39,7 +39,7 @@
 </button>
 
 <div class="app-user-fixed">
-    <button type="button" class="size-12 bg-white rounded-2xl shadow-card border border-gray1 inline-flex items-center justify-center text-gray3 hover:text-gray5 transition-colors" aria-label="通知">
+    <button type="button" class="hidden size-12 bg-white rounded-2xl shadow-card border border-gray1 inline-flex items-center justify-center text-gray3 hover:text-gray5 transition-colors" aria-label="通知" hidden>
         <i data-lucide="bell" class="w-4 h-4"></i>
     </button>
 

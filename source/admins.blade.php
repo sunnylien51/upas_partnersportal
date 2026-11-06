@@ -43,7 +43,7 @@ title: 系統管理
     <div class="page-body">
         <div class="content-wrapper" data-admin-guard>
             <div class="list-empty" data-admin-forbidden hidden>
-                僅總管理者可管理系統管理員帳號。
+                僅總管理者可管理帳號。
             </div>
 
             <div
@@ -80,7 +80,7 @@ title: 系統管理
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2">
-                        <a href="{{ site_href($page, '/admins/create') }}" class="btn-primary" data-requires="admin.manage">新增系統管理員</a>
+                        <a href="{{ site_href($page, '/admins/create') }}" class="btn-primary" data-requires="admin.manage">新增帳號</a>
                     </div>
                 </div>
 
@@ -103,10 +103,11 @@ title: 系統管理
                 <div class="list-card">
                     <div class="list-card-body">
                         <div class="self-stretch overflow-x-auto">
-                            <div class="min-w-[920px]">
+                            <div class="min-w-[1040px]">
                                 <div class="list-head">
                                     <div class="flex-[1.1] min-w-[11rem] text-cb3 text-gray4">使用者名稱</div>
                                     <div class="flex-[1.2] min-w-[12rem] text-cb3 text-gray4">E-mail</div>
+                                    <div class="w-28 shrink-0 text-cb3 text-gray4">帳號類型</div>
                                     <div class="flex-[1.6] min-w-[16rem] text-cb3 text-gray4">左側選單權限</div>
                                     <div class="w-20 text-cb3 text-gray4">狀態</div>
                                     <div class="w-24 shrink-0"></div>
@@ -133,29 +134,26 @@ title: 系統管理
                                             <div class="flex-[1.2] min-w-[12rem] pr-4">
                                                 <p class="text-eb2 text-gray5 break-all" data-admin-email>{{ $item['email'] }}</p>
                                             </div>
+                                            <div class="w-28 shrink-0 pr-4">
+                                                <p class="text-cb3 text-gray5 whitespace-nowrap" data-admin-role>{{ ($item['role'] ?? 'staff') === 'admin' ? '總管理者' : '一般帳號' }}</p>
+                                            </div>
                                             <div class="flex-[1.6] min-w-[16rem] pr-4">
                                                 <div class="flex flex-wrap gap-1" data-admin-nav>
-                                                    @forelse ($navPaths as $path)
-                                                        <span class="nav-permission-chip">{{ $navLabels[$path] ?? $path }}</span>
-                                                    @empty
-                                                        <span class="text-cb3 text-gray3">未指定</span>
-                                                    @endforelse
+                                                    @if (($item['role'] ?? 'staff') === 'admin')
+                                                        <span class="text-cb3 text-gray5">全部選單</span>
+                                                    @else
+                                                        @forelse ($navPaths as $path)
+                                                            <span class="nav-permission-chip">{{ $navLabels[$path] ?? $path }}</span>
+                                                        @empty
+                                                            <span class="text-cb3 text-gray3">未指定</span>
+                                                        @endforelse
+                                                    @endif
                                                 </div>
                                             </div>
                                             <div class="w-20 shrink-0">
                                                 <span class="status-pill status-{{ $status['value'] }}" data-admin-status>{{ $status['label'] }}</span>
                                             </div>
                                             <div class="w-24 shrink-0 inline-flex items-center justify-end" data-admin-actions>
-                                                <button
-                                                    type="button"
-                                                    class="icon-action"
-                                                    data-admin-preview
-                                                    data-requires="admin.manage"
-                                                    aria-label="預覽 {{ $item['name'] }} 的選單權限"
-                                                    title="預覽選單"
-                                                >
-                                                    <i data-lucide="eye" class="w-4 h-4"></i>
-                                                </button>
                                                 <a
                                                     href="{{ site_href($page, '/admins/edit') }}?id={{ urlencode($item['id']) }}"
                                                     class="icon-action"
@@ -195,6 +193,9 @@ title: 系統管理
                                         <div class="flex-[1.2] min-w-[12rem] pr-4">
                                             <p class="text-eb2 text-gray5 break-all" data-admin-email>—</p>
                                         </div>
+                                        <div class="w-28 shrink-0 pr-4">
+                                            <p class="text-cb3 text-gray5 whitespace-nowrap" data-admin-role>—</p>
+                                        </div>
                                         <div class="flex-[1.6] min-w-[16rem] pr-4">
                                             <div class="flex flex-wrap gap-1" data-admin-nav></div>
                                         </div>
@@ -202,9 +203,6 @@ title: 系統管理
                                             <span class="status-pill" data-admin-status>—</span>
                                         </div>
                                         <div class="w-24 shrink-0 inline-flex items-center justify-end" data-admin-actions>
-                                            <button type="button" class="icon-action" data-admin-preview data-requires="admin.manage" aria-label="預覽選單" title="預覽選單">
-                                                <i data-lucide="eye" class="w-4 h-4"></i>
-                                            </button>
                                             <a href="#" class="icon-action" data-requires="admin.manage" data-admin-edit-link aria-label="編輯" title="編輯">
                                                 <i data-lucide="square-pen" class="w-4 h-4"></i>
                                             </a>
@@ -214,7 +212,7 @@ title: 系統管理
                                         </div>
                                     </div>
                                     <div class="list-empty" data-admin-empty hidden>
-                                        沒有符合條件的系統管理員
+                                        沒有符合條件的帳號
                                     </div>
                                 </div>
                             </div>

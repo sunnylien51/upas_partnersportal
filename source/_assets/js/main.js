@@ -311,13 +311,194 @@ const filterEmpty = document.querySelector('[data-filter-empty]');
 const searchInput = document.querySelector('[data-search-input]');
 const statusFilter = document.querySelector('[data-opp-status-filter] [data-form-select-value]');
 const salesFilter = document.querySelector('[data-opp-sales-filter] [data-form-select-value]');
+const dealerFilter = document.querySelector('[data-opp-dealer-filter] [data-form-select-value]');
+const countryFilter = document.querySelector('[data-opp-country-filter] [data-form-select-value]');
+const dateFromFilter = document.querySelector('[data-opp-date-from]');
+const dateToFilter = document.querySelector('[data-opp-date-to]');
 
-function closeFilterDropdown() {}
+function closeFilterDropdown() {
+    if (!opportunityFilterPanel || opportunityFilterPanel.hidden) {
+        return;
+    }
+    opportunityFilterPanel.hidden = true;
+    opportunityFilterToggle?.classList.remove('is-open');
+    opportunityFilterToggle?.setAttribute('aria-expanded', 'false');
+}
+
+function opportunityDateInRange(value, from, to) {
+    if (!from && !to) {
+        return true;
+    }
+    if (!value) {
+        return false;
+    }
+    if (from && value < from) {
+        return false;
+    }
+    if (to && value > to) {
+        return false;
+    }
+    return true;
+}
+
+const opportunityChips = document.querySelector('[data-opp-filter-chips]');
+const opportunityFilterPanel = document.querySelector('[data-opp-filter-panel]');
+const opportunityFilterToggle = document.querySelector('[data-opp-filter-toggle]');
+const appliedOpportunityQuery = {
+    query: '',
+    status: '',
+    statusLabel: '',
+    sales: '',
+    salesLabel: '',
+    dealer: '',
+    dealerLabel: '',
+    country: '',
+    countryLabel: '',
+    dateFrom: '',
+    dateTo: '',
+};
+
+function opportunitySelectState(selector) {
+    const select = document.querySelector(selector);
+    const value = select?.querySelector('[data-form-select-value]')?.value || '';
+    const label = select?.querySelector('[data-form-select-label]')?.textContent?.trim() || '';
+    return { value, label: value ? label : '' };
+}
+
+function readDraftOpportunityQuery() {
+    const status = opportunitySelectState('[data-opp-status-filter]');
+    const sales = opportunitySelectState('[data-opp-sales-filter]');
+    const dealer = opportunitySelectState('[data-opp-dealer-filter]');
+    const country = opportunitySelectState('[data-opp-country-filter]');
+    return {
+        query: (searchInput?.value || '').trim(),
+        status: status.value,
+        statusLabel: status.label,
+        sales: sales.value,
+        salesLabel: sales.label,
+        dealer: dealer.value,
+        dealerLabel: dealer.label,
+        country: country.value,
+        countryLabel: country.label,
+        dateFrom: dateFromFilter?.value || '',
+        dateTo: dateToFilter?.value || '',
+    };
+}
+
+function commitOpportunityQuery() {
+    if (suppressOpportunityCommit) {
+        return;
+    }
+    Object.assign(appliedOpportunityQuery, readDraftOpportunityQuery());
+    renderOpportunityChips();
+    applyOpportunityFilters();
+}
+
+function resetOpportunitySelect(selector) {
+    const select = document.querySelector(selector);
+    const option = (select?._formMenu || select)?.querySelector('[data-form-select-option][data-value=""]');
+    if (select && option) {
+        setFormSelectValue(select, option);
+    }
+}
+
+let suppressOpportunityCommit = false;
+
+function clearOpportunityQuery() {
+    closeFormSelects();
+    suppressOpportunityCommit = true;
+    if (searchInput) {
+        searchInput.value = '';
+        searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    resetOpportunitySelect('[data-opp-status-filter]');
+    resetOpportunitySelect('[data-opp-sales-filter]');
+    resetOpportunitySelect('[data-opp-dealer-filter]');
+    resetOpportunitySelect('[data-opp-country-filter]');
+    if (dateFromFilter) dateFromFilter.value = '';
+    if (dateToFilter) dateToFilter.value = '';
+    suppressOpportunityCommit = false;
+    commitOpportunityQuery();
+}
+
+function removeOpportunityChip(key) {
+    suppressOpportunityCommit = true;
+    if (key === 'query' && searchInput) {
+        searchInput.value = '';
+        searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    if (key === 'status') resetOpportunitySelect('[data-opp-status-filter]');
+    if (key === 'sales') resetOpportunitySelect('[data-opp-sales-filter]');
+    if (key === 'dealer') resetOpportunitySelect('[data-opp-dealer-filter]');
+    if (key === 'country') resetOpportunitySelect('[data-opp-country-filter]');
+    if (key === 'date') {
+        if (dateFromFilter) dateFromFilter.value = '';
+        if (dateToFilter) dateToFilter.value = '';
+    }
+    suppressOpportunityCommit = false;
+    commitOpportunityQuery();
+}
+
+function renderOpportunityChips() {
+    if (!opportunityChips) {
+        return;
+    }
+
+    const chips = [];
+    if (appliedOpportunityQuery.query) {
+        chips.push({ key: 'query', text: `關鍵字：${appliedOpportunityQuery.query}` });
+    }
+    if (appliedOpportunityQuery.status) {
+        chips.push({ key: 'status', text: `狀態：${appliedOpportunityQuery.statusLabel}` });
+    }
+    if (appliedOpportunityQuery.sales) {
+        chips.push({ key: 'sales', text: `承接業務：${appliedOpportunityQuery.salesLabel}` });
+    }
+    if (appliedOpportunityQuery.dealer) {
+        chips.push({ key: 'dealer', text: `身份：${appliedOpportunityQuery.dealerLabel}` });
+    }
+    if (appliedOpportunityQuery.country) {
+        chips.push({ key: 'country', text: `國家：${appliedOpportunityQuery.countryLabel}` });
+    }
+    if (appliedOpportunityQuery.dateFrom || appliedOpportunityQuery.dateTo) {
+        const from = appliedOpportunityQuery.dateFrom || '…';
+        const to = appliedOpportunityQuery.dateTo || '…';
+        chips.push({ key: 'date', text: `建立日期：${from} – ${to}` });
+    }
+
+    const escapeChip = (value) => String(value).replace(/[&<>"']/g, (char) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+    })[char]);
+    opportunityChips.innerHTML = chips.map((chip) => (
+        `<button type="button" class="filter-chip" data-opp-chip="${chip.key}">${escapeChip(chip.text)}<i data-lucide="x"></i></button>`
+    )).join('');
+    opportunityChips.hidden = chips.length === 0;
+    const filtersActive = Boolean(
+        appliedOpportunityQuery.status
+        || appliedOpportunityQuery.sales
+        || appliedOpportunityQuery.dealer
+        || appliedOpportunityQuery.country
+        || appliedOpportunityQuery.dateFrom
+        || appliedOpportunityQuery.dateTo
+    );
+    opportunityFilterToggle?.classList.toggle('is-active', filtersActive);
+    if (chips.length) {
+        refreshIcons(opportunityChips);
+    }
+}
 
 function applyOpportunityFilters() {
-    const query = (searchInput?.value || '').trim().toLowerCase();
-    const status = statusFilter?.value || '';
-    const sales = salesFilter?.value || '';
+    const query = appliedOpportunityQuery.query.toLowerCase();
+    const status = appliedOpportunityQuery.status;
+    const sales = appliedOpportunityQuery.sales;
+    const dealer = appliedOpportunityQuery.dealer;
+    const country = appliedOpportunityQuery.country;
+    const dateFrom = appliedOpportunityQuery.dateFrom;
+    const dateTo = appliedOpportunityQuery.dateTo;
     const rows = document.querySelectorAll('[data-opp-row]');
     let visibleCount = 0;
 
@@ -325,8 +506,11 @@ function applyOpportunityFilters() {
         const visibilityOk = row.dataset.visibilityAllowed !== '0';
         const statusOk = !status || row.dataset.status === status;
         const salesOk = !sales || (row.dataset.salesName || '') === sales;
+        const dealerOk = !dealer || (row.dataset.dealer || '') === dealer;
+        const countryOk = !country || (row.dataset.country || '') === country;
+        const dateOk = opportunityDateInRange(row.dataset.oppDate || '', dateFrom, dateTo);
         const searchOk = query.length === 0 || (row.dataset.search || '').toLowerCase().includes(query);
-        const visible = visibilityOk && statusOk && salesOk && searchOk;
+        const visible = visibilityOk && statusOk && salesOk && dealerOk && countryOk && dateOk && searchOk;
 
         row.hidden = !visible;
         if (visible) {
@@ -339,8 +523,37 @@ function applyOpportunityFilters() {
     }
 }
 
-statusFilter?.addEventListener('change', applyOpportunityFilters);
-salesFilter?.addEventListener('change', applyOpportunityFilters);
+document.querySelector('[data-opp-clear]')?.addEventListener('click', clearOpportunityQuery);
+opportunityFilterToggle?.addEventListener('click', (event) => {
+    event.stopPropagation();
+    if (!opportunityFilterPanel) {
+        return;
+    }
+    const open = opportunityFilterPanel.hidden;
+    opportunityFilterPanel.hidden = !open;
+    opportunityFilterToggle.classList.toggle('is-open', open);
+    opportunityFilterToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+});
+opportunityFilterPanel?.addEventListener('click', (event) => {
+    event.stopPropagation();
+});
+opportunityChips?.addEventListener('click', (event) => {
+    const chip = event.target.closest('[data-opp-chip]');
+    if (!chip) {
+        return;
+    }
+    removeOpportunityChip(chip.dataset.oppChip);
+});
+if (opportunityFilterPanel && searchInput) {
+    searchInput.addEventListener('input', () => {
+        commitOpportunityQuery();
+    });
+}
+[statusFilter, salesFilter, dealerFilter, countryFilter, dateFromFilter, dateToFilter].forEach((input) => {
+    input?.addEventListener('change', () => {
+        commitOpportunityQuery();
+    });
+});
 
 /* ---------- 預覽身分權限：客人看總管／非總管；工程師可開詳細身分 ---------- */
 const ROLE_STORAGE_KEY = 'upas-preview-role';
@@ -350,11 +563,11 @@ const SYSADMIN_DELETED_KEY = 'upas-system-admins-deleted';
 const SYSADMIN_PREVIEW_KEY = 'upas-preview-sysadmin-id';
 const SIMPLE_NON_ADMIN_ROLE = 'dealer_tw';
 const NAV_CAPABILITIES = {
-    '/opportunities': ['opportunity.view', 'opportunity.create', 'opportunity.export', 'opportunity.actions'],
+    '/opportunities': ['opportunity.view', 'opportunity.create', 'opportunity.export', 'opportunity.actions', 'opportunity.notify'],
     '/products': ['product.manage'],
     '/training': ['training.manage'],
     '/marketing': ['marketing.manage'],
-    '/support': ['support.create', 'support.manage'],
+    '/support': ['support.create', 'support.manage', 'support.notify'],
     '/profile': ['profile.manage'],
 };
 const rolesConfigEl = document.getElementById('app-roles-config');
@@ -490,7 +703,9 @@ function readMergedSystemAdmins() {
 }
 
 function getSysadminOverlay() {
-    const admins = readMergedSystemAdmins().filter((item) => (item.status || 'active') !== 'disabled');
+    const admins = readMergedSystemAdmins().filter((item) => {
+        return (item.status || 'active') !== 'disabled' && item.role !== 'admin';
+    });
     const previewId = localStorage.getItem(SYSADMIN_PREVIEW_KEY);
     const chosen = admins.find((item) => item.id === previewId) || admins[0];
     if (!chosen) {
@@ -501,7 +716,7 @@ function getSysadminOverlay() {
     return {
         nav,
         can: capabilitiesFromNav(nav),
-        label: chosen.name ? `${chosen.name}（系統管理員）` : '系統管理員',
+        label: chosen.name ? `${chosen.name}（一般帳號）` : '一般帳號',
     };
 }
 
@@ -675,11 +890,9 @@ document.querySelectorAll('[data-search-input]').forEach((input) => {
 
     input.addEventListener('input', () => {
         syncSearchClear();
-        applyOpportunityFilters();
     });
     input.addEventListener('search', () => {
         syncSearchClear();
-        applyOpportunityFilters();
     });
     clearBtn.addEventListener('click', () => {
         input.value = '';
@@ -760,14 +973,14 @@ function setFormSelectValue(select, option) {
     const labelEl = select.querySelector('[data-form-select-label]');
     const trigger = select.querySelector('[data-form-select-trigger]');
 
-    if (hidden) {
-        hidden.value = value;
-        hidden.dispatchEvent(new Event('change', { bubbles: true }));
-    }
-
     if (labelEl) {
         labelEl.textContent = label;
         labelEl.classList.toggle('is-placeholder', value === '');
+    }
+
+    if (hidden) {
+        hidden.value = value;
+        hidden.dispatchEvent(new Event('change', { bubbles: true }));
     }
 
     if (trigger) {
@@ -894,7 +1107,9 @@ function bindFormSelect(select) {
         const willOpen = !select.classList.contains('is-open');
         closeFormSelects();
         closeStatusSelects();
-        closeFilterDropdown();
+        if (!select.closest('[data-opp-filter]')) {
+            closeFilterDropdown();
+        }
 
         if (!willOpen) {
             return;
@@ -1481,6 +1696,7 @@ window.upasApp = {
     bindTrainingCenter,
 };
 
+import('./notify-mailbox.js');
 import('./opportunity-flow.js');
 import('./support-center.js');
 import('./faq-admin.js');

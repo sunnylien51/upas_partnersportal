@@ -47,7 +47,7 @@ if (! function_exists('oem_staff_options')) {
         $options = [];
         foreach ($page->partners ?? [] as $partner) {
             $identity = $partner['identity'] ?? '';
-            if (($partner['status'] ?? '') !== 'approved' || ! in_array($identity, ['oem_manager', 'oem_sales'], true)) {
+            if (($partner['status'] ?? '') !== 'approved' || ! in_array($identity, ['oem_director', 'oem_manager', 'oem_sales'], true)) {
                 continue;
             }
             $options[] = ['value' => $partner['id'], 'label' => $partner['name'] ?? $partner['id']];

@@ -1,5 +1,5 @@
 ---
-title: 新增系統管理員
+title: 新增帳號
 ---
 @extends('_layouts.app')
 
@@ -27,14 +27,14 @@ title: 新增系統管理員
     <div class="page-body">
         <div class="content-wrapper" data-admin-guard>
             <div class="list-empty" data-admin-forbidden hidden>
-                僅總管理者可管理系統管理員帳號。
+                僅總管理者可管理帳號。
             </div>
 
             <div class="self-stretch flex flex-col gap-5" data-admin-allowed>
                 <div class="page-toolbar">
                     <div class="inline-flex flex-col items-start gap-1 min-w-0">
                         <div class="inline-flex items-center gap-3 min-w-0">
-                            <h1 class="text-ch4 text-gray5 truncate" data-admin-heading>新增系統管理員</h1>
+                            <h1 class="text-ch4 text-gray5 truncate" data-admin-heading>新增帳號</h1>
                             <span class="status-pill status-{{ $sampleStatus['value'] }}" data-admin-status-pill>{{ $sampleStatus['label'] }}</span>
                         </div>
                         <p class="text-[12px] font-medium tracking-[0.04em] text-gray3">編號將於儲存時自動產生</p>
@@ -57,6 +57,25 @@ title: 新增系統管理員
                                 <div class="self-stretch inline-flex items-center gap-3">
                                     <span class="section-accent" aria-hidden="true"></span>
                                     <h2 class="text-ch5 text-gray5">帳號資料</h2>
+                                </div>
+
+                                <div class="self-stretch flex flex-col items-start gap-1">
+                                    <div class="inline-flex items-center gap-1">
+                                        <span class="text-cb2 text-red">*</span>
+                                        <span class="text-cb2 text-gray5">帳號類型</span>
+                                    </div>
+                                    <div class="self-stretch inline-flex items-start gap-4" data-account-role-group>
+                                        <label class="source-option flex-1">
+                                            <input type="radio" name="account_role" value="admin" class="sr-only" data-account-role>
+                                            <span class="source-radio" aria-hidden="true"></span>
+                                            <span class="source-option-label">總管理者</span>
+                                        </label>
+                                        <label class="source-option flex-1 is-selected">
+                                            <input type="radio" name="account_role" value="staff" class="sr-only" data-account-role checked>
+                                            <span class="source-radio" aria-hidden="true"></span>
+                                            <span class="source-option-label">一般帳號</span>
+                                        </label>
+                                    </div>
                                 </div>
 
                                 <div class="self-stretch grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -99,7 +118,9 @@ title: 新增系統管理員
                                 </div>
                             </section>
 
-                            <section class="card-panel gap-4">
+                            <p class="text-cb3 text-gray3" data-super-admin-note hidden>總管理者固定可使用全部左側選單，包含系統管理。</p>
+
+                            <section class="card-panel gap-4" data-nav-permission-section>
                                 <div class="self-stretch inline-flex items-center gap-3">
                                     <span class="section-accent" aria-hidden="true"></span>
                                     <h2 class="text-ch5 text-gray5">左側選單權限</h2>
@@ -159,7 +180,7 @@ title: 新增系統管理員
                                     </div>
                                 </div>
                                 <p class="text-cb3 text-gray3">
-                                    儲存後會自動產生管理員編號。切換預覽身分至「系統管理員」可查看此帳號的左側選單。
+                                    儲存後會自動產生帳號編號。總管理者固定看得到全部選單；一般帳號依勾選的左側選單使用。
                                 </p>
                                 <div class="self-stretch inline-flex flex-col gap-2 pt-1">
                                     <button type="submit" class="btn-primary w-full h-11" data-requires="admin.manage">建立帳號</button>

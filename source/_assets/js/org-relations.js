@@ -2,6 +2,7 @@ const STORAGE_KEY = 'upas-partners';
 const DELETED_KEY = 'upas-partners-deleted';
 
 const IDENTITY_LABEL = {
+    oem_director: '原廠高階主管',
     oem_manager: '原廠業務主管',
     oem_sales: '原廠業務',
     dealer_tw: '國內經銷商',
@@ -122,6 +123,12 @@ if (page) {
         return working.find((item) => item.id === id) || null;
     }
 
+    function managersOf(directorId) {
+        return working
+            .filter((item) => item.identity === 'oem_manager' && item.manager_id === directorId)
+            .sort(byName);
+    }
+
     function salesOf(managerId) {
         return working
             .filter((item) => item.identity === 'oem_sales' && item.manager_id === managerId)
@@ -171,13 +178,41 @@ if (page) {
         `;
     }
 
+    function managerBranch(manager, { nested = false } = {}) {
+        const sales = salesOf(manager.id);
+        const rowClass = nested ? 'org-row bg-bg2' : 'org-row';
+        return `
+            <div class="flex flex-col gap-2" data-org-drop="manager" data-org-id="${escapeText(manager.id)}">
+                <div class="${rowClass}" draggable="${canEdit() ? 'true' : 'false'}" data-org-drag="manager" data-org-id="${escapeText(manager.id)}">
+                    ${toggleButton(manager.id, true)}
+                    <span class="text-cb3 text-gray5 min-w-0 truncate">${escapeText(personLabel(manager))}</span>
+                </div>
+                <div class="org-children" ${expanded.has(manager.id) ? '' : 'hidden'}>
+                    ${sales.length
+                        ? sales.map((item) => salesBranch(item)).join('')
+                        : '<p class="text-cb3 text-gray3">尚無業務。將原廠業務拖到這裡。</p>'}
+                </div>
+            </div>
+        `;
+    }
+
     function renderPool() {
+        const directorIds = new Set(working.filter((item) => item.identity === 'oem_director').map((item) => item.id));
         const managerIds = new Set(working.filter((item) => item.identity === 'oem_manager').map((item) => item.id));
+        const looseManagers = working
+            .filter((item) => item.identity === 'oem_manager' && !directorIds.has(item.manager_id || ''))
+            .sort(byName);
         const looseSales = working
             .filter((item) => item.identity === 'oem_sales' && !managerIds.has(item.manager_id || ''))
             .sort(byName);
 
         poolEl.innerHTML = `
+            <div class="self-stretch flex flex-col gap-2" data-org-drop="unbind-manager">
+                <p class="text-cb3 text-gray4">原廠業務主管（尚未指定直屬高階主管）</p>
+                ${looseManagers.length
+                    ? looseManagers.map((manager) => managerBranch(manager)).join('')
+                    : '<p class="org-dropzone text-cb3 text-gray3 px-3 py-4 rounded-[8px] border border-dashed border-gray1">目前都已指定直屬高階主管。</p>'}
+            </div>
             <div class="self-stretch flex flex-col gap-2" data-org-drop="unbind-sales">
                 <p class="text-cb3 text-gray4">原廠業務（尚未指定直屬主管）</p>
                 ${looseSales.length
@@ -188,28 +223,28 @@ if (page) {
     }
 
     function renderTree() {
-        const managers = working.filter((item) => item.identity === 'oem_manager').sort(byName);
-        if (!managers.length) {
-            treeEl.innerHTML = '<p class="text-cb3 text-gray3">尚無原廠業務主管。請先在夥伴管理指定身分權限。</p>';
+        const directors = working.filter((item) => item.identity === 'oem_director').sort(byName);
+        if (!directors.length) {
+            treeEl.innerHTML = '<p class="text-cb3 text-gray3">尚無原廠高階主管。請先在夥伴管理指定身分權限。</p>';
             return;
         }
 
-        treeEl.innerHTML = managers.map((manager) => {
-            const sales = salesOf(manager.id);
+        treeEl.innerHTML = directors.map((director) => {
+            const managers = managersOf(director.id);
             return `
-                <div class="flex flex-col gap-2" data-org-drop="manager" data-org-id="${escapeText(manager.id)}">
+                <div class="flex flex-col gap-2" data-org-drop="director" data-org-id="${escapeText(director.id)}">
                     <div class="org-row">
-                        ${toggleButton(manager.id, true)}
-                        <span class="text-cb3 text-gray5 min-w-0 truncate">${escapeText(personLabel(manager))}</span>
+                        ${toggleButton(director.id, true)}
+                        <span class="text-cb3 text-gray5 min-w-0 truncate">${escapeText(personLabel(director))}</span>
                     </div>
-                    <div class="org-children" ${expanded.has(manager.id) ? '' : 'hidden'}>
-                        ${sales.length
-                            ? sales.map((item) => salesBranch(item)).join('')
-                            : '<p class="text-cb3 text-gray3">尚無業務。將左側的原廠業務拖到這裡。</p>'}
+                    <div class="org-children" ${expanded.has(director.id) ? '' : 'hidden'}>
+                        ${managers.length
+                            ? managers.map((item) => managerBranch(item, { nested: true })).join('')
+                            : '<p class="text-cb3 text-gray3">尚無業務主管。將左側的業務主管拖到這裡。</p>'}
                     </div>
-            </div>
-        `;
-    }).join('');
+                </div>
+            `;
+        }).join('');
     }
 
     function render() {
@@ -284,7 +319,13 @@ if (page) {
             return false;
         }
         const drop = zone.dataset.orgDrop;
-        return drag.kind === 'sales' && (drop === 'manager' || drop === 'unbind-sales');
+        if (drag.kind === 'sales') {
+            return drop === 'manager' || drop === 'unbind-sales';
+        }
+        if (drag.kind === 'manager') {
+            return drop === 'director' || drop === 'unbind-manager';
+        }
+        return false;
     }
 
     async function applyDrop(zone, moving) {
@@ -329,6 +370,36 @@ if (page) {
                 return;
             }
             source.manager_id = '';
+        } else if (moving.kind === 'manager' && drop === 'director') {
+            if (source.manager_id === targetId) {
+                return;
+            }
+            const ok = await showConfirm({
+                title: '調整直屬高階主管',
+                message: `確定將「${source.name || source.id}」改掛到「${target?.name || '這位高階主管'}」底下？`,
+                confirmLabel: '確定',
+                cancelLabel: '取消',
+            });
+            if (!ok) {
+                return;
+            }
+            source.manager_id = targetId;
+            expanded.add(targetId);
+            expanded.add(source.id);
+        } else if (moving.kind === 'manager' && drop === 'unbind-manager') {
+            if (!source.manager_id) {
+                return;
+            }
+            const ok = await showConfirm({
+                title: '取消直屬高階主管',
+                message: `確定讓「${source.name || source.id}」先不掛高階主管？`,
+                confirmLabel: '確定',
+                cancelLabel: '取消',
+            });
+            if (!ok) {
+                return;
+            }
+            source.manager_id = '';
         }
 
         render();
@@ -355,7 +426,11 @@ if (page) {
         showToast('已還原尚未儲存的調整');
     });
 
-    working.filter((item) => item.identity === 'oem_manager' || item.identity === 'oem_sales').forEach((item) => {
+    working.filter((item) => (
+        item.identity === 'oem_director'
+        || item.identity === 'oem_manager'
+        || item.identity === 'oem_sales'
+    )).forEach((item) => {
         expanded.add(item.id);
     });
     render();

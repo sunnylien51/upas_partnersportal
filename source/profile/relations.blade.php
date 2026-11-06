@@ -17,7 +17,7 @@ title: 組織關係
             </div>
 
             <p class="text-cb3 text-gray3">
-                在這裡看原廠業務的上下層。一位原廠業務只掛一位直屬主管；主管上面不再掛人。經銷不綁業務，商機由總管理者審核時指派承接業務。
+                在這裡看原廠上下層：高階主管 → 業務主管 → 業務。一位業務只掛一位業務主管；一位業務主管只掛一位高階主管。經銷不綁業務，商機由總管理者審核時指派承接業務。
             </p>
 
             <div class="org-layout">
@@ -26,7 +26,7 @@ title: 組織關係
                         <span class="section-accent" aria-hidden="true"></span>
                         <h2 class="text-ch5 text-gray5">未歸屬</h2>
                     </div>
-                    <p class="text-cb3 text-gray3">尚未指定直屬主管的原廠業務會列在這裡。拖到右側的主管下面即可建立關係。</p>
+                    <p class="text-cb3 text-gray3">尚未指定直屬主管的業務主管／業務會列在這裡。拖到右側對應層級即可建立關係。</p>
                     <div class="self-stretch flex flex-col gap-4" data-org-pool></div>
                 </section>
 
@@ -35,7 +35,7 @@ title: 組織關係
                         <span class="section-accent" aria-hidden="true"></span>
                         <h2 class="text-ch5 text-gray5">原廠組織</h2>
                     </div>
-                    <p class="text-cb3 text-gray3">展開主管可看直屬業務。拖移業務可改掛主管。</p>
+                    <p class="text-cb3 text-gray3">展開高階主管可看業務主管，再展開可看直屬業務。拖移可改掛上級。</p>
                     <div class="self-stretch flex flex-col gap-3" data-org-tree></div>
                 </section>
             </div>

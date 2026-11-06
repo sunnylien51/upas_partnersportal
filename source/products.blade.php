@@ -57,7 +57,7 @@ title: 產品資訊中心
                         <div class="min-w-[720px]">
                             <div class="list-head">
                                 <div class="w-32 text-cb3 text-gray4">發布日期</div>
-                                <div class="w-28 text-cb3 text-gray4">分類</div>
+                                <div class="w-44 shrink-0 whitespace-nowrap text-cb3 text-gray4">分類</div>
                                 <div class="flex-1 text-cb3 text-gray4">公告主題</div>
                                 <div class="w-24 text-cb3 text-gray4">附件</div>
                                 <div class="w-20 shrink-0" data-requires="product.manage"></div>
@@ -78,7 +78,7 @@ title: 產品資訊中心
                                         @if ($item['category'] !== 'new') hidden @endif
                                     >
                                         <div class="w-32 text-eb3 text-gray5 uppercase" data-catalog-date>{{ $item['date'] }}</div>
-                                        <div class="w-28">
+                                        <div class="w-44 shrink-0 whitespace-nowrap">
                                             <span class="text-cb3 text-brand2" data-catalog-category>{{ $category['label'] }}</span>
                                         </div>
                                         <div class="flex-1 pr-4 text-cb3 text-gray5" data-catalog-title>{{ $item['title'] }}</div>
@@ -142,7 +142,7 @@ title: 產品資訊中心
     <template data-catalog-row-template>
         <div class="list-row" data-catalog-row data-catalog-id="" data-category="" data-search="">
             <div class="w-32 text-eb3 text-gray5 uppercase" data-catalog-date></div>
-            <div class="w-28">
+            <div class="w-44 shrink-0 whitespace-nowrap">
                 <span class="text-cb3 text-brand2" data-catalog-category></span>
             </div>
             <div class="flex-1 pr-4 text-cb3 text-gray5" data-catalog-title></div>

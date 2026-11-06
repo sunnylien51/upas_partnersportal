@@ -70,15 +70,39 @@ function formatDateTime(date = new Date()) {
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
 
-function nextTicketId(existing) {
-    let max = 2600;
+function formatTicketTime(value) {
+    const text = String(value || '').trim();
+    if (!text || text === '—') {
+        return '—';
+    }
+    if (/UTC\+8/.test(text)) {
+        return text;
+    }
+    if (/^\d{4}-\d{2}-\d{2}(?:[ T]\d{2}:\d{2})?$/.test(text)) {
+        return `${text.replace('T', ' ')} (UTC+8)`;
+    }
+    return text;
+}
+
+/** 工單編號：T + YYMMDD + 當日流水號(3位) */
+function ticketIdDatePrefix(date = new Date()) {
+    const y = String(date.getFullYear()).slice(-2);
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `T${y}${m}${d}`;
+}
+
+function nextTicketId(existing, date = new Date()) {
+    const prefix = ticketIdDatePrefix(date);
+    let max = 0;
+    const pattern = new RegExp(`^${prefix}(\\d{3})$`, 'i');
     existing.forEach((ticket) => {
-        const match = String(ticket.id || '').match(/TKT-(\d+)/i);
+        const match = String(ticket?.id || ticket || '').match(pattern);
         if (match) {
             max = Math.max(max, Number(match[1]));
         }
     });
-    return `TKT-${max + 1}`;
+    return `${prefix}${String(max + 1).padStart(3, '0')}`;
 }
 
 function formatFileSize(bytes) {
@@ -295,8 +319,8 @@ function bindTicketModal(meta, { onSave } = {}) {
         setText('[data-ticket-modal-type]', ticketTypes[ticket.type] || ticket.type || '—');
         setText('[data-ticket-modal-contact]', ticket.contact || '—');
         setText('[data-ticket-modal-assignee]', ticket.assignee || '尚未指派');
-        setText('[data-ticket-modal-created]', ticket.createdAt || '—');
-        setText('[data-ticket-modal-updated]', ticket.updatedAt || ticket.updated || '—');
+        setText('[data-ticket-modal-created]', formatTicketTime(ticket.createdAt));
+        setText('[data-ticket-modal-updated]', formatTicketTime(ticket.updatedAt || ticket.updated));
         setText('[data-ticket-modal-description]', ticket.description || '—');
         setText('[data-ticket-modal-note]', String(ticket.note || '').trim() || '—');
 
@@ -391,7 +415,7 @@ function bindTicketModal(meta, { onSave } = {}) {
             pill.textContent = nextStatus.label;
         }
         setText('[data-ticket-modal-assignee]', next.assignee || '尚未指派');
-        setText('[data-ticket-modal-updated]', next.updatedAt);
+        setText('[data-ticket-modal-updated]', formatTicketTime(next.updatedAt));
         setText('[data-ticket-modal-note]', next.note || '—');
 
         showToast('已更新工單處理結果', 'success');
@@ -426,6 +450,7 @@ function bindSupportCenter(root) {
     const ticketPageSize = Number(root.dataset.ticketPageSize || 5);
     let faqPage = 1;
     let ticketPage = 1;
+    let ticketStatus = '';
 
     bindFaqAccordion(root);
 
@@ -549,7 +574,8 @@ function bindSupportCenter(root) {
 
     function applyTicketFilter() {
         const rows = [...root.querySelectorAll('[data-ticket-row]')];
-        const total = rows.length;
+        const matched = rows.filter((row) => !ticketStatus || row.dataset.status === ticketStatus);
+        const total = matched.length;
         const pages = Math.max(1, Math.ceil(total / ticketPageSize) || 1);
         if (ticketPage > pages) {
             ticketPage = pages;
@@ -558,7 +584,10 @@ function bindSupportCenter(root) {
         const start = total === 0 ? 0 : (ticketPage - 1) * ticketPageSize;
         const end = start + ticketPageSize;
 
-        rows.forEach((row, index) => {
+        rows.forEach((row) => {
+            row.hidden = true;
+        });
+        matched.forEach((row, index) => {
             row.hidden = !(index >= start && index < end);
         });
 
@@ -657,7 +686,7 @@ function bindSupportCenter(root) {
         set('[data-ticket-id-text]', ticket.id);
         set('[data-ticket-customer]', ticket.customer || '—');
         set('[data-ticket-subject]', ticket.subject || '—');
-        set('[data-ticket-updated]', ticket.updated || '剛剛');
+        set('[data-ticket-created]', formatTicketTime(ticket.createdAt || ''));
         set('[data-ticket-assignee]', ticket.assignee || '尚未指派');
 
         row.setAttribute('aria-label', `檢視工單 ${ticket.id}`);
@@ -715,6 +744,14 @@ function bindSupportCenter(root) {
             faqPage = 1;
             applyFaqFilter();
         });
+    });
+
+    const ticketStatusInput = root.querySelector('[data-ticket-status-filter] [data-form-select-value]');
+    ticketStatus = ticketStatusInput?.value || '';
+    ticketStatusInput?.addEventListener('change', () => {
+        ticketStatus = ticketStatusInput.value || '';
+        ticketPage = 1;
+        applyTicketFilter();
     });
 
     if (search) {

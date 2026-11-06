@@ -1,6 +1,6 @@
 @php
     $selectedProduct = $selectedProduct ?? '';
-    $selectedUnits = $selectedUnits ?? '0-499';
+    $selectedUnits = $selectedUnits ?? '50-300U';
     $showPlaceholder = $showPlaceholder ?? false;
 @endphp
 

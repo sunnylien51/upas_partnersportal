@@ -137,6 +137,13 @@
                     </span>
                     <input type="url" name="attachment_url" class="form-input" placeholder="https://">
                 </label>
+
+                <label class="form-field">
+                    <span class="form-label">
+                        <span>備註</span>
+                    </span>
+                    <input type="text" name="attachment_note" class="form-input" placeholder="選填" maxlength="120">
+                </label>
             </section>
         </div>
 

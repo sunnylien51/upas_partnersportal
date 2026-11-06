@@ -37,7 +37,11 @@ title: 技術支援中心
             data-download-create-url="{{ site_href($page, '/support/download') }}"
         >
 
-            <div class="self-stretch flex justify-end">
+            <div class="self-stretch flex flex-wrap justify-end gap-2">
+                <button type="button" class="btn-secondary" data-requires="support.notify" data-notify-mailbox-open="support">
+                    <i data-lucide="mail" class="w-4 h-4"></i>
+                    <span>指定收件信箱</span>
+                </button>
                 <a href="{{ site_href($page, '/support/create') }}" class="btn-primary" data-requires="support.create">
                     <i data-lucide="plus" class="w-4 h-4"></i>
                     <span>建立技術工單</span>
@@ -133,22 +137,36 @@ title: 技術支援中心
 
             {{-- ========== 我的技術工單 ========== --}}
             <section class="list-card">
-                <div class="self-stretch px-5 pt-5 pb-2 inline-flex items-center gap-3">
-                    <span class="section-accent" aria-hidden="true"></span>
-                    <h2 class="text-ch5 text-gray5">我的技術工單</h2>
+                <div class="self-stretch px-5 pt-5 pb-2 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                    <div class="inline-flex items-center gap-3">
+                        <span class="section-accent" aria-hidden="true"></span>
+                        <h2 class="text-ch5 text-gray5">我的技術工單</h2>
+                    </div>
+                    <div class="form-select w-full md:w-44" data-form-select data-ticket-status-filter>
+                        <input type="hidden" value="" data-form-select-value>
+                        <button type="button" class="form-select-trigger" data-form-select-trigger aria-haspopup="listbox" aria-expanded="false">
+                            <span class="is-placeholder" data-form-select-label>狀態</span>
+                            <i data-lucide="chevron-down" class="w-4 h-4 text-gray4"></i>
+                        </button>
+                        <div class="form-select-menu" data-form-select-menu hidden role="listbox">
+                            <button type="button" class="form-select-option is-selected" role="option" data-form-select-option data-value="" data-label="狀態">全部</button>
+                            @foreach ($page->supportTicketStatuses as $option)
+                                <button type="button" class="form-select-option" role="option" data-form-select-option data-value="{{ $option['value'] }}" data-label="{{ $option['label'] }}">{{ $option['label'] }}</button>
+                            @endforeach
+                        </div>
+                    </div>
                 </div>
 
                 <div class="list-card-body">
                     <div class="self-stretch overflow-x-auto">
-                        <div class="min-w-[880px]">
+                        <div class="min-w-[1000px]">
                             <div class="list-head">
                                 <div class="w-32 text-cb3 text-gray4">工單編號</div>
-                                <div class="w-28 text-cb3 text-gray4">客戶</div>
+                                <div class="w-[10.5rem] text-cb3 text-gray4">客戶</div>
                                 <div class="flex-1 text-cb3 text-gray4">問題主旨</div>
-                                <div class="w-28 text-cb3 text-gray4">更新</div>
+                                <div class="w-56 text-cb3 text-gray4">建立時間</div>
                                 <div class="w-24 text-cb3 text-gray4">處理人員</div>
-                                <div class="w-24 text-cb3 text-gray4">狀態</div>
-                                <div class="w-14 text-cb3 text-gray4 text-right pr-1">動作</div>
+                                <div class="w-20 text-cb3 text-gray4">狀態</div>
                             </div>
 
                             <div class="flex flex-col" data-ticket-rows>
@@ -157,7 +175,7 @@ title: 技術支援中心
                                         $status = $statusMap[$item['status']] ?? ['value' => $item['status'], 'label' => $item['status']];
                                     @endphp
                                     <div
-                                        class="list-row list-row-link"
+                                        class="list-row list-row-link min-h-[52px]"
                                         data-ticket-row
                                         data-ticket-open
                                         data-ticket-id="{{ $item['id'] }}"
@@ -168,17 +186,12 @@ title: 技術支援中心
                                         aria-label="檢視工單 {{ $item['id'] }}"
                                     >
                                         <div class="w-32 text-eb2 text-gray5 uppercase" data-ticket-id-text>{{ $item['id'] }}</div>
-                                        <div class="w-28 text-cb3 text-gray5">{{ $item['customer'] }}</div>
+                                        <div class="w-[10.5rem] text-cb3 text-gray5">{{ $item['customer'] }}</div>
                                         <div class="flex-1 pr-4 text-cb3 text-gray5">{{ $item['subject'] }}</div>
-                                        <div class="w-28 text-cb3 text-gray4" data-ticket-updated>{{ $item['updated'] }}</div>
+                                        <div class="w-56 shrink-0 whitespace-nowrap text-eb3 text-gray4" data-ticket-created>{{ $item['createdAt'] ?? '' }} (UTC+8)</div>
                                         <div class="w-24 text-cb3 text-gray5" data-ticket-assignee>{{ $item['assignee'] }}</div>
-                                        <div class="w-24">
+                                        <div class="w-20">
                                             <span class="status-pill status-{{ $status['value'] }}" data-ticket-status>{{ $status['label'] }}</span>
-                                        </div>
-                                        <div class="w-14 shrink-0 inline-flex items-center justify-end">
-                                            <span class="icon-action pointer-events-none" aria-hidden="true">
-                                                <i data-lucide="eye" class="w-4 h-4"></i>
-                                            </span>
                                         </div>
                                     </div>
                                 @endforeach
@@ -248,7 +261,7 @@ title: 技術支援中心
 
     <template data-ticket-row-template>
         <div
-            class="list-row list-row-link"
+            class="list-row list-row-link min-h-[52px]"
             data-ticket-row
             data-ticket-open
             data-ticket-id=""
@@ -259,20 +272,20 @@ title: 技術支援中心
             aria-label="檢視工單"
         >
             <div class="w-32 text-eb2 text-gray5 uppercase" data-ticket-id-text></div>
-            <div class="w-28 text-cb3 text-gray5" data-ticket-customer></div>
+            <div class="w-[10.5rem] text-cb3 text-gray5" data-ticket-customer></div>
             <div class="flex-1 pr-4 text-cb3 text-gray5" data-ticket-subject></div>
-            <div class="w-28 text-cb3 text-gray4" data-ticket-updated></div>
+            <div class="w-56 shrink-0 whitespace-nowrap text-eb3 text-gray4" data-ticket-created></div>
             <div class="w-24 text-cb3 text-gray5" data-ticket-assignee></div>
-            <div class="w-24">
+            <div class="w-20">
                 <span class="status-pill" data-ticket-status></span>
-            </div>
-            <div class="w-14 shrink-0 inline-flex items-center justify-end">
-                <span class="icon-action pointer-events-none" aria-hidden="true">
-                    <i data-lucide="eye" class="w-4 h-4"></i>
-                </span>
             </div>
         </div>
     </template>
+
+    @include('_components.notify-mailbox-modal', [
+        'notifyScope' => 'support',
+        'notifyPurpose' => '有新技術工單建立時，會寄信通知以下信箱。',
+    ])
 
     <div class="app-modal-host" data-ticket-modal hidden>
         <div class="app-modal-backdrop" data-ticket-modal-dismiss></div>
@@ -319,11 +332,11 @@ title: 技術支援中心
                         </div>
                         <div class="review-result-row">
                             <span class="w-24 shrink-0 text-cb3 text-gray3">建立時間</span>
-                            <span class="flex-1 min-w-0 text-cb3 text-gray5" data-ticket-modal-created>—</span>
+                            <span class="flex-1 min-w-0 text-eb3 text-gray5" data-ticket-modal-created>—</span>
                         </div>
                         <div class="review-result-row">
                             <span class="w-24 shrink-0 text-cb3 text-gray3">最後更新</span>
-                            <span class="flex-1 min-w-0 text-cb3 text-gray5" data-ticket-modal-updated>—</span>
+                            <span class="flex-1 min-w-0 text-eb3 text-gray5" data-ticket-modal-updated>—</span>
                         </div>
                     </div>
                 </section>

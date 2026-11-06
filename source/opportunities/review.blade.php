@@ -67,11 +67,11 @@ title: 商機審核
                                 <span class="text-cb3 text-gray5 min-w-0 flex-1" data-review-renewal-days>—</span>
                             </div>
                             <div class="review-result-row">
-                                <span class="text-cb3 text-gray3 shrink-0">原保護期限</span>
+                                <span class="text-cb3 text-gray3 shrink-0">原保護到期日</span>
                                 <span class="text-cb3 text-gray5 min-w-0 flex-1" data-review-renewal-old>—</span>
                             </div>
                             <div class="review-result-row">
-                                <span class="text-cb3 text-gray3 shrink-0">申請後新保護期</span>
+                                <span class="text-cb3 text-gray3 shrink-0">申請後新保護到期日</span>
                                 <span class="text-cb3 text-gray5 min-w-0 flex-1" data-review-renewal-new>—</span>
                             </div>
                             <div class="review-result-row">
@@ -250,7 +250,7 @@ title: 商機審核
                                 </div>
 
                                 <div class="flex-1 self-stretch flex flex-col items-start gap-1">
-                                    <span class="form-label"><span>競爭品牌／方案</span></span>
+                                    <span class="form-label"><span>備註</span></span>
                                     <textarea
                                         class="form-input form-textarea is-readonly"
                                         data-review-field="competitors"

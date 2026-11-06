@@ -69,32 +69,28 @@ title: 新增商機
                                 </div>
                             </section>
 
-                            {{-- 經銷不選承接業務，由總管審核時指派；JS 依身分隱藏 --}}
+                            {{-- 表單用手填業務姓名；正式承接歸屬僅總管審核下拉指派 --}}
                             <section class="card-panel flex-1 gap-4" data-opp-oem-section>
                                 <div class="self-stretch inline-flex items-center gap-3">
                                     <span class="section-accent" aria-hidden="true"></span>
                                     <h2 class="text-ch5 text-gray5">原廠負責資訊</h2>
                                 </div>
 
-                                <div class="form-field">
+                                <label class="form-field">
                                     <span class="form-label">
-                                        <span>承接業務</span>
+                                        <span class="text-red">*</span>
+                                        <span>原廠業務</span>
                                     </span>
-                                    <div class="form-select" data-form-select data-opp-oem-sales-select>
-                                        <input type="hidden" name="oem_sales_id" value="" data-form-select-value>
-                                        <button type="button" class="form-select-trigger" data-form-select-trigger aria-haspopup="listbox" aria-expanded="false">
-                                            <span class="is-placeholder" data-form-select-label>待指派</span>
-                                            <i data-lucide="chevron-down" class="w-4 h-4 text-gray4 shrink-0"></i>
-                                        </button>
-                                        <div class="form-select-menu" data-form-select-menu hidden role="listbox">
-                                            <button type="button" class="form-select-option" role="option" data-form-select-option data-value="" data-label="待指派">待指派（由總管理者審核時指派）</button>
-                                            @foreach ($oemStaffOptions as $staff)
-                                                <button type="button" class="form-select-option" role="option" data-form-select-option data-value="{{ $staff['value'] }}" data-label="{{ $staff['label'] }}">{{ $staff['label'] }}</button>
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                    <p class="text-cb3 text-gray3">原廠業務預設為自己；承接業務決定此商機出現在哪位業務名下。</p>
-                                </div>
+                                    <input
+                                        type="text"
+                                        name="oem_sales"
+                                        class="form-input"
+                                        placeholder="請輸入業務姓名"
+                                        required
+                                        data-opp-oem-sales-input
+                                    >
+                                    <p class="text-cb3 text-gray3">請填寫業務姓名；正式承接歸屬由總管理者審核時指派。</p>
+                                </label>
                             </section>
                         </div>
 
@@ -249,12 +245,12 @@ title: 新增商機
 
                                     <label class="flex-1 self-stretch flex flex-col items-start gap-1">
                                         <span class="form-label">
-                                            <span>競爭品牌／方案</span>
+                                            <span>備註</span>
                                         </span>
                                         <textarea
                                             name="competitors"
                                             class="form-input form-textarea"
-                                            placeholder="若有競品請填寫（選填）"
+                                            placeholder="選填"
                                         ></textarea>
                                     </label>
                                 </div>
@@ -427,7 +423,7 @@ title: 新增商機
     <template data-product-row-template>
         @include('_components.opportunity-product-row', [
             'selectedProduct' => '',
-            'selectedUnits' => '0-499',
+            'selectedUnits' => '50-300U',
             'showPlaceholder' => true,
         ])
     </template>

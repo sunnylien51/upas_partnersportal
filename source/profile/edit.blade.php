@@ -10,6 +10,7 @@ title: 編輯夥伴資料
         'identity' => '',
         'level' => '',
         'oem_sales' => '',
+        'assigned_sales_id' => '',
         'manager_id' => '',
         'company' => '',
         'tax_id' => '',
@@ -45,17 +46,38 @@ title: 編輯夥伴資料
     $sampleLevel = $sample['level'] ?? '';
     $sampleLevelLabel = $levelLabels[$sampleLevel] ?? '請選擇會員等級';
 
+    $oemDirectorOptions = [];
     $oemManagerOptions = [];
+    $oemSalesOptions = [];
     foreach ($partners as $item) {
-        if (($item['status'] ?? '') === 'approved' && ($item['identity'] ?? '') === 'oem_manager') {
+        if (($item['status'] ?? '') !== 'approved') {
+            continue;
+        }
+        $identity = $item['identity'] ?? '';
+        if ($identity === 'oem_director') {
+            $oemDirectorOptions[] = $item;
+        }
+        if ($identity === 'oem_manager') {
             $oemManagerOptions[] = $item;
+        }
+        if ($identity === 'oem_sales') {
+            $oemSalesOptions[] = $item;
         }
     }
 
+    $managerCandidates = array_merge($oemDirectorOptions, $oemManagerOptions);
     $boundManager = null;
-    foreach ($oemManagerOptions as $item) {
+    foreach ($managerCandidates as $item) {
         if (($item['id'] ?? '') === ($sample['manager_id'] ?? '')) {
             $boundManager = $item;
+            break;
+        }
+    }
+
+    $boundSales = null;
+    foreach ($oemSalesOptions as $item) {
+        if (($item['id'] ?? '') === ($sample['assigned_sales_id'] ?? '')) {
+            $boundSales = $item;
             break;
         }
     }
@@ -172,12 +194,42 @@ title: 編輯夥伴資料
                                 <input type="text" name="oem_sales" class="form-input" value="{{ $sample['oem_sales'] ?? '' }}" placeholder="例如：林佳穎">
                             </label>
 
+                            <div class="form-field" data-partner-assigned-sales-field hidden>
+                                <span class="form-label">所屬業務</span>
+                                <p class="text-cb3 text-gray3">審核時指定一位原廠業務。選定後才會出現在夥伴列表；未選顯示「—」。</p>
+                                <div class="form-select" data-form-select data-partner-assigned-sales-select>
+                                    <input type="hidden" name="assigned_sales_id" value="{{ $sample['assigned_sales_id'] ?? '' }}" data-form-select-value>
+                                    <button type="button" class="form-select-trigger" data-form-select-trigger aria-haspopup="listbox" aria-expanded="false">
+                                        <span class="{{ $boundSales ? '' : 'is-placeholder' }}" data-form-select-label>
+                                            {{ $boundSales ? ($boundSales['name'] . '（' . $boundSales['id'] . '）') : '請選擇所屬業務' }}
+                                        </span>
+                                        <i data-lucide="chevron-down" class="w-4 h-4 text-gray4"></i>
+                                    </button>
+                                    <div class="form-select-menu" data-form-select-menu hidden role="listbox">
+                                        <button type="button" class="form-select-option {{ ($sample['assigned_sales_id'] ?? '') === '' ? 'is-selected' : '' }}" role="option" data-form-select-option data-value="" data-label="請選擇所屬業務">請選擇所屬業務</button>
+                                        @foreach ($oemSalesOptions as $option)
+                                            <button
+                                                type="button"
+                                                class="form-select-option {{ ($sample['assigned_sales_id'] ?? '') === $option['id'] ? 'is-selected' : '' }}"
+                                                role="option"
+                                                data-form-select-option
+                                                data-value="{{ $option['id'] }}"
+                                                data-label="{{ $option['name'] }}（{{ $option['id'] }}）"
+                                                @if (($sample['assigned_sales_id'] ?? '') === $option['id']) aria-selected="true" @endif
+                                            >
+                                                {{ $option['name'] }}（{{ $option['id'] }}）
+                                            </button>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="form-field" data-partner-manager-field hidden>
                                 <span class="form-label">
                                     <span class="text-red">*</span>
-                                    <span>直屬主管</span>
+                                    <span data-partner-manager-label>直屬主管</span>
                                 </span>
-                                <p class="text-cb3 text-gray3">一位主管可掛多名業務；沒有再下一層。</p>
+                                <p class="text-cb3 text-gray3" data-partner-manager-hint>一位業務主管可掛多名業務。</p>
                                 <div class="form-select" data-form-select data-partner-manager-select>
                                     <input type="hidden" name="manager_id" value="{{ $sample['manager_id'] ?? '' }}" data-form-select-value>
                                     <button type="button" class="form-select-trigger" data-form-select-trigger aria-haspopup="listbox" aria-expanded="false">
@@ -188,13 +240,29 @@ title: 編輯夥伴資料
                                     </button>
                                     <div class="form-select-menu" data-form-select-menu hidden role="listbox">
                                         <div class="form-select-options" data-form-select-options>
-                                            <button type="button" class="form-select-option {{ ($sample['manager_id'] ?? '') === '' ? 'is-selected' : '' }}" role="option" data-form-select-option data-value="" data-label="請選擇直屬主管">請選擇直屬主管</button>
+                                            <button type="button" class="form-select-option {{ ($sample['manager_id'] ?? '') === '' ? 'is-selected' : '' }}" role="option" data-form-select-option data-value="" data-label="請選擇直屬主管" data-manager-placeholder>請選擇直屬主管</button>
+                                            @foreach ($oemDirectorOptions as $option)
+                                                <button
+                                                    type="button"
+                                                    class="form-select-option {{ ($sample['manager_id'] ?? '') === $option['id'] ? 'is-selected' : '' }}"
+                                                    role="option"
+                                                    data-form-select-option
+                                                    data-manager-for="oem_manager"
+                                                    data-value="{{ $option['id'] }}"
+                                                    data-label="{{ $option['name'] }}（{{ $option['id'] }}）"
+                                                    @if (($sample['manager_id'] ?? '') === $option['id']) aria-selected="true" @endif
+                                                    hidden
+                                                >
+                                                    {{ $option['name'] }}（{{ $option['id'] }}）
+                                                </button>
+                                            @endforeach
                                             @foreach ($oemManagerOptions as $option)
                                                 <button
                                                     type="button"
                                                     class="form-select-option {{ ($sample['manager_id'] ?? '') === $option['id'] ? 'is-selected' : '' }}"
                                                     role="option"
                                                     data-form-select-option
+                                                    data-manager-for="oem_sales"
                                                     data-value="{{ $option['id'] }}"
                                                     data-label="{{ $option['name'] }}（{{ $option['id'] }}）"
                                                     @if (($sample['manager_id'] ?? '') === $option['id']) aria-selected="true" @endif

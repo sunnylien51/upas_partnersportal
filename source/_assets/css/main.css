@@ -231,6 +231,32 @@
     @apply px-4 py-2 bg-white border-b border-gray1 inline-flex w-full items-center;
   }
 
+  .opp-list-scroll {
+    overflow-x: auto;
+  }
+
+  .opp-list-fit {
+    width: 100%;
+    min-width: 58.5rem;
+  }
+
+  .list-head.opp-list-cols,
+  .list-row.opp-list-cols {
+    display: grid;
+    width: 100%;
+    column-gap: 6px;
+    align-items: center;
+    grid-template-columns:
+      6rem
+      minmax(8rem, 1fr)
+      11.25rem
+      5.75rem
+      5rem
+      6rem
+      9.25rem
+      4.75rem;
+  }
+
   .list-row-link {
     @apply text-inherit no-underline cursor-pointer transition-colors hover:bg-bg2;
   }
@@ -253,6 +279,22 @@
 
   .search-bar {
     @apply shrink-0 px-3 py-2.5 bg-white rounded-[8px] border border-gray1 inline-flex items-center gap-2;
+  }
+
+  .filter-chip {
+    @apply inline-flex items-center gap-1 pl-2.5 pr-2 py-[4px] rounded-full bg-white/10 border border-gray2 text-[12px] text-gray4;
+  }
+
+  .filter-chip svg {
+    @apply w-3.5 h-3.5 text-gray3 shrink-0;
+  }
+
+  [data-opp-filter-toggle].is-active {
+    @apply text-gray5 border-gray5;
+  }
+
+  .opp-filter-popover {
+    @apply absolute left-0 top-[calc(100%+8px)] z-40 w-80 max-h-[min(32rem,calc(100vh-8rem))] overflow-y-auto p-3 bg-white border border-gray1 rounded-xl shadow-card flex flex-col gap-3;
   }
 
   .file-icon {
@@ -469,8 +511,10 @@
   }
 
   .status-trigger.status-reviewing,
+  .status-trigger.status-renewing,
   .status-trigger.status-expiring,
   .status-option.status-reviewing,
+  .status-option.status-renewing,
   .status-option.status-expiring {
     @apply text-brand2;
   }
@@ -762,57 +806,6 @@
     @apply text-gray3 opacity-40 pointer-events-none;
   }
 
-  /* ---------- 商機篩選下拉 ---------- */
-  .filter-dropdown {
-    @apply relative;
-  }
-
-  .filter-trigger {
-    @apply pl-4 pr-1.5 py-1.5 bg-white rounded-[8px] border border-gray1 inline-flex items-center gap-2 transition-colors;
-  }
-
-  .filter-trigger:hover,
-  .filter-dropdown.is-open .filter-trigger {
-    @apply border-gray2;
-  }
-
-  .filter-dropdown.has-filters .filter-trigger {
-    @apply border-brand2;
-  }
-
-  .filter-panel {
-    display: none;
-    z-index: 70;
-    width: min(766px, calc(100vw - 24px));
-    background: #fff;
-    border-radius: 1rem;
-    box-shadow: var(--shadow-card);
-    outline: 1px solid var(--color-gray1);
-    outline-offset: -1px;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  .filter-panel.is-open {
-    display: flex;
-  }
-
-  .filter-chip {
-    @apply px-3.5 py-1.5 rounded-[20px] outline outline-1 outline-offset-[-1px] outline-gray1 inline-flex justify-center items-center text-cb3 text-gray3 uppercase transition-colors cursor-pointer;
-  }
-
-  .filter-chip:hover {
-    @apply outline-gray2 text-gray4;
-  }
-
-  .filter-chip.is-selected {
-    @apply bg-brand2 outline-brand2 text-white;
-  }
-
-  .filter-chip.is-selected:hover {
-    @apply text-white outline-brand2;
-  }
-
   /* ---------- 新增商機表單 ---------- */
   .form-field {
     @apply self-stretch min-h-20 inline-flex flex-col justify-center items-start gap-1;
@@ -848,6 +841,12 @@
 
   .form-date {
     @apply pr-10 appearance-none;
+  }
+
+  .opp-filter-date {
+    letter-spacing: 0;
+    padding-left: 0.5rem;
+    padding-right: 1.75rem;
   }
 
   .form-date::-webkit-calendar-picker-indicator {
@@ -953,7 +952,7 @@
   }
 
   .form-select-trigger [data-form-select-label] {
-    @apply truncate;
+    @apply truncate min-w-0;
   }
 
   .form-select-trigger--product {
@@ -1149,7 +1148,8 @@
     @apply shrink-0 px-2.5 py-1 rounded-[5px] bg-bg2 border border-gray1 text-[12px] font-medium tracking-[0.06em] leading-5;
   }
 
-  .status-pill.status-reviewing {
+  .status-pill.status-reviewing,
+  .status-pill.status-renewing {
     @apply text-brand2;
   }
 
@@ -1200,30 +1200,6 @@
 
   .status-pill.status-resolved {
     @apply text-green;
-  }
-
-  .level-pill {
-    @apply shrink-0 px-2 py-0.5 rounded-[5px] border border-gray1 bg-white text-[11px] font-medium tracking-[0.04em] leading-4 text-gray4;
-  }
-
-  .level-pill.level-none {
-    @apply border-transparent bg-transparent text-gray3 px-0;
-  }
-
-  .level-pill.level-standard {
-    @apply text-gray5;
-  }
-
-  .level-pill.level-gold {
-    @apply text-brand2 border-brand2/30;
-  }
-
-  .level-pill.level-platinum {
-    @apply text-gray5 border-gray3;
-  }
-
-  .level-pill.level-diamond {
-    @apply text-green border-green/30;
   }
 
   /* ---------- 技術支援：FAQ 摺疊 ---------- */

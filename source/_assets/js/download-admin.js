@@ -181,6 +181,7 @@ function normalizeAsset(src) {
         attachmentSize: String(src.attachmentSize || '').trim(),
         attachmentType: String(src.attachmentType || '').trim(),
         attachmentUrl: String(src.attachmentUrl || '').trim(),
+        note: String(src.note || '').trim(),
         format: String(src.format || '').trim(),
     };
 }
@@ -242,6 +243,7 @@ function localizedDownload(item, locale) {
         attachmentSize: asset.attachmentSize || '',
         attachmentType: asset.attachmentType || '',
         attachmentUrl: asset.attachmentUrl || '',
+        note: asset.note || '',
         format: detectFormat(asset) || asset.format || '',
         translated: isTranslated(item, locale),
     };
@@ -417,7 +419,7 @@ function buildDownloadRow(record, state) {
                     <span class="text-cb3 text-gray5 truncate">${escapeHtml(title)}</span>
                     ${item.translated ? '' : `<span class="badge-untranslated shrink-0" data-requires="${escapeHtml(state.capability)}">未翻譯</span>`}
                 </span>
-                <span class="text-[11px] font-medium text-gray3 uppercase">${escapeHtml(item.format || '—')}</span>
+                <span class="text-[12px] text-gray4 truncate max-w-full">備註：${escapeHtml(item.note || '—')}</span>
             </span>
         </div>
         <div class="inline-flex items-center gap-1 shrink-0">
@@ -796,6 +798,7 @@ function emptySlice() {
         attachmentSize: '',
         attachmentType: '',
         attachmentUrl: '',
+        note: '',
     };
 }
 
@@ -807,6 +810,7 @@ function sliceFromAsset(title, asset) {
         attachmentSize: asset?.attachmentSize || '',
         attachmentType: asset?.attachmentType || '',
         attachmentUrl: asset?.attachmentUrl || '',
+        note: asset?.note || '',
     };
 }
 
@@ -914,6 +918,7 @@ function readLocaleSlice(form) {
         attachmentSize: form.querySelector('[name="attachment_size"]')?.value.trim() || '',
         attachmentType: form.querySelector('[name="attachment_type"]')?.value.trim() || '',
         attachmentUrl: form.querySelector('[name="attachment_url"]')?.value.trim() || '',
+        note: form.querySelector('[name="attachment_note"]')?.value.trim() || '',
     };
 }
 
@@ -923,6 +928,9 @@ function applyLocaleSlice(form, slice) {
 
     const urlInput = form.querySelector('[name="attachment_url"]');
     if (urlInput) urlInput.value = slice.attachmentUrl || '';
+
+    const noteInput = form.querySelector('[name="attachment_note"]');
+    if (noteInput) noteInput.value = slice.note || '';
 
     const radio = form.querySelector(`[name="attachment"][value="${slice.attachment === 'link' ? 'link' : 'download'}"]`);
     if (radio) radio.checked = true;
@@ -967,6 +975,7 @@ function collectDownload(currentId, draft, existingIds) {
             attachmentSize: slice.attachment === 'link' ? '' : slice.attachmentSize,
             attachmentType: slice.attachment === 'link' ? '' : slice.attachmentType,
             attachmentUrl: slice.attachment === 'link' ? slice.attachmentUrl : '',
+            note: slice.note || '',
         };
         assets[locale] = { ...asset, format: detectFormat(asset) };
     });

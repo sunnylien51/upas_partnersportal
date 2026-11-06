@@ -56,6 +56,10 @@ function asyncJigsawBuildPlugin() {
 
             server.watcher.on('change', (file) => {
                 const normalized = file.replace(/\\/g, '/');
+                if (normalized.includes('/source/_assets/') && normalized.endsWith('.css')) {
+                    server.ws.send({ type: 'full-reload' });
+                    return;
+                }
                 if (
                     (normalized.includes('/source/') && (normalized.endsWith('.blade.php') || normalized.endsWith('.md') || normalized.endsWith('.php'))) ||
                     normalized.endsWith('config.php')
@@ -74,11 +78,10 @@ export default defineConfig({
     server: {
         host: true,
         port: 5173,
-        strictPort: false,
+        strictPort: true,
         cors: true,
         hmr: {
             host: 'localhost',
-            port: 5173,
         },
         watch: {
             usePolling: true,

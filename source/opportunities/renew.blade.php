@@ -37,7 +37,7 @@ title: 商機續期申請
                         </div>
                     </div>
                     <div class="shrink-0 inline-flex items-baseline gap-2">
-                        <span class="text-cb3 text-gray3">原保護期限</span>
+                        <span class="text-cb3 text-gray3">原保護到期日</span>
                         <span class="text-cb3 text-brand2" data-renew-old-protection>{{ $sample['protection'] ?? '—' }}</span>
                     </div>
                 </div>
@@ -82,7 +82,7 @@ title: 商機續期申請
                         <label class="form-field">
                             <span class="form-label">
                                 <span class="text-red">*</span>
-                                <span>新保護期限</span>
+                                <span>新保護到期日</span>
                             </span>
                             <input
                                 type="text"
@@ -152,14 +152,14 @@ title: 商機續期申請
                         <span class="section-accent" aria-hidden="true"></span>
                         <h2 class="text-ch5 text-gray5">確認送出</h2>
                     </div>
-                    <p class="text-cb3 text-gray3">請確認以下續期內容。送出後將進入「審核中」，管理者核准後才會延長保護期。</p>
+                    <p class="text-cb3 text-gray3">請確認以下續期內容。送出後將進入「續期審核中」，管理者核准後才會延長保護到期日。</p>
                     <div class="review-result-card">
                         <div class="review-result-row">
                             <span class="text-cb3 text-gray3 shrink-0">延長期限</span>
                             <span class="text-cb3 text-gray5 min-w-0 flex-1" data-renew-confirm-days>—</span>
                         </div>
                         <div class="review-result-row">
-                            <span class="text-cb3 text-gray3 shrink-0">新保護期</span>
+                            <span class="text-cb3 text-gray3 shrink-0">新保護到期日</span>
                             <span class="text-cb3 text-gray5 min-w-0 flex-1" data-renew-confirm-protection>—</span>
                         </div>
                         <div class="review-result-row">

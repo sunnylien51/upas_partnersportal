@@ -45,6 +45,19 @@ function readJson(id) {
     }
 }
 
+const ROLE_LABELS = {
+    admin: '總管理者',
+    staff: '一般帳號',
+};
+
+function accountRoleOf(admin) {
+    return admin?.role === 'admin' ? 'admin' : 'staff';
+}
+
+function roleLabel(role) {
+    return ROLE_LABELS[role] || ROLE_LABELS.staff;
+}
+
 function catalogMaps() {
     const meta = readJson('admin-catalog-data') || {};
     return {
@@ -172,11 +185,57 @@ function findAdmin(id) {
     return { ...(seed || {}), ...(stored || {}) };
 }
 
+function listAdmins() {
+    const deleted = new Set(readDeletedIds());
+    const byId = new Map();
+
+    (catalogMaps().admins || []).forEach((item) => {
+        const id = String(item?.id || '');
+        if (!id || deleted.has(id)) {
+            return;
+        }
+        byId.set(id, item);
+    });
+
+    readStoredAdmins().forEach((item) => {
+        const id = String(item?.id || '');
+        if (!id || deleted.has(id)) {
+            return;
+        }
+        byId.set(id, { ...(byId.get(id) || {}), ...item });
+    });
+
+    return [...byId.values()];
+}
+
+function activeSuperAdminCount(exceptId = '') {
+    return listAdmins().filter((item) => {
+        if (String(item.id || '') === String(exceptId || '')) {
+            return false;
+        }
+        return accountRoleOf(item) === 'admin' && (item.status || 'active') === 'active';
+    }).length;
+}
+
+function removesLastSuperAdmin(previous, next) {
+    const wasActiveSuper = previous
+        && accountRoleOf(previous) === 'admin'
+        && (previous.status || 'active') === 'active';
+    const staysActiveSuper = next
+        && accountRoleOf(next) === 'admin'
+        && (next.status || 'active') === 'active';
+    if (!wasActiveSuper || staysActiveSuper) {
+        return false;
+    }
+    return activeSuperAdminCount(previous.id) === 0;
+}
+
 function searchText(admin) {
     return [
         admin.id,
         admin.name,
         admin.email,
+        roleLabel(accountRoleOf(admin)),
     ].filter(Boolean).join(' ');
 }
 
@@ -206,8 +265,11 @@ function setFormSelectByValue(select, value) {
     }
 }
 
-function navChipsHtml(nav, labels) {
-    const paths = sanitizeNav(nav);
+function navChipsHtml(admin, labels) {
+    if (accountRoleOf(admin) === 'admin') {
+        return '<span class="text-cb3 text-gray5">全部選單</span>';
+    }
+    const paths = sanitizeNav(admin?.nav);
     if (!paths.length) {
         return '<span class="text-cb3 text-gray3">未指定</span>';
     }
@@ -233,10 +295,11 @@ function applyAdminToRow(row, admin, maps) {
     setText('[data-admin-name]', admin.name);
     setText('[data-admin-member-id]', admin.id);
     setText('[data-admin-email]', admin.email);
+    setText('[data-admin-role]', roleLabel(accountRoleOf(admin)));
 
     const navEl = row.querySelector('[data-admin-nav]');
     if (navEl) {
-        navEl.innerHTML = navChipsHtml(admin.nav, maps.navLabels);
+        navEl.innerHTML = navChipsHtml(admin, maps.navLabels);
     }
 
     const pill = row.querySelector('[data-admin-status]');
@@ -267,11 +330,6 @@ function createAdminRow(root, admin, maps) {
     if (editLink) {
         editLink.href = editHref;
         editLink.setAttribute('aria-label', `編輯 ${admin.name || admin.id || ''}`);
-    }
-
-    const previewBtn = row.querySelector('[data-admin-preview]');
-    if (previewBtn) {
-        previewBtn.setAttribute('aria-label', `預覽 ${admin.name || ''} 的選單權限`);
     }
 
     const deleteBtn = row.querySelector('[data-admin-delete]');
@@ -374,6 +432,34 @@ function syncAdminGuard() {
     });
 }
 
+function selectedAccountRole(form) {
+    return form.querySelector('[name="account_role"]:checked')?.value === 'admin' ? 'admin' : 'staff';
+}
+
+function syncAccountRoleUi(form) {
+    const role = selectedAccountRole(form);
+    form.querySelectorAll('[data-account-role-group] .source-option').forEach((option) => {
+        const input = option.querySelector('[data-account-role]');
+        option.classList.toggle('is-selected', input?.value === role);
+    });
+    const navSection = form.querySelector('[data-nav-permission-section]');
+    const note = form.querySelector('[data-super-admin-note]');
+    if (navSection) {
+        navSection.hidden = role === 'admin';
+    }
+    if (note) {
+        note.hidden = role !== 'admin';
+    }
+}
+
+function setAccountRole(form, role) {
+    const value = role === 'admin' ? 'admin' : 'staff';
+    form.querySelectorAll('[name="account_role"]').forEach((input) => {
+        input.checked = input.value === value;
+    });
+    syncAccountRoleUi(form);
+}
+
 function collectNav(form) {
     return sanitizeNav(
         [...form.querySelectorAll('[data-nav-permission]:checked')].map((input) => input.value)
@@ -424,7 +510,7 @@ function validateAdminForm(form, { requirePassword = false } = {}) {
     }
 
     const nav = collectNav(form);
-    if (!nav.length) {
+    if (selectedAccountRole(form) !== 'admin' && !nav.length) {
         form.querySelectorAll('[data-nav-permission-options] .source-option').forEach((option) => {
             option.classList.add('form-error');
         });
@@ -435,13 +521,15 @@ function validateAdminForm(form, { requirePassword = false } = {}) {
 }
 
 function collectAdminPayload(form, existing = {}) {
+    const role = selectedAccountRole(form);
     return {
         id: existing.id || '',
         name: form.querySelector('[name="name"]')?.value.trim() || '',
         email: form.querySelector('[name="email"]')?.value.trim() || '',
         status: form.querySelector('[name="status"]')?.value || 'active',
+        role,
         created_at: form.querySelector('[name="created_at"]')?.value || existing.created_at || formatCreatedAt(),
-        nav: collectNav(form),
+        nav: role === 'admin' ? [] : collectNav(form),
     };
 }
 
@@ -449,23 +537,6 @@ function refreshRolePreview() {
     if (typeof app().applyPreviewRole === 'function' && typeof app().getPreviewRole === 'function') {
         app().applyPreviewRole(app().getPreviewRole());
     }
-}
-
-async function previewAdminNav(admin, homeUrl) {
-    if (!admin?.id) {
-        return;
-    }
-    if (typeof app().previewSysadmin === 'function') {
-        app().previewSysadmin(admin.id, { applyNow: false });
-    } else {
-        localStorage.setItem(PREVIEW_KEY, admin.id);
-        localStorage.setItem('upas-preview-role', 'sysadmin');
-        localStorage.setItem('upas-preview-role-mode', 'full');
-    }
-    showToast(`已切換為「${admin.name}」的選單預覽`);
-    window.setTimeout(() => {
-        window.location.href = homeUrl || './';
-    }, 450);
 }
 
 function bindAdminList(root) {
@@ -523,7 +594,7 @@ function bindAdminList(root) {
             const row = deleteBtn.closest('[data-admin-row]');
             const admin = findAdmin(row?.dataset.adminId || '');
             const confirmed = await showConfirm({
-                title: '刪除系統管理員',
+                title: '刪除帳號',
                 message: `確定刪除「${admin?.name || admin?.id || '此帳號'}」？此操作無法復原。`,
                 confirmLabel: '刪除',
                 cancelLabel: '取消',
@@ -532,21 +603,15 @@ function bindAdminList(root) {
             if (!confirmed || !admin) {
                 return;
             }
+            if (removesLastSuperAdmin(admin, null)) {
+                showToast('至少要保留一位啟用中的總管理者', 'error');
+                return;
+            }
             markAdminDeleted(admin.id);
             row?.remove();
             render();
             refreshRolePreview();
-            showToast('已刪除系統管理員');
-            return;
-        }
-
-        const previewBtn = event.target.closest('[data-admin-preview]');
-        if (previewBtn) {
-            event.preventDefault();
-            event.stopPropagation();
-            const row = previewBtn.closest('[data-admin-row]');
-            const admin = findAdmin(row?.dataset.adminId || '');
-            await previewAdminNav(admin, root.dataset.homeUrl || './');
+            showToast('已刪除帳號');
             return;
         }
 
@@ -567,12 +632,30 @@ function bindAdminList(root) {
     render();
 }
 
+function rememberPreviewAccount(admin) {
+    if (accountRoleOf(admin) === 'admin') {
+        if (localStorage.getItem(PREVIEW_KEY) === String(admin.id || '')) {
+            localStorage.removeItem(PREVIEW_KEY);
+        }
+        return;
+    }
+    localStorage.setItem(PREVIEW_KEY, admin.id);
+}
+
+function bindAccountRole(form) {
+    syncAccountRoleUi(form);
+    form.querySelectorAll('[name="account_role"]').forEach((input) => {
+        input.addEventListener('change', () => syncAccountRoleUi(form));
+    });
+}
+
 function bindAdminCreateForm(form) {
     const listUrl = form.dataset.listUrl || '/admins/';
     const maps = catalogMaps();
     const pill = document.querySelector('[data-admin-status-pill]');
 
     syncNavOptionStyles(form);
+    bindAccountRole(form);
 
     form.querySelector('[name="status"]')?.addEventListener('change', () => {
         const value = form.querySelector('[name="status"]')?.value || '';
@@ -589,7 +672,7 @@ function bindAdminCreateForm(form) {
     form.querySelector('[name="name"]')?.addEventListener('input', (event) => {
         const heading = document.querySelector('[data-admin-heading]');
         if (heading) {
-            heading.textContent = event.target.value.trim() || '新增系統管理員';
+            heading.textContent = event.target.value.trim() || '新增帳號';
         }
     });
 
@@ -611,8 +694,8 @@ function bindAdminCreateForm(form) {
         };
 
         upsertStoredAdmin(saved);
-        localStorage.setItem(PREVIEW_KEY, saved.id);
-        showToast(`已建立系統管理員 ${saved.id}`);
+        rememberPreviewAccount(saved);
+        showToast(`已建立帳號 ${saved.id}`);
         window.setTimeout(() => {
             window.location.href = listUrl;
         }, 500);
@@ -633,7 +716,7 @@ function bindAdminEditForm(form) {
         form.hidden = true;
         if (toolbar) toolbar.hidden = true;
         if (missing) missing.hidden = false;
-        if (crumb) crumb.textContent = '編輯系統管理員';
+        if (crumb) crumb.textContent = '編輯帳號';
         return;
     }
 
@@ -657,6 +740,7 @@ function bindAdminEditForm(form) {
 
     setFormSelectByValue(form.querySelector('[name="status"]')?.closest('[data-form-select]'), admin.status || 'active');
 
+    setAccountRole(form, accountRoleOf(admin));
     const selectedNav = new Set(sanitizeNav(admin.nav));
     form.querySelectorAll('[data-nav-permission]').forEach((input) => {
         input.checked = selectedNav.has(input.value);
@@ -665,13 +749,13 @@ function bindAdminEditForm(form) {
 
     const heading = document.querySelector('[data-admin-heading]');
     const pill = document.querySelector('[data-admin-status-pill]');
-    if (heading) heading.textContent = admin.name || '系統管理員';
+    if (heading) heading.textContent = admin.name || '帳號';
     if (pill) {
         pill.className = `status-pill status-${admin.status || ''}`;
         pill.textContent = maps.statuses[admin.status] || admin.status || '—';
     }
     if (crumb) {
-        crumb.textContent = admin.name || admin.id || '編輯系統管理員';
+        crumb.textContent = admin.name || admin.id || '編輯帳號';
     }
 
     form.querySelector('[name="status"]')?.addEventListener('change', () => {
@@ -685,9 +769,12 @@ function bindAdminEditForm(form) {
     form.querySelectorAll('[data-nav-permission]').forEach((input) => {
         input.addEventListener('change', () => syncNavOptionStyles(form));
     });
+    form.querySelectorAll('[name="account_role"]').forEach((input) => {
+        input.addEventListener('change', () => syncAccountRoleUi(form));
+    });
 
     form.querySelector('[name="name"]')?.addEventListener('input', (event) => {
-        const name = event.target.value.trim() || admin.name || '系統管理員';
+        const name = event.target.value.trim() || admin.name || '帳號';
         if (heading) heading.textContent = name;
         if (crumb) crumb.textContent = name;
     });
@@ -706,9 +793,13 @@ function bindAdminEditForm(form) {
 
         const saved = collectAdminPayload(form, admin);
         saved.id = admin.id;
+        if (removesLastSuperAdmin(admin, saved)) {
+            showToast('至少要保留一位啟用中的總管理者', 'error');
+            return;
+        }
         upsertStoredAdmin(saved);
-        localStorage.setItem(PREVIEW_KEY, saved.id);
-        showToast('已儲存系統管理員');
+        rememberPreviewAccount(saved);
+        showToast('已儲存帳號');
         window.setTimeout(() => {
             window.location.href = listUrl;
         }, 450);
