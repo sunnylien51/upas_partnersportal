@@ -5,4 +5,4 @@
 
 [build.environment]
   NODE_VERSION = "22"
-  PHP_VERSION = "8.2"
+  PHP_VERSION = "8.3"
