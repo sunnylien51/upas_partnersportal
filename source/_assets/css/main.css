@@ -28,7 +28,11 @@
 
 @layer components {
   .app-user-fixed {
-    @apply fixed top-6 right-4 md:right-12 z-30 flex items-center gap-2.5;
+    @apply fixed top-5 right-4 md:right-12 z-30 flex items-center gap-2.5;
+  }
+
+  .app-sidebar-toggle {
+    @apply md:hidden fixed top-5 left-4 z-30 size-12 bg-white rounded-2xl shadow-card border border-gray1 inline-flex items-center justify-center text-gray3 hover:text-gray5 transition-colors;
   }
 
   .app-user-menu {
@@ -105,7 +109,7 @@
   }
 
   .role-preview-badge {
-    @apply text-[10px] font-medium tracking-[0.06em] text-gray3;
+    @apply text-[10px] font-medium tracking-[0.06em] text-gray3 bg-transparent p-0 border-0 cursor-help;
   }
 
   .role-preview-switch {
@@ -119,6 +123,10 @@
     border-radius:8px;
   }
 
+  .role-preview-switch[hidden] {
+    display: none;
+  }
+
   .role-preview-switch--sidebar {
     flex-wrap: wrap;
     max-width: 100%;
@@ -126,6 +134,14 @@
 
   .role-preview-switch--sidebar .role-preview-btn {
     @apply px-2 py-1.5;
+  }
+
+  .role-preview-switch[data-role-mode="simple"] {
+    flex-wrap: nowrap;
+  }
+
+  .role-preview-switch[data-role-mode="simple"] .role-preview-btn {
+    @apply flex-1 justify-center px-3;
   }
 
   .role-preview-btn {
@@ -215,12 +231,42 @@
     @apply px-4 py-2 bg-white border-b border-gray1 inline-flex w-full items-center;
   }
 
+  .opp-list-scroll {
+    overflow-x: auto;
+  }
+
+  .opp-list-fit {
+    width: 100%;
+    min-width: 60.25rem;
+  }
+
+  .list-head.opp-list-cols,
+  .list-row.opp-list-cols {
+    display: grid;
+    width: 100%;
+    column-gap: 6px;
+    align-items: center;
+    grid-template-columns:
+      6rem
+      minmax(8rem, 1fr)
+      11.25rem
+      5.75rem
+      6.75rem
+      6rem
+      9.25rem
+      4.75rem;
+  }
+
   .list-row-link {
     @apply text-inherit no-underline cursor-pointer transition-colors hover:bg-bg2;
   }
 
   .list-empty {
     @apply px-4 py-10 text-center text-cb3 text-gray3;
+  }
+
+  .nav-permission-chip {
+    @apply px-2 py-0.5 rounded-[5px] bg-bg2 text-[12px] font-medium tracking-[0.04em] text-gray4;
   }
 
   .pagination-bar {
@@ -233,6 +279,22 @@
 
   .search-bar {
     @apply shrink-0 px-3 py-2.5 bg-white rounded-[8px] border border-gray1 inline-flex items-center gap-2;
+  }
+
+  .filter-chip {
+    @apply inline-flex items-center gap-1 pl-2.5 pr-2 py-[4px] rounded-full bg-white/10 border border-gray2 text-[12px] text-gray4;
+  }
+
+  .filter-chip svg {
+    @apply w-3.5 h-3.5 text-gray3 shrink-0;
+  }
+
+  [data-opp-filter-toggle].is-active {
+    @apply text-gray5 border-gray5;
+  }
+
+  .opp-filter-popover {
+    @apply absolute left-0 top-[calc(100%+8px)] z-40 w-80 max-h-[min(32rem,calc(100vh-8rem))] overflow-y-auto p-3 bg-white border border-gray1 rounded-xl shadow-card flex flex-col gap-3;
   }
 
   .file-icon {
@@ -366,7 +428,13 @@
   [data-ticket-modal-attachment-section][hidden],
   [data-ticket-modal-note-section][hidden],
   [data-ticket-manage][hidden],
-  [data-ticket-manage-save][hidden] {
+  [data-ticket-manage-save][hidden],
+  [data-admin-row][hidden],
+  [data-admin-empty][hidden],
+  [data-admin-forbidden][hidden],
+  [data-admin-missing][hidden],
+  [data-admin-allowed][hidden],
+  [data-admin-edit-toolbar][hidden] {
     display: none !important;
   }
 
@@ -443,15 +511,19 @@
   }
 
   .status-trigger.status-reviewing,
+  .status-trigger.status-renewing,
   .status-trigger.status-expiring,
   .status-option.status-reviewing,
+  .status-option.status-renewing,
   .status-option.status-expiring {
     @apply text-brand2;
   }
 
   .status-trigger.status-rejected,
+  .status-trigger.status-renewal_rejected,
   .status-trigger.status-expired,
   .status-option.status-rejected,
+  .status-option.status-renewal_rejected,
   .status-option.status-expired {
     @apply text-red;
   }
@@ -736,57 +808,6 @@
     @apply text-gray3 opacity-40 pointer-events-none;
   }
 
-  /* ---------- 商機篩選下拉 ---------- */
-  .filter-dropdown {
-    @apply relative;
-  }
-
-  .filter-trigger {
-    @apply pl-4 pr-1.5 py-1.5 bg-white rounded-[8px] border border-gray1 inline-flex items-center gap-2 transition-colors;
-  }
-
-  .filter-trigger:hover,
-  .filter-dropdown.is-open .filter-trigger {
-    @apply border-gray2;
-  }
-
-  .filter-dropdown.has-filters .filter-trigger {
-    @apply border-brand2;
-  }
-
-  .filter-panel {
-    display: none;
-    z-index: 70;
-    width: min(766px, calc(100vw - 24px));
-    background: #fff;
-    border-radius: 1rem;
-    box-shadow: var(--shadow-card);
-    outline: 1px solid var(--color-gray1);
-    outline-offset: -1px;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  .filter-panel.is-open {
-    display: flex;
-  }
-
-  .filter-chip {
-    @apply px-3.5 py-1.5 rounded-[20px] outline outline-1 outline-offset-[-1px] outline-gray1 inline-flex justify-center items-center text-cb3 text-gray3 uppercase transition-colors cursor-pointer;
-  }
-
-  .filter-chip:hover {
-    @apply outline-gray2 text-gray4;
-  }
-
-  .filter-chip.is-selected {
-    @apply bg-brand2 outline-brand2 text-white;
-  }
-
-  .filter-chip.is-selected:hover {
-    @apply text-white outline-brand2;
-  }
-
   /* ---------- 新增商機表單 ---------- */
   .form-field {
     @apply self-stretch min-h-20 inline-flex flex-col justify-center items-start gap-1;
@@ -822,6 +843,12 @@
 
   .form-date {
     @apply pr-10 appearance-none;
+  }
+
+  .opp-filter-date {
+    letter-spacing: 0;
+    padding-left: 0.5rem;
+    padding-right: 1.75rem;
   }
 
   .form-date::-webkit-calendar-picker-indicator {
@@ -877,6 +904,18 @@
     transform: translate(-50%, -50%);
   }
 
+  .source-check {
+    @apply size-4 rounded-[4px] border-2 border-gray2 bg-white shrink-0;
+  }
+
+  .source-option.is-selected .source-check {
+    @apply border-0 bg-brand;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M3.5 8.5L6.5 11.5L12.5 4.5' stroke='white' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
   .source-option.form-error {
     outline-color: var(--color-red) !important;
   }
@@ -915,7 +954,18 @@
   }
 
   .form-select-trigger [data-form-select-label] {
-    @apply truncate;
+    @apply truncate min-w-0;
+  }
+
+  .form-select-trigger--product {
+    @apply min-h-11 h-auto;
+  }
+
+  .form-select-trigger--product [data-form-select-label] {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    word-break: break-word;
   }
 
   .form-select-trigger [data-form-select-label].is-placeholder {
@@ -961,7 +1011,8 @@
     box-shadow: 0 12px 32px rgba(47, 49, 49, 0.12);
     flex-direction: column;
     gap: 0.125rem;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   .form-select-menu.is-open {
@@ -1096,10 +1147,11 @@
   }
 
   .status-pill {
-    @apply shrink-0 px-2.5 py-1 rounded-[5px] bg-bg2 border border-gray1 text-[12px] font-medium tracking-[0.06em] leading-5;
+    @apply inline-block shrink-0 whitespace-nowrap px-2.5 py-1 rounded-[5px] bg-bg2 border border-gray1 text-[12px] font-medium tracking-[0.06em] leading-5;
   }
 
-  .status-pill.status-reviewing {
+  .status-pill.status-reviewing,
+  .status-pill.status-renewing {
     @apply text-brand2;
   }
 
@@ -1107,7 +1159,16 @@
     @apply text-green;
   }
 
-  .status-pill.status-rejected {
+  .status-pill.status-active {
+    @apply text-green;
+  }
+
+  .status-pill.status-disabled {
+    @apply text-gray3;
+  }
+
+  .status-pill.status-rejected,
+  .status-pill.status-renewal_rejected {
     @apply text-red;
   }
 
@@ -1142,30 +1203,6 @@
 
   .status-pill.status-resolved {
     @apply text-green;
-  }
-
-  .level-pill {
-    @apply shrink-0 px-2 py-0.5 rounded-[5px] border border-gray1 bg-white text-[11px] font-medium tracking-[0.04em] leading-4 text-gray4;
-  }
-
-  .level-pill.level-none {
-    @apply border-transparent bg-transparent text-gray3 px-0;
-  }
-
-  .level-pill.level-standard {
-    @apply text-gray5;
-  }
-
-  .level-pill.level-gold {
-    @apply text-brand2 border-brand2/30;
-  }
-
-  .level-pill.level-platinum {
-    @apply text-gray5 border-gray3;
-  }
-
-  .level-pill.level-diamond {
-    @apply text-green border-green/30;
   }
 
   /* ---------- 技術支援：FAQ 摺疊 ---------- */
@@ -1667,5 +1704,40 @@
     font-size: 14px;
     line-height: normal;
     letter-spacing: 0.06em;
+  }
+
+  .org-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+    align-items: start;
+  }
+
+  @media (min-width: 1280px) {
+    .org-layout {
+      grid-template-columns: 320px minmax(0, 1fr);
+    }
+  }
+
+  .org-row {
+    @apply self-stretch flex items-center gap-2 px-3 py-2 rounded-[8px] border border-gray1 bg-white;
+  }
+
+  .org-row.bg-bg2 {
+    background: var(--color-bg2);
+  }
+
+  .org-row.is-over,
+  .org-dropzone.is-over {
+    outline: 1px solid var(--color-brand2, #e36a2a);
+    outline-offset: -1px;
+  }
+
+  .org-children {
+    @apply ml-4 pl-3 border-l border-gray1 flex flex-col gap-2;
+  }
+
+  .org-toggle {
+    @apply size-6 shrink-0 inline-flex items-center justify-center text-gray4;
   }
 }

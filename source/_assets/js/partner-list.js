@@ -128,7 +128,7 @@ async function confirmDeletePartner(partner) {
     const company = partner?.company || partner?.id || '此夥伴';
     return showConfirm({
         title: '刪除夥伴',
-        message: `確定刪除「${company}」？此操作無法復原。<br>若該夥伴仍有相關商機，請先轉移商機或變更原廠所屬業務，避免商機歸屬異常。`,
+        message: `確定刪除「${company}」？此操作無法復原。<br>若該夥伴仍有相關商機，請先轉移商機或變更承接業務，避免商機歸屬異常。`,
         confirmLabel: '刪除',
         cancelLabel: '取消',
         danger: true,
@@ -150,6 +150,38 @@ function catalogMaps() {
 
 function isDealerIdentity(identity) {
     return identity === 'dealer_tw' || identity === 'dealer_overseas';
+}
+
+function needsManagerIdentity(identity) {
+    return identity === 'oem_sales' || identity === 'oem_manager';
+}
+
+function isOemStaffIdentity(identity) {
+    return identity === 'oem_director' || identity === 'oem_manager' || identity === 'oem_sales';
+}
+
+function partnerDirectory() {
+    const byId = new Map();
+    (catalogMaps().partners || []).forEach((item) => {
+        if (item?.id) {
+            byId.set(item.id, item);
+        }
+    });
+    readStoredPartners().forEach((item) => {
+        if (item?.id && !isPartnerDeleted(item.id)) {
+            byId.set(item.id, { ...(byId.get(item.id) || {}), ...item });
+        }
+    });
+    return byId;
+}
+
+function assignedSalesDisplay(partner, directory = partnerDirectory()) {
+    const salesId = String(partner?.assigned_sales_id || '').trim();
+    if (!salesId) {
+        return '—';
+    }
+    const name = String(directory.get(salesId)?.name || '').trim();
+    return name || '—';
 }
 
 function identityFilterMatch(filterValue, identity, maps) {
@@ -176,23 +208,6 @@ function levelDisplay(partner, maps) {
         };
     }
     return { value: '', label: '' };
-}
-
-function oemSalesListDisplay(partner, maps = catalogMaps()) {
-    const requested = String(partner.oem_sales || '').trim();
-    const boundId = String(partner.oem_sales_id || '').trim();
-    const identity = partner.identity || '';
-
-    if (partner.status === 'approved' && isDealerIdentity(identity) && boundId) {
-        const bound = (maps.partners || []).find((item) => item.id === boundId);
-        return bound?.name || requested || boundId;
-    }
-
-    if (requested) {
-        return `申請：${requested}`;
-    }
-
-    return '—';
 }
 
 function identityDisplay(partner, maps) {
@@ -226,6 +241,7 @@ function searchText(partner, countryLabel = '', maps = {}) {
         countryLabel,
         partner.oem_sales,
         partner.name,
+        assignedSalesDisplay(partner),
         partner.email,
         partner.phone,
         partner.job_title,
@@ -281,14 +297,12 @@ function applyPartnerToRow(row, partner, maps) {
         }
     };
 
-    setText('[data-partner-company]', partner.company);
     setText('[data-partner-member-id]', partner.id);
+    setText('[data-partner-company]', partner.company);
     setText('[data-partner-identity]', identityDisplay(partner, maps));
-    setText('[data-partner-oem-sales]', oemSalesListDisplay(partner, maps));
     setText('[data-partner-name]', partner.name);
     setText('[data-partner-title]', partner.job_title);
-    setText('[data-partner-email]', partner.email);
-    setText('[data-partner-phone]', partner.phone);
+    setText('[data-partner-assigned-sales]', assignedSalesDisplay(partner));
 
     const pill = row.querySelector('[data-partner-status]');
     if (pill) {
@@ -454,8 +468,8 @@ function openPartnerPreview(partnerId) {
     setText('[data-partner-preview-applied]', partner.applied_at);
     setText('[data-partner-preview-tax-id]', partner.tax_id);
     setText('[data-partner-preview-country]', countryLabel);
-    setText('[data-partner-preview-oem-sales]', oemSalesListDisplay(partner, maps));
     setText('[data-partner-preview-name]', partner.name);
+    setText('[data-partner-preview-assigned-sales]', assignedSalesDisplay(partner));
     setText('[data-partner-preview-title]', partner.job_title);
     setText('[data-partner-preview-email]', partner.email);
     setText('[data-partner-preview-phone]', partner.phone);
@@ -664,10 +678,6 @@ function bindPartnerList(root) {
         syncClear();
     }
 
-    root.querySelector('[data-partner-export]')?.addEventListener('click', () => {
-        showToast('已開始匯出 Excel（示意）');
-    });
-
     root.addEventListener('click', async (event) => {
         const deleteBtn = event.target.closest('[data-partner-delete]');
         if (deleteBtn && root.contains(deleteBtn)) {
@@ -749,18 +759,13 @@ function validatePartnerForm(form) {
 
         if (requiresApprovalFields && isDealerIdentity(identity)) {
             const levelSelect = form.querySelector('[data-partner-level-select]');
-            const salesSelect = form.querySelector('[data-partner-oem-sales-select]');
             if (!form.querySelector('[name="level"]')?.value) {
                 levelSelect?.querySelector('[data-form-select-trigger]')?.classList.add('form-error');
                 valid = false;
             }
-            if (!form.querySelector('[name="oem_sales_id"]')?.value) {
-                salesSelect?.querySelector('[data-form-select-trigger]')?.classList.add('form-error');
-                valid = false;
-            }
         }
 
-        if (requiresApprovalFields && identity === 'oem_sales' && !form.querySelector('[name="manager_id"]')?.value) {
+        if (requiresApprovalFields && needsManagerIdentity(identity) && !form.querySelector('[name="manager_id"]')?.value) {
             form.querySelector('[data-partner-manager-select]')
                 ?.querySelector('[data-form-select-trigger]')
                 ?.classList.add('form-error');
@@ -768,7 +773,26 @@ function validatePartnerForm(form) {
         }
     }
 
+    const password = form.querySelector('[name="password"]')?.value || '';
+    const confirm = form.querySelector('[name="password_confirmation"]')?.value || '';
+    if (password || confirm) {
+        if (password !== confirm) {
+            form.querySelector('[name="password_confirmation"]')?.classList.add('form-error');
+            valid = false;
+        }
+    }
+
     return valid;
+}
+
+function showPartnerFormErrorToast(form) {
+    const password = form.querySelector('[name="password"]')?.value || '';
+    const confirm = form.querySelector('[name="password_confirmation"]')?.value || '';
+    if ((password || confirm) && password !== confirm) {
+        showToast('兩次密碼不一致', 'error');
+        return;
+    }
+    showToast('請先補齊必填欄位', 'error');
 }
 
 function syncIdentityOptionStyles(form) {
@@ -782,29 +806,54 @@ function syncPartnerReviewFields(form) {
     const identity = form.querySelector('[name="identity"]:checked')?.value || '';
     const status = form.querySelector('[name="status"]')?.value || '';
     const isDealer = isDealerIdentity(identity);
-    const isOemSales = identity === 'oem_sales';
-    const isOem = identity === 'oem_sales' || identity === 'oem_manager';
+    const needsManager = needsManagerIdentity(identity);
+    const isOem = isOemStaffIdentity(identity);
 
     const levelField = form.querySelector('[data-partner-level-field]');
     const salesField = form.querySelector('[data-partner-oem-sales-field]');
+    const assignedSalesField = form.querySelector('[data-partner-assigned-sales-field]');
     const managerField = form.querySelector('[data-partner-manager-field]');
+    const managerLabel = form.querySelector('[data-partner-manager-label]');
+    const managerHint = form.querySelector('[data-partner-manager-hint]');
     const oemNote = form.querySelector('[data-partner-oem-company-note]');
     const identityRequired = form.querySelector('[data-partner-identity-required]');
+    const managerSelect = form.querySelector('[data-partner-manager-select]');
 
     if (levelField) levelField.hidden = !isDealer;
     if (salesField) salesField.hidden = !isDealer;
-    if (managerField) managerField.hidden = !isOemSales;
+    if (assignedSalesField) assignedSalesField.hidden = !isDealer;
+    if (managerField) managerField.hidden = !needsManager;
     if (oemNote) oemNote.hidden = !isOem;
     if (identityRequired) {
         identityRequired.hidden = !(status === 'approved' || form.matches('[data-partner-create-form]'));
     }
 
+    if (managerLabel) {
+        managerLabel.textContent = identity === 'oem_manager' ? '直屬高階主管' : '直屬主管';
+    }
+    if (managerHint) {
+        managerHint.textContent = identity === 'oem_manager'
+            ? '一位高階主管可掛多名業務主管。'
+            : '一位業務主管可掛多名業務。';
+    }
+
+    if (managerSelect) {
+        const currentValue = managerSelect.querySelector('[data-form-select-value]')?.value || '';
+        let currentStillValid = false;
+        managerSelect.querySelectorAll('[data-manager-for]').forEach((option) => {
+            const visible = needsManager && option.dataset.managerFor === identity;
+            option.hidden = !visible;
+            if (visible && option.dataset.value === currentValue) {
+                currentStillValid = true;
+            }
+        });
+        if (!needsManager || !currentStillValid) {
+            setFormSelectByValue(managerSelect, '');
+        }
+    }
+
     if (!isDealer) {
         setFormSelectByValue(form.querySelector('[data-partner-level-select]'), '');
-        setFormSelectByValue(form.querySelector('[data-partner-oem-sales-select]'), '');
-    }
-    if (!isOemSales) {
-        setFormSelectByValue(form.querySelector('[data-partner-manager-select]'), '');
     }
 
     syncIdentityOptionStyles(form);
@@ -872,15 +921,7 @@ function bindPartnerEditForm(form) {
     form.querySelector('[name="id"]').value = partner.id || '';
     form.querySelector('[name="applied_at"]').value = partner.applied_at || '';
     form.querySelector('[name="oem_sales"]').value = partner.oem_sales || '';
-
-    const requestedWrap = form.querySelector('[data-partner-oem-sales-requested]');
-    const requestedName = form.querySelector('[data-partner-oem-sales-requested-name]');
-    if (requestedName) {
-        requestedName.textContent = partner.oem_sales || '';
-    }
-    if (requestedWrap) {
-        requestedWrap.hidden = !String(partner.oem_sales || '').trim();
-    }
+    setFormSelectByValue(form.querySelector('[data-partner-assigned-sales-select]'), partner.assigned_sales_id || '');
     form.querySelector('[name="company"]').value = partner.company || '';
     form.querySelector('[name="tax_id"]').value = partner.tax_id || '';
     form.querySelector('[name="name"]').value = partner.name || '';
@@ -906,7 +947,6 @@ function bindPartnerEditForm(form) {
     setFormSelectByValue(form.querySelector('[name="status"]')?.closest('[data-form-select]'), partner.status || '');
     setFormSelectByValue(form.querySelector('[name="country"]')?.closest('[data-form-select]'), partner.country || '');
     setFormSelectByValue(form.querySelector('[data-partner-level-select]'), partner.level || '');
-    setFormSelectByValue(form.querySelector('[data-partner-oem-sales-select]'), partner.oem_sales_id || '');
     setFormSelectByValue(form.querySelector('[data-partner-manager-select]'), partner.manager_id || '');
 
     const identityInput = form.querySelector(`[data-identity-input][value="${CSS.escape(partner.identity || '')}"]`);
@@ -967,22 +1007,20 @@ function bindPartnerEditForm(form) {
             if (typeof firstError?.focus === 'function') {
                 firstError.focus({ preventScroll: true });
             }
-            showToast('請先補齊必填欄位', 'error');
+            showPartnerFormErrorToast(form);
             return;
         }
 
         const identity = form.querySelector('[name="identity"]:checked')?.value || '';
-        const oemSalesId = form.querySelector('[name="oem_sales_id"]')?.value || '';
-        const requestedOemSales = partner.oem_sales || form.querySelector('[name="oem_sales"]')?.value.trim() || '';
 
         const saved = {
             ...partner,
             id: form.querySelector('[name="id"]')?.value || partner.id,
             identity,
             level: isDealerIdentity(identity) ? (form.querySelector('[name="level"]')?.value || '') : '',
-            oem_sales_id: isDealerIdentity(identity) ? oemSalesId : '',
-            oem_sales: requestedOemSales,
-            manager_id: identity === 'oem_sales' ? (form.querySelector('[name="manager_id"]')?.value || '') : '',
+            oem_sales: form.querySelector('[name="oem_sales"]')?.value.trim() || '',
+            assigned_sales_id: isDealerIdentity(identity) ? (form.querySelector('[name="assigned_sales_id"]')?.value || '') : '',
+            manager_id: needsManagerIdentity(identity) ? (form.querySelector('[name="manager_id"]')?.value || '') : '',
             company: form.querySelector('[name="company"]')?.value.trim() || '',
             tax_id: form.querySelector('[name="tax_id"]')?.value.trim() || '',
             country: form.querySelector('[name="country"]')?.value || '',
@@ -995,10 +1033,11 @@ function bindPartnerEditForm(form) {
         };
 
         const taxHint = form.querySelector('[data-partner-tax-hint]');
+        const passwordReset = Boolean(form.querySelector('[name="password"]')?.value);
         if (taxHint && !taxHint.hidden) {
-            showToast('此統編已有其他帳號，已儲存（僅提醒）');
+            showToast(passwordReset ? '此統編已有其他帳號，已儲存並重設密碼（僅提醒）' : '此統編已有其他帳號，已儲存（僅提醒）');
         } else {
-            showToast('已儲存夥伴資料');
+            showToast(passwordReset ? '已儲存夥伴資料並重設密碼' : '已儲存夥伴資料');
         }
 
         upsertStoredPartner(saved);
@@ -1010,15 +1049,13 @@ function bindPartnerEditForm(form) {
 
 function collectPartnerPayload(form, { requireIdentity = false } = {}) {
     const identity = form.querySelector('[name="identity"]:checked')?.value || '';
-    const oemSalesId = form.querySelector('[name="oem_sales_id"]')?.value || '';
-    const requestedOemSales = form.querySelector('[name="oem_sales"]')?.value.trim() || '';
 
     return {
         identity: requireIdentity || identity ? identity : '',
         level: isDealerIdentity(identity) ? (form.querySelector('[name="level"]')?.value || '') : '',
-        oem_sales_id: isDealerIdentity(identity) ? oemSalesId : '',
-        oem_sales: requestedOemSales,
-        manager_id: identity === 'oem_sales' ? (form.querySelector('[name="manager_id"]')?.value || '') : '',
+        oem_sales: form.querySelector('[name="oem_sales"]')?.value.trim() || '',
+        assigned_sales_id: isDealerIdentity(identity) ? (form.querySelector('[name="assigned_sales_id"]')?.value || '') : '',
+        manager_id: needsManagerIdentity(identity) ? (form.querySelector('[name="manager_id"]')?.value || '') : '',
         company: form.querySelector('[name="company"]')?.value.trim() || '',
         tax_id: form.querySelector('[name="tax_id"]')?.value.trim() || '',
         country: form.querySelector('[name="country"]')?.value || '',
@@ -1066,7 +1103,7 @@ function bindPartnerCreateForm(form) {
         if (!validatePartnerForm(form)) {
             const firstError = form.querySelector('.form-error');
             firstError?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            showToast('請先補齊必填欄位', 'error');
+            showPartnerFormErrorToast(form);
             return;
         }
 
@@ -1143,7 +1180,7 @@ function bindPartnerRegisterForm(form) {
             identity: '',
             level: '',
             oem_sales: form.querySelector('[name="oem_sales"]')?.value.trim() || '',
-            oem_sales_id: '',
+            assigned_sales_id: '',
             manager_id: '',
             company: form.querySelector('[name="company"]')?.value.trim() || '',
             tax_id: form.querySelector('[name="tax_id"]')?.value.trim() || '',

@@ -1,5 +1,6 @@
 [build]
-  command = "npm run build && php vendor/bin/jigsaw build production"
+  # vendor/ 不進 Git，要先 composer install；再 npm 建置與 Jigsaw 產出 build_production
+  command = "composer install --no-interaction --prefer-dist && npm run build && php vendor/bin/jigsaw build production"
   publish = "build_production"
 
 [build.environment]

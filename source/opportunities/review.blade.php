@@ -30,9 +30,9 @@ title: 商機審核
     <div
         class="page-body"
         data-review-page
-        data-list-url="{{ $page->baseUrl }}/opportunities/"
-        data-create-url="{{ $page->baseUrl }}/opportunities/create/"
-        data-renew-url="{{ $page->baseUrl }}/opportunities/renew/"
+        data-list-url="{{ site_href($page, '/opportunities') }}"
+        data-create-url="{{ site_href($page, '/opportunities/create') }}"
+        data-renew-url="{{ site_href($page, '/opportunities/renew') }}"
         data-partner-company="{{ $page->partner['company'] }}"
         data-partner-contact="{{ $page->partner['contact'] }}"
         data-partner-phone="{{ $page->partner['phone'] }}"
@@ -48,7 +48,7 @@ title: 商機審核
                     </h1>
                     <span class="status-pill status-{{ $sample['status'] }}" data-review-status-pill>{{ $sample['statusLabel'] }}</span>
                 </div>
-                <a href="{{ $page->baseUrl }}/opportunities/" class="btn-secondary">返回列表</a>
+                <a href="{{ site_href($page, '/opportunities') }}" class="btn-secondary">返回列表</a>
             </div>
 
             <div class="review-layout">
@@ -57,9 +57,21 @@ title: 商機審核
                 <div class="review-main" data-review-detail>
 
                     <section class="card-panel gap-4" data-review-renewal hidden>
-                        <div class="self-stretch inline-flex items-center gap-3">
-                            <span class="section-accent" aria-hidden="true"></span>
-                            <h2 class="text-ch5 text-gray5">續期申請內容</h2>
+                        <div class="self-stretch inline-flex items-center justify-between gap-3">
+                            <div class="inline-flex items-center gap-3 min-w-0">
+                                <span class="section-accent" aria-hidden="true"></span>
+                                <h2 class="text-ch5 text-gray5">續期申請內容</h2>
+                            </div>
+                            <a
+                                href="#"
+                                class="icon-action"
+                                data-review-renewal-edit
+                                hidden
+                                aria-label="編輯續期申請"
+                                title="編輯續期申請／補件"
+                            >
+                                <i data-lucide="square-pen" class="w-4 h-4"></i>
+                            </a>
                         </div>
                         <div class="review-result-card">
                             <div class="review-result-row">
@@ -67,20 +79,20 @@ title: 商機審核
                                 <span class="text-cb3 text-gray5 min-w-0 flex-1" data-review-renewal-days>—</span>
                             </div>
                             <div class="review-result-row">
-                                <span class="text-cb3 text-gray3 shrink-0">原保護期限</span>
+                                <span class="text-cb3 text-gray3 shrink-0">原保護到期日</span>
                                 <span class="text-cb3 text-gray5 min-w-0 flex-1" data-review-renewal-old>—</span>
                             </div>
                             <div class="review-result-row">
-                                <span class="text-cb3 text-gray3 shrink-0">申請後新保護期</span>
+                                <span class="text-cb3 text-gray3 shrink-0">申請後新保護到期日</span>
                                 <span class="text-cb3 text-gray5 min-w-0 flex-1" data-review-renewal-new>—</span>
                             </div>
                             <div class="review-result-row">
                                 <span class="text-cb3 text-gray3 shrink-0">續期原因</span>
                                 <span class="text-cb3 text-gray5 min-w-0 flex-1 whitespace-pre-wrap" data-review-renewal-reason>—</span>
                             </div>
-                            <div class="review-result-row">
-                                <span class="text-cb3 text-gray3 shrink-0">上傳附件</span>
-                                <span class="text-cb3 text-gray5 min-w-0 flex-1" data-review-renewal-file>—</span>
+                            <div class="self-stretch flex flex-col items-stretch gap-2">
+                                <span class="text-cb3 text-gray3">上傳附件</span>
+                                <div class="self-stretch flex flex-col items-stretch gap-2" data-review-renewal-file></div>
                             </div>
                         </div>
                     </section>
@@ -110,12 +122,12 @@ title: 商機審核
                                 <h2 class="text-ch5 text-gray5">原廠負責資訊</h2>
                             </div>
                             <div class="form-field">
-                                <span class="form-label"><span>原廠所屬業務</span></span>
+                                <span class="form-label"><span>承接業務</span></span>
                                 <input
                                     type="text"
                                     class="form-input is-readonly"
                                     data-review-field="oem_sales"
-                                    value="{{ $sampleFields['oem_sales'] ?? ($sampleForm['oem_sales'] ?? '—') }}"
+                                    value="{{ $sampleForm['oem_sales'] ?? '—' }}"
                                     readonly
                                     tabindex="-1"
                                 >
@@ -223,9 +235,9 @@ title: 商機審核
                                     }
                                 @endphp
                                 @foreach ($products as $index => $product)
-                                    <div class="self-stretch inline-flex items-center gap-3" data-review-product-row>
-                                        <input type="text" class="form-input flex-1 min-w-0 is-readonly" data-review-product value="{{ $product !== '' ? $product : '—' }}" readonly tabindex="-1">
-                                        <input type="text" class="form-input w-48 shrink-0 is-readonly" data-review-units value="{{ $units[$index] ?? '—' }}" readonly tabindex="-1">
+                                    <div class="self-stretch flex flex-col md:flex-row md:items-center gap-3" data-review-product-row>
+                                        <input type="text" class="form-input w-full min-w-0 md:flex-1 is-readonly" data-review-product value="{{ $product !== '' ? $product : '—' }}" readonly tabindex="-1">
+                                        <input type="text" class="form-input w-full md:w-48 shrink-0 is-readonly" data-review-units value="{{ $units[$index] ?? '—' }}" readonly tabindex="-1">
                                     </div>
                                 @endforeach
                             </div>
@@ -250,7 +262,7 @@ title: 商機審核
                                 </div>
 
                                 <div class="flex-1 self-stretch flex flex-col items-start gap-1">
-                                    <span class="form-label"><span>競爭品牌／方案</span></span>
+                                    <span class="form-label"><span>備註</span></span>
                                     <textarea
                                         class="form-input form-textarea is-readonly"
                                         data-review-field="competitors"
@@ -321,7 +333,7 @@ title: 商機審核
                         </div>
 
                         <p class="text-cb3 text-gray3" data-review-hint hidden>
-                            僅總管理者可操作。選擇審核結果後會更新商機狀態；指派原廠業務後，該筆會出現在對應業務帳號。
+                            僅總管理者可操作。審核通過需指派承接業務；指派後該筆會出現在承接業務與其主管的帳號。
                         </p>
 
                         <div class="form-field" data-review-result-field hidden>
@@ -342,6 +354,7 @@ title: 商機審核
                                             class="form-select-option"
                                             role="option"
                                             data-form-select-option
+                                            data-review-result-scope="opportunity"
                                             data-value="{{ $result['value'] }}"
                                             data-label="{{ $result['label'] }}"
                                             data-status="{{ $result['status'] ?? '' }}"
@@ -358,23 +371,47 @@ title: 商機審核
                                             </span>
                                         </button>
                                     @endforeach
+                                    @foreach ($page->opportunityRenewalReviewResults ?? [] as $result)
+                                        <button
+                                            type="button"
+                                            class="form-select-option"
+                                            role="option"
+                                            data-form-select-option
+                                            data-review-result-scope="renewal"
+                                            hidden
+                                            data-value="{{ $result['value'] }}"
+                                            data-label="{{ $result['label'] }}"
+                                            data-status="{{ $result['status'] ?? '' }}"
+                                            data-status-label="{{ $result['statusLabel'] ?? '' }}"
+                                            data-renewal-status="{{ $result['renewalStatus'] ?? '' }}"
+                                            data-allow-resubmit="{{ !empty($result['allowResubmit']) ? '1' : '0' }}"
+                                        >
+                                            <span class="inline-flex flex-col items-start gap-0.5 min-w-0">
+                                                <span>{{ $result['label'] }}</span>
+                                                @if (!empty($result['statusLabel']))
+                                                    <span class="text-[11px] font-normal text-gray3 tracking-normal">
+                                                        → {{ $result['statusLabel'] }}
+                                                    </span>
+                                                @endif
+                                            </span>
+                                        </button>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>
 
                         <div class="form-field" data-review-sales-field hidden>
                             <span class="form-label">
-                                <span class="text-red">*</span>
-                                <span>原廠業務</span>
+                                <span>承接業務</span>
                             </span>
-                            <div class="form-select" data-form-select data-required>
+                            <div class="form-select" data-form-select>
                                 <input type="hidden" name="assigned_sales" value="" data-form-select-value>
                                 <button type="button" class="form-select-trigger" data-form-select-trigger aria-haspopup="listbox" aria-expanded="false">
-                                    <span class="is-placeholder" data-form-select-label>請選擇派發業務</span>
+                                    <span class="is-placeholder" data-form-select-label>請選擇承接業務</span>
                                     <i data-lucide="chevron-down" class="w-4 h-4 text-gray4 shrink-0"></i>
                                 </button>
                                 <div class="form-select-menu" data-form-select-menu hidden role="listbox">
-                                    @foreach ($page->opportunityOemSalesOptions as $sales)
+                                    @foreach (oem_staff_options($page) as $sales)
                                         <button
                                             type="button"
                                             class="form-select-option"
@@ -403,8 +440,8 @@ title: 商機審核
                         <div class="self-stretch flex flex-col gap-3 pt-1" data-review-actions>
                             <button type="submit" class="btn-primary w-full h-11" data-review-submit hidden>送出審核結果</button>
                             <button type="button" class="btn-primary w-full h-11" data-review-edit-btn hidden>修改審核</button>
-                            <button type="button" class="btn-secondary w-full h-11" data-review-cancel-edit hidden>取消修改</button>
-                            <a href="{{ $page->baseUrl }}/opportunities/" class="btn-secondary w-full h-11" data-review-cancel>取消</a>
+                            <button type="button" class="btn-secondary w-full h-11" data-review-cancel-edit hidden>取消編輯</button>
+                            <a href="{{ site_href($page, '/opportunities') }}" class="btn-secondary w-full h-11" data-review-cancel>取消編輯</a>
                             <a
                                 href="#"
                                 class="btn-secondary w-full h-11"

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>商機篩選提案</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gray5: #2F3131;
+    --gray4: #636568;
+    --gray3: #969CA6;
+    --gray1: #EBEBEB;
+    --bg: #F3F4F5;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--gray5);
+    font-family: "Noto Sans TC", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .page { max-width: 1080px; margin: 0 auto; padding: 28px 28px 72px; }
+  h1 { font-size: 22px; margin: 0 0 8px; font-weight: 700; }
+  .lead { margin: 0 0 28px; color: var(--gray4); line-height: 1.7; }
+  .block { margin-bottom: 40px; }
+  .block-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+  h2 { font-size: 16px; margin: 0; }
+  .tag { font-size: 12px; letter-spacing: 0.08em; background: var(--gray5); color: #fff; border-radius: 4px; padding: 2px 8px; }
+  .tag.alt { background: #fff; color: var(--gray4); border: 1px solid var(--gray1); }
+  .why { margin: 0 0 12px; color: var(--gray4); line-height: 1.7; }
+  .card { background: #fff; border-radius: 16px; padding: 12px; }
+  .tray { background: var(--bg); border: 1px solid var(--gray1); border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 8px; }
+  .row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .search-group { flex: 1; min-width: 220px; display: flex; align-items: center; background: #fff; border: 1px solid var(--gray1); border-radius: 8px; overflow: hidden; }
+  .search-group input { flex: 1; min-width: 0; border: 0; outline: 0; padding: 10px 12px; font: inherit; background: transparent; }
+  .search-group input::placeholder { color: var(--gray3); }
+  .search-group button { border: 0; border-left: 1px solid var(--gray1); background: var(--gray5); color: #fff; padding: 10px 16px; font: inherit; cursor: pointer; white-space: nowrap; }
+  select, .btn {
+    height: 42px;
+    border-radius: 8px;
+    border: 1px solid var(--gray1);
+    background: #fff;
+    color: var(--gray5);
+    font: inherit;
+    padding: 0 12px;
+    cursor: pointer;
+  }
+  .btn.dark { background: var(--gray5); color: #fff; border-color: var(--gray5); }
+  .btn.on { border-color: var(--gray5); }
+  .pills { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pill {
+    border: 1px solid var(--gray1);
+    background: #fff;
+    border-radius: 999px;
+    padding: 6px 12px;
+    font: inherit;
+    cursor: pointer;
+    color: var(--gray4);
+  }
+  .pill.is-on { background: var(--gray5); color: #fff; border-color: var(--gray5); }
+  .panel { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .field span { font-size: 12px; color: var(--gray4); }
+  .field select { width: 100%; }
+  .panel-actions { display: flex; justify-content: flex-end; gap: 8px; }
+  .hint { font-size: 12px; color: var(--gray3); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; min-height: 0; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--gray1); border-radius: 999px; padding: 4px 8px 4px 10px; background: #fff; }
+  .chip button { border: 0; background: transparent; color: var(--gray3); cursor: pointer; font: inherit; }
+  .list-head, .list-row {
+    display: grid;
+    grid-template-columns: 130px 1fr 110px 100px;
+    gap: 8px;
+    padding: 10px 12px;
+    align-items: center;
+  }
+  .list-head { margin-top: 8px; background: var(--bg); border-radius: 10px 10px 0 0; color: var(--gray4); }
+  .list-row { border-bottom: 1px solid var(--gray1); }
+  .empty { padding: 28px 12px; text-align: center; color: var(--gray3); }
+  .hidden { display: none; }
+  @media (max-width: 800px) { .panel { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+  <div class="page">
+    <h1>狀態下拉為什麼讓人以為沒篩到</h1>
+    <p class="lead">下拉選單的習慣是一改就生效。若它跟「搜尋」排在一起、卻要再按一次才變，畫面會又擠又容易誤會。下面三種都把標籤放在搜尋和列表中間。正式頁還沒改。</p>
+
+    <section class="block">
+      <div class="block-head"><span class="tag">建議</span><h2>狀態一改就更新。搜尋鈕只屬於關鍵字</h2></div>
+      <p class="why">狀態留在關鍵字旁邊，但選了立刻篩，並在下方長出標籤。搜尋鈕貼在輸入框上，只送關鍵字，不會看起來像整排條件的送出鍵。其他條件收在篩選裡，改了同樣立刻生效。</p>
+      <div class="card" data-demo="instant">
+        <div class="tray">
+          <div class="row">
+            <div class="search-group">
+              <input type="search" data-q placeholder="搜尋案件/客戶">
+              <button type="button" data-run>搜尋</button>
+            </div>
+            <select data-status aria-label="狀態">
+              <option value="">狀態</option>
+            </select>
+            <button type="button" class="btn" data-clear>清除條件</button>
+            <button type="button" class="btn" data-toggle>篩選</button>
+          </div>
+          <div class="panel hidden" data-panel>
+            <label class="field"><span>身份</span><select data-dealer><option value="">全部</option></select></label>
+            <label class="field"><span>國家</span><select data-country><option value="">全部</option></select></label>
+            <label class="field"><span>承接業務</span><select data-sales><option value="">全部</option></select></label>
+          </div>
+        </div>
+        <div class="chips" data-chips></div>
+        <div data-list></div>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="block-head"><span class="tag alt">做法 2</span><h2>狀態改成一排可點的項目，不用下拉</h2></div>
+      <p class="why">沒有狀態下拉，就不會有「我選了為什麼沒變」的落差。點項目就是在換清單。項目多時會換行，適合狀態選項不算少的時候。</p>
+      <div class="card" data-demo="pills">
+        <div class="tray">
+          <div class="row">
+            <div class="search-group">
+              <input type="search" data-q placeholder="搜尋案件/客戶">
+              <button type="button" data-run>搜尋</button>
+            </div>
+            <button type="button" class="btn" data-clear>清除條件</button>
+          </div>
+          <div class="pills" data-pills></div>
+        </div>
+        <div class="chips" data-chips></div>
+        <div data-list></div>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="block-head"><span class="tag alt">做法 3</span><h2>主列不放下拉。全部條件按一次才套用</h2></div>
+      <p class="why">之後若每次篩選都要打後端，主列就只留關鍵字和搜尋。狀態跟身份、國家放在同一層，按「套用篩選」才改列表，避免半套即時、半套要按鈕。</p>
+      <div class="card" data-demo="apply">
+        <div class="tray">
+          <div class="row">
+            <div class="search-group">
+              <input type="search" data-q placeholder="搜尋案件/客戶">
+              <button type="button" data-run>搜尋</button>
+            </div>
+            <button type="button" class="btn" data-clear>清除條件</button>
+            <button type="button" class="btn" data-toggle>篩選</button>
+          </div>
+          <div class="panel hidden" data-panel>
+            <label class="field"><span>狀態</span><select data-status><option value="">全部</option></select></label>
+            <label class="field"><span>身份</span><select data-dealer><option value="">全部</option></select></label>
+            <label class="field"><span>國家</span><select data-country><option value="">全部</option></select></label>
+            <div class="panel-actions" style="grid-column: 1 / -1">
+              <span class="hint" data-dirty hidden>條件已改，尚未套用</span>
+              <button type="button" class="btn dark" data-apply>套用篩選</button>
+            </div>
+          </div>
+        </div>
+        <div class="chips" data-chips></div>
+        <div data-list></div>
+      </div>
+    </section>
+  </div>
+  <script>
+    const ROWS = [
+      { id: "N260728008", customer: "H 零售", dealer: "海外經銷商", sales: "James Cole", status: "invalid", statusLabel: "已失效", country: "美國" },
+      { id: "N260728005", customer: "A 公司", dealer: "台灣經銷商", sales: "林佳穎", status: "approved", statusLabel: "已核准", country: "台灣" },
+      { id: "N260728004", customer: "B 科技", dealer: "原廠業務", sales: "林佳穎", status: "reviewing", statusLabel: "審核中", country: "台灣" },
+      { id: "N260728001", customer: "C 醫院", dealer: "海外經銷商", sales: "吳佩珊", status: "expiring", statusLabel: "即將到期", country: "香港" },
+      { id: "N260728002", customer: "D 學校", dealer: "台灣經銷商", sales: "吳佩珊", status: "rejected", statusLabel: "退回補件", country: "台灣" },
+    ];
+    const STATUSES = [
+      ["", "全部"],
+      ["reviewing", "審核中"],
+      ["approved", "已核准"],
+      ["rejected", "退回補件"],
+      ["expiring", "即將到期"],
+      ["invalid", "已失效"],
+    ];
+
+    function fillSelect(select, pairs) {
+      if (!select) return;
+      const current = select.value;
+      const first = select.querySelector("option")?.outerHTML || "";
+      select.innerHTML = first + pairs.map(([value, label]) => `<option value="${value}">${label}</option>`).join("");
+      select.value = current;
+    }
+
+    function unique(key) {
+      return [...new Set(ROWS.map((row) => row[key]))];
+    }
+
+    function mount(card) {
+      const mode = card.dataset.demo;
+      const q = card.querySelector("[data-q]");
+      const status = card.querySelector("[data-status]");
+      const dealer = card.querySelector("[data-dealer]");
+      const country = card.querySelector("[data-country]");
+      const sales = card.querySelector("[data-sales]");
+      const chips = card.querySelector("[data-chips]");
+      const list = card.querySelector("[data-list]");
+      const dirty = card.querySelector("[data-dirty]");
+      const state = { query: "", status: "", dealer: "", country: "", sales: "" };
+
+      fillSelect(status, STATUSES.slice(1));
+      fillSelect(dealer, unique("dealer").map((value) => [value, value]));
+      fillSelect(country, unique("country").map((value) => [value, value]));
+      fillSelect(sales, unique("sales").map((value) => [value, value]));
+
+      const pills = card.querySelector("[data-pills]");
+      if (pills) {
+        pills.innerHTML = STATUSES.map(([value, label], index) => (
+          `<button type="button" class="pill${index === 0 ? " is-on" : ""}" data-value="${value}">${label}</button>`
+        )).join("");
+        pills.addEventListener("click", (event) => {
+          const pill = event.target.closest("[data-value]");
+          if (!pill) return;
+          state.status = pill.dataset.value;
+          pills.querySelectorAll(".pill").forEach((item) => item.classList.toggle("is-on", item === pill));
+          render();
+        });
+      }
+
+      function labelOf(select, value) {
+        if (!value || !select) return "";
+        return [...select.options].find((option) => option.value === value)?.textContent || value;
+      }
+
+      function statusLabel(value) {
+        return STATUSES.find(([item]) => item === value)?.[1] || "";
+      }
+
+      function render() {
+        const query = state.query.trim().toLowerCase();
+        const matched = ROWS.filter((row) => (
+          (!query || `${row.id} ${row.customer}`.toLowerCase().includes(query))
+          && (!state.status || row.status === state.status)
+          && (!state.dealer || row.dealer === state.dealer)
+          && (!state.country || row.country === state.country)
+          && (!state.sales || row.sales === state.sales)
+        ));
+        const items = [];
+        if (state.query.trim()) items.push(["query", `關鍵字：${state.query.trim()}`]);
+        if (state.status) items.push(["status", `狀態：${statusLabel(state.status)}`]);
+        if (state.dealer) items.push(["dealer", `身份：${state.dealer}`]);
+        if (state.country) items.push(["country", `國家：${state.country}`]);
+        if (state.sales) items.push(["sales", `承接業務：${state.sales}`]);
+        chips.innerHTML = items.map(([key, text]) => `<span class="chip">${text}<button type="button" data-remove="${key}" aria-label="移除">×</button></span>`).join("");
+        list.innerHTML = `
+          <div class="list-head"><div>編號</div><div>客戶</div><div>身份</div><div>狀態</div></div>
+          ${matched.map((row) => `<div class="list-row"><div>${row.id}</div><div>${row.customer}</div><div>${row.dealer}</div><div>${row.statusLabel}</div></div>`).join("")}
+          ${matched.length ? "" : `<div class="empty">沒有符合條件的商機</div>`}
+        `;
+      }
+
+      function clearAll() {
+        state.query = "";
+        state.status = "";
+        state.dealer = "";
+        state.country = "";
+        state.sales = "";
+        q.value = "";
+        [status, dealer, country, sales].forEach((select) => { if (select) select.value = ""; });
+        card.querySelectorAll(".pill").forEach((pill, index) => pill.classList.toggle("is-on", index === 0));
+        if (dirty) dirty.hidden = true;
+        render();
+      }
+
+      card.querySelector("[data-run]")?.addEventListener("click", () => {
+        state.query = q.value;
+        render();
+      });
+      q.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          state.query = q.value;
+          render();
+        }
+      });
+      card.querySelector("[data-clear]")?.addEventListener("click", clearAll);
+      card.querySelector("[data-toggle]")?.addEventListener("click", (event) => {
+        const panel = card.querySelector("[data-panel]");
+        const open = panel.classList.toggle("hidden") === false;
+        event.currentTarget.classList.toggle("on", open);
+      });
+      card.querySelector("[data-apply]")?.addEventListener("click", () => {
+        state.status = status?.value || "";
+        state.dealer = dealer?.value || "";
+        state.country = country?.value || "";
+        state.sales = sales?.value || "";
+        if (dirty) dirty.hidden = true;
+        render();
+      });
+      card.querySelectorAll("[data-panel] select").forEach((select) => {
+        select.addEventListener("change", () => {
+          if (mode === "apply") {
+            if (dirty) dirty.hidden = false;
+            return;
+          }
+          state.status = status?.value || "";
+          state.dealer = dealer?.value || "";
+          state.country = country?.value || "";
+          state.sales = sales?.value || "";
+          render();
+        });
+      });
+      status?.addEventListener("change", () => {
+        if (mode === "apply") return;
+        state.status = status.value;
+        render();
+      });
+      chips.addEventListener("click", (event) => {
+        const key = event.target.closest("[data-remove]")?.dataset.remove;
+        if (!key) return;
+        state[key] = "";
+        if (key === "query") q.value = "";
+        const field = card.querySelector(`[data-${key}]`);
+        if (field && field.tagName === "SELECT") field.value = "";
+        card.querySelectorAll(".pill").forEach((pill, index) => {
+          pill.classList.toggle("is-on", key === "status" ? index === 0 : pill.classList.contains("is-on"));
+        });
+        render();
+      });
+      render();
+    }
+
+    document.querySelectorAll("[data-demo]").forEach(mount);
+  </script>
+</body>
+</html>

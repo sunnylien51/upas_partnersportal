@@ -21,7 +21,7 @@ title: 行銷資源中心
             data-catalog-kind="marketing"
             data-page-size="8"
             data-manage="marketing.manage"
-            data-create-url="{{ $page->baseUrl }}/marketing/create/"
+            data-create-url="{{ site_href($page, '/marketing/create') }}"
         >
 
             <div class="self-stretch flex flex-col md:flex-row md:items-center md:justify-between gap-3">
@@ -44,7 +44,7 @@ title: 行銷資源中心
                         <i data-lucide="layers" class="w-4 h-4"></i>
                         <span>管理分類</span>
                     </button>
-                    <a href="{{ $page->baseUrl }}/marketing/create/" class="btn-primary shrink-0 self-start" data-requires="marketing.manage">
+                    <a href="{{ site_href($page, '/marketing/create') }}" class="btn-primary shrink-0 self-start" data-requires="marketing.manage">
                         <i data-lucide="plus" class="w-4 h-4"></i>
                         <span>新增資源</span>
                     </a>
@@ -57,7 +57,7 @@ title: 行銷資源中心
                         <div class="min-w-[800px]">
                             <div class="list-head">
                                 <div class="w-32 text-cb3 text-gray4">發布日期</div>
-                                <div class="w-36 text-cb3 text-gray4">分類</div>
+                                <div class="w-44 shrink-0 whitespace-nowrap text-cb3 text-gray4">分類</div>
                                 <div class="flex-1 text-cb3 text-gray4">資源名稱</div>
                                 <div class="w-20 text-cb3 text-gray4">格式</div>
                                 <div class="w-24 text-cb3 text-gray4">附件</div>
@@ -79,7 +79,7 @@ title: 行銷資源中心
                                         @if ($item['category'] !== 'doc') hidden @endif
                                     >
                                         <div class="w-32 text-eb3 text-gray5 uppercase" data-catalog-date>{{ $item['date'] }}</div>
-                                        <div class="w-36">
+                                        <div class="w-44 shrink-0 whitespace-nowrap">
                                             <span class="text-cb3 text-brand2" data-catalog-category>{{ $category['label'] }}</span>
                                         </div>
                                         <div class="flex-1 pr-4 text-cb3 text-gray5" data-catalog-title>{{ $item['title'] }}</div>
@@ -97,7 +97,7 @@ title: 行銷資源中心
                                         </div>
                                         <div class="w-20 shrink-0 inline-flex items-center justify-end" data-catalog-actions data-requires="marketing.manage">
                                             <a
-                                                href="{{ $page->baseUrl }}/marketing/create/?id={{ urlencode($item['id']) }}"
+                                                href="{{ site_href($page, '/marketing/create') }}?id={{ urlencode($item['id']) }}"
                                                 class="icon-action"
                                                 data-catalog-edit
                                                 aria-label="編輯 {{ $item['title'] }}"
@@ -144,7 +144,7 @@ title: 行銷資源中心
     <template data-catalog-row-template>
         <div class="list-row" data-catalog-row data-catalog-id="" data-category="" data-search="">
             <div class="w-32 text-eb3 text-gray5 uppercase" data-catalog-date></div>
-            <div class="w-36">
+            <div class="w-44 shrink-0 whitespace-nowrap">
                 <span class="text-cb3 text-brand2" data-catalog-category></span>
             </div>
             <div class="flex-1 pr-4 text-cb3 text-gray5" data-catalog-title></div>
@@ -170,8 +170,8 @@ title: 行銷資源中心
         {!! json_encode([
             'kind' => 'marketing',
             'capability' => 'marketing.manage',
-            'createUrl' => rtrim($page->baseUrl, '/') . '/marketing/create/',
-            'listUrl' => rtrim($page->baseUrl, '/') . '/marketing/',
+            'createUrl' => site_href($page, '/marketing/create'),
+            'listUrl' => site_href($page, '/marketing'),
             'categories' => $categories,
             'items' => $page->marketingResources,
             'formats' => $page->marketingFormats ?? ['PDF', 'PPTX', 'XLSX', 'ZIP'],

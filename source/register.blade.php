@@ -13,24 +13,22 @@ cardMaxWidth: 800px
     <form
         class="self-stretch flex flex-col items-start gap-8"
         data-partner-register-form
-        data-login-url="{{ $page->baseUrl }}/login/"
+        data-login-url="{{ site_href($page, '/login') }}"
         novalidate
     >
         <div class="form-field gap-1">
             <label for="register-oem-sales" class="form-label">
-                <span class="text-red">*</span>
-                <span>原廠業務姓名</span>
+                <span>主要業務窗口</span>
             </label>
             <input
                 id="register-oem-sales"
                 type="text"
                 name="oem_sales"
                 class="form-input"
-                placeholder="填寫目前所屬業務窗口姓名"
+                placeholder="選填，目前聯繫的原廠業務姓名"
                 autocomplete="off"
-                required
             >
-            <p class="text-cb3 text-gray3">僅供審核參考，正式綁定需待後台核准後指定。</p>
+            <p class="text-cb3 text-gray3">僅供參考，不影響商機歸屬。</p>
         </div>
 
         <div class="self-stretch flex flex-col items-start gap-4">
@@ -50,7 +48,7 @@ cardMaxWidth: 800px
                         type="text"
                         name="company"
                         class="form-input"
-                        placeholder="請輸入公司名稱"
+                        placeholder="請輸入完整公司名稱"
                         autocomplete="organization"
                         required
                     >
@@ -232,12 +230,12 @@ cardMaxWidth: 800px
                 </p>
                 <p class="text-cb3 text-gray3">請等待原廠審核。審核通過後即可使用登入帳號。</p>
             </div>
-            <a href="{{ $page->baseUrl }}/login/" class="btn-primary w-full h-11">返回登入</a>
+            <a href="{{ site_href($page, '/login') }}" class="btn-primary w-full h-11">返回登入</a>
         </div>
 
         <div class="self-stretch inline-flex justify-center items-center gap-1" data-partner-register-login-link>
             <span class="text-cb3 text-gray4">已有帳號？</span>
-            <a href="{{ $page->baseUrl }}/login/" class="auth-link underline">返回登入</a>
+            <a href="{{ site_href($page, '/login') }}" class="auth-link underline">返回登入</a>
         </div>
     </form>
 @endsection

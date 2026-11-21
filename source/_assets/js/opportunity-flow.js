@@ -1,5 +1,7 @@
 /* ---------- 商機中心：暫存／送出／審核／列表動作 ---------- */
 
+import { downloadXlsx } from './xlsx-download.js';
+
 const app = () => window.upasApp || {};
 
 const OPPORTUNITY_DRAFTS_KEY = 'upas-opportunity-drafts';
@@ -9,6 +11,8 @@ const DEFAULT_STATUS_LABELS = {
     draft: '暫存',
     approved: '已核准',
     reviewing: '審核中',
+    renewing: '續期審核中',
+    renewal_rejected: '續期退回補件',
     rejected: '退回補件',
     expiring: '即將到期',
     expired: '已到期',
@@ -21,6 +25,8 @@ const DEFAULT_STATUS_ICONS = {
     draft: 'file-pen-line',
     approved: 'check-circle',
     reviewing: 'clock',
+    renewing: 'refresh-cw',
+    renewal_rejected: 'file-warning',
     rejected: 'file-warning',
     expiring: 'alert-circle',
     expired: 'circle-x',
@@ -36,6 +42,29 @@ const DEFAULT_DEALER_LABELS = {
 };
 
 const RENEWAL_DAYS = 90;
+const SUBMIT_REVIEW_NOTICE = '原廠將於3天內於系統內通知審核結果，請登入系統查看。';
+
+function showSubmitReviewNotice(title = '已送出，商機進入審核中') {
+    try {
+        const result = showAppConfirm({
+            title,
+            message: SUBMIT_REVIEW_NOTICE,
+            confirmLabel: '確定',
+            hideCancel: true,
+        });
+        if (result && typeof result.then === 'function') {
+            return result.catch(() => {
+                window.alert(SUBMIT_REVIEW_NOTICE);
+            });
+        }
+    } catch (error) {
+        window.alert(SUBMIT_REVIEW_NOTICE);
+        return Promise.resolve();
+    }
+
+    window.alert(SUBMIT_REVIEW_NOTICE);
+    return Promise.resolve();
+}
 
 function showAppToast(message, tone = 'default') {
     if (typeof app().showAppToast === 'function') {
@@ -92,9 +121,45 @@ function getQueryParam(name) {
     return new URLSearchParams(window.location.search).get(name);
 }
 
-function formatDateTime(date = new Date()) {
+function opportunityCreatedAt(record, fallbackRecord = null) {
+    const raw = String(
+        record?.createdAt
+        || record?.submittedAt
+        || record?.created_at
+        || fallbackRecord?.createdAt
+        || fallbackRecord?.submittedAt
+        || fallbackRecord?.created_at
+        || ''
+    ).trim();
+    if (!raw || raw === '—') {
+        return '';
+    }
+    const slashDate = raw.match(/^(\d{4}\/\d{2}\/\d{2})(?:[ T](\d{2}:\d{2}))?/);
+    if (slashDate) {
+        return slashDate[2] ? `${slashDate[1]} ${slashDate[2]}` : slashDate[1];
+    }
+    const isoDate = raw.match(/^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}:\d{2}))?/);
+    if (isoDate) {
+        const dateText = `${isoDate[1]}/${isoDate[2]}/${isoDate[3]}`;
+        return isoDate[4] ? `${dateText} ${isoDate[4]}` : dateText;
+    }
+    const date = new Date(raw);
+    if (Number.isNaN(date.getTime())) {
+        return raw;
+    }
     const pad = (n) => String(n).padStart(2, '0');
     return `${date.getFullYear()}/${pad(date.getMonth() + 1)}/${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+function setRowCreatedUi(row, record, fallbackRecord = null) {
+    const createdEl = row.querySelector('[data-opp-created]');
+    if (!createdEl) {
+        return;
+    }
+    const text = opportunityCreatedAt(record, fallbackRecord);
+    if (text) {
+        createdEl.textContent = text;
+    }
 }
 
 function formatAmount(value) {
@@ -104,6 +169,15 @@ function formatAmount(value) {
     }
 
     return `$${amount.toLocaleString('en-US')}`;
+}
+
+function formatDateTime(date = new Date()) {
+    const stamp = date instanceof Date ? date : new Date(date);
+    if (Number.isNaN(stamp.getTime())) {
+        return '';
+    }
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${stamp.getFullYear()}/${pad(stamp.getMonth() + 1)}/${pad(stamp.getDate())} ${pad(stamp.getHours())}:${pad(stamp.getMinutes())}`;
 }
 
 function addDaysIso(days, from = new Date()) {
@@ -178,28 +252,27 @@ function removeOpportunityDraft(id) {
     writeOpportunityDrafts(drafts);
 }
 
-function createOpportunityDraftId() {
-    const stamp = new Date();
-    const y = String(stamp.getFullYear()).slice(-2);
-    const m = String(stamp.getMonth() + 1).padStart(2, '0');
-    const d = String(stamp.getDate()).padStart(2, '0');
-    const rand = String(Math.floor(Math.random() * 900) + 100);
-    return `DRAFT-${y}${m}${d}${rand}`;
-}
-
-/** 商機編號：N + YY + MMDD + 當日流水號(3位)，送出報備時產生 */
-function opportunityIdDatePrefix(date = new Date()) {
+/** 商機編號共用：開頭字母 + YYMMDD */
+function opportunityIdDatePrefix(letter, date = new Date()) {
     const y = String(date.getFullYear()).slice(-2);
     const m = String(date.getMonth() + 1).padStart(2, '0');
     const d = String(date.getDate()).padStart(2, '0');
-    return `N${y}${m}${d}`;
+    return `${letter}${y}${m}${d}`;
 }
 
 function collectKnownOpportunityIds() {
     const ids = new Set();
     Object.keys(getSeedCatalog() || {}).forEach((id) => ids.add(id));
     Object.keys(readOpportunityStore() || {}).forEach((id) => ids.add(id));
+    Object.keys(readOpportunityDrafts() || {}).forEach((id) => ids.add(id));
     return ids;
+}
+
+/** 暫存編號：D + YYMMDD + 當日流水號(3位) */
+function createOpportunityDraftId(date = new Date()) {
+    const prefix = opportunityIdDatePrefix('D', date);
+    const next = maxSequenceForPrefix(prefix, collectKnownOpportunityIds()) + 1;
+    return `${prefix}${String(next).padStart(3, '0')}`;
 }
 
 function maxSequenceForPrefix(prefix, knownIds) {
@@ -214,10 +287,47 @@ function maxSequenceForPrefix(prefix, knownIds) {
     return max;
 }
 
+/** 商機編號：N + YYMMDD + 當日流水號(3位)，送出報備時產生 */
 function createOpportunityId(date = new Date()) {
-    const prefix = opportunityIdDatePrefix(date);
+    const prefix = opportunityIdDatePrefix('N', date);
     const next = maxSequenceForPrefix(prefix, collectKnownOpportunityIds()) + 1;
     return `${prefix}${String(next).padStart(3, '0')}`;
+}
+
+function opportunityIdSortValue(id) {
+    const text = String(id || '');
+    const official = text.match(/^N(\d+)/i);
+    if (official) {
+        return Number(official[1]);
+    }
+    const draft = text.match(/^(?:DRAFT-|D)(\d+)/i);
+    if (draft) {
+        return Number(draft[1]);
+    }
+    return 0;
+}
+
+function sortOpportunityListRows(list) {
+    if (!list) {
+        return;
+    }
+
+    const empty = list.querySelector('[data-filter-empty]');
+    const rows = [...list.querySelectorAll('[data-opp-row]')];
+    rows.sort((a, b) => {
+        const byId = opportunityIdSortValue(b.dataset.oppId) - opportunityIdSortValue(a.dataset.oppId);
+        if (byId !== 0) {
+            return byId;
+        }
+        return String(b.dataset.oppId || '').localeCompare(String(a.dataset.oppId || ''), 'en');
+    });
+    rows.forEach((row) => {
+        if (empty) {
+            list.insertBefore(row, empty);
+        } else {
+            list.appendChild(row);
+        }
+    });
 }
 
 function readOpportunityStore() {
@@ -261,14 +371,186 @@ function getRowCustomerName(row) {
 function setRowDealerUi(row, dealer) {
     const key = dealer || 'tw';
     row.dataset.dealer = key;
+    const label = getDealerLabel(key);
     const dealerEl = row.querySelector('[data-opp-dealer]');
     if (dealerEl) {
-        dealerEl.textContent = getDealerLabel(key);
+        dealerEl.textContent = label;
     }
 }
 
-function opportunitySearchText(id, customer, dealer) {
-    return `${id} ${customer || ''} ${getDealerLabel(dealer)}`;
+function createdFilterDate(record, fallbackRecord = null) {
+    const text = opportunityCreatedAt(record, fallbackRecord);
+    const match = text.match(/^(\d{4})\/(\d{2})\/(\d{2})/);
+    return match ? `${match[1]}-${match[2]}-${match[3]}` : '';
+}
+
+function setRowQueryMeta(row, record, fallbackRecord = null) {
+    const createdBy = String(record?.created_by || row.dataset.createdBy || '').trim();
+    const partner = createdBy && createdBy !== 'admin' ? getPartnersById().get(createdBy) : null;
+    row.dataset.country = String(partner?.country || '').trim();
+    row.dataset.oppDate = createdFilterDate(record, fallbackRecord);
+}
+
+function opportunitySearchText(id, customer, dealer, salesName = '', reporter = '') {
+    return `${id} ${customer || ''} ${getDealerLabel(dealer)} ${reporter || ''} ${salesName || ''}`.trim();
+}
+
+function opportunityReporterName(record) {
+    const createdBy = String(record?.created_by || '').trim();
+    if (!createdBy) {
+        return '';
+    }
+    if (createdBy === 'admin') {
+        return '總管理者';
+    }
+
+    const partner = getPartnersById().get(createdBy);
+    if (!partner) {
+        return createdBy;
+    }
+
+    return String(partner.name || '').trim() || createdBy;
+}
+
+// 搜尋仍含公司名；列表顯示用 opportunityReporterLine
+function opportunityReporterLabel(record) {
+    const createdBy = String(record?.created_by || '').trim();
+    const name = opportunityReporterName(record);
+    if (!createdBy || createdBy === 'admin') {
+        return name;
+    }
+
+    const company = String(getPartnersById().get(createdBy)?.company || '').trim();
+    const identity = opportunityReporterIdentity(record);
+    const base = company && name ? `${company}／${name}` : (name || company);
+    return [base, identity].filter(Boolean).join(' ');
+}
+
+function opportunityReporterIdentity(record) {
+    const createdBy = String(record?.created_by || '').trim();
+    if (!createdBy || createdBy === 'admin') {
+        return '';
+    }
+
+    const partner = getPartnersById().get(createdBy);
+    if (!partner) {
+        return '';
+    }
+
+    const meta = getListMeta();
+    const identity = String(partner.identity || '').trim();
+    const identityLabel = String(meta.identityLabels?.[identity] || '').trim();
+    if (!identityLabel) {
+        return '';
+    }
+
+    const level = String(partner.level || '').trim();
+    const isDealer = identity === 'dealer_tw' || identity === 'dealer_overseas';
+    const levelLabel = partner.status === 'approved' && isDealer && level
+        ? String(meta.levelLabels?.[level] || level).trim()
+        : '';
+    return levelLabel ? `${identityLabel}/${levelLabel}` : identityLabel;
+}
+
+function opportunityReporterLine(record) {
+    const name = opportunityReporterName(record);
+    const identity = opportunityReporterIdentity(record);
+    if (name && identity) {
+        return `${name} / ${identity}`;
+    }
+    return name || identity || '';
+}
+
+function setRowReporterUi(row, record) {
+    const reporterEl = row.querySelector('[data-opp-reporter]');
+    if (!reporterEl) {
+        return;
+    }
+
+    const source = {
+        ...(record || {}),
+        created_by: String(record?.created_by || row.dataset.createdBy || '').trim(),
+    };
+    const name = opportunityReporterName(source);
+    const identity = opportunityReporterIdentity(source);
+    const line = name && identity ? `${name} / ${identity}` : (name || identity || '—');
+    const nameEl = reporterEl.querySelector('[data-opp-reporter-name]');
+    const identityEl = reporterEl.querySelector('[data-opp-reporter-identity]');
+
+    if (!nameEl) {
+        reporterEl.textContent = line;
+        reporterEl.title = line === '—' ? '' : line;
+        return;
+    }
+
+    nameEl.textContent = name || '—';
+    if (identityEl) {
+        identityEl.textContent = identity;
+        identityEl.hidden = !identity;
+    }
+    reporterEl.title = name || identity ? line : '';
+}
+
+const UNASSIGNED_SALES_LABEL = '待指派';
+
+// 承接業務以商機的 oem_sales_id 為準；未指派的送審商機顯示「待指派」
+function opportunitySalesName(record) {
+    if (!record) {
+        return '';
+    }
+
+    const salesId = String(record.oem_sales_id || '').trim();
+    if (salesId) {
+        const name = String(getPartnersById().get(salesId)?.name || '').trim();
+        return name || String(record.review?.salesLabel || '').trim() || salesId;
+    }
+
+    return record.status === 'draft' ? '' : UNASSIGNED_SALES_LABEL;
+}
+
+function ensureSalesFilterOption(name) {
+    const select = document.querySelector('[data-opp-sales-filter]');
+    if (!select || !name) {
+        return;
+    }
+
+    const menu = select._formMenu || select.querySelector('[data-form-select-menu]');
+    if (!menu || menu.querySelector(`[data-form-select-option][data-value="${CSS.escape(name)}"]`)) {
+        return;
+    }
+
+    const option = document.createElement('button');
+    option.type = 'button';
+    option.className = 'form-select-option';
+    option.setAttribute('role', 'option');
+    option.setAttribute('data-form-select-option', '');
+    option.dataset.value = name;
+    option.dataset.label = name;
+    option.textContent = name;
+    option.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (typeof app().setFormSelectValue === 'function') {
+            app().setFormSelectValue(select, option);
+        }
+        if (typeof app().closeFormSelects === 'function') {
+            app().closeFormSelects();
+        }
+    });
+    menu.appendChild(option);
+}
+
+function setRowSalesUi(row, record) {
+    const name = opportunitySalesName(record);
+    row.dataset.salesName = name;
+    ensureSalesFilterOption(name);
+
+    const salesEl = row.querySelector('[data-opp-sales]');
+    if (!salesEl) {
+        return;
+    }
+
+    salesEl.textContent = name || '—';
 }
 
 function getStatusLabels() {
@@ -291,23 +573,57 @@ function getStatusLabel(status) {
 }
 
 function isPendingRenewal(record) {
-    return record?.renewal?.status === 'pending';
+    // 分開模型：以續期紀錄為準；兼容舊資料曾把商機 status 寫成 renewing
+    return record?.renewal?.status === 'pending' || record?.status === 'renewing';
 }
 
 function isRejectedRenewal(record) {
-    return Boolean(record?.renewal) && record?.status === 'rejected';
+    return record?.renewal?.status === 'rejected';
 }
 
 function isRenewalReview(record) {
-    return Boolean(record?.renewal) && (record?.status === 'reviewing' || record?.status === 'rejected');
+    return isPendingRenewal(record) || isRejectedRenewal(record);
+}
+
+function isReviewQueueStatus(status) {
+    return status === 'reviewing' || status === 'renewing';
+}
+
+/** 列表／篩選用顯示狀態（商機 status 與續期 status 分開） */
+function getDisplayStatus(record) {
+    if (!record) {
+        return '';
+    }
+    if (record.renewal?.status === 'pending' || record.status === 'renewing') {
+        return 'renewing';
+    }
+    if (record.renewal?.status === 'rejected') {
+        return 'renewal_rejected';
+    }
+    return record.status || '';
+}
+
+function getBaseOpportunityStatus(record) {
+    if (!record) {
+        return '';
+    }
+    if (record.status === 'renewing') {
+        return record.renewal?.previousStatus || 'approved';
+    }
+    return record.status || '';
+}
+
+function isInReviewQueue(record) {
+    return record?.status === 'reviewing' || isPendingRenewal(record);
 }
 
 function canApplyRenewal(record) {
-    if (!record) {
+    if (!record || isPendingRenewal(record)) {
         return false;
     }
 
-    if (record.status === 'approved' || record.status === 'expiring') {
+    const base = getBaseOpportunityStatus(record);
+    if (base === 'approved' || base === 'expiring') {
         return true;
     }
 
@@ -355,6 +671,26 @@ function getPreviewActor() {
         identity: 'admin',
         partnerId: '',
     };
+}
+
+function previewActorKey(actor = getPreviewActor()) {
+    const partnerId = String(actor?.partnerId || '').trim();
+    if (partnerId) {
+        return partnerId;
+    }
+
+    return (actor?.identity || actor?.roleKey) === 'admin' ? 'admin' : '';
+}
+
+function isDraftCreator(record, actor = getPreviewActor()) {
+    const createdBy = String(record?.created_by || '').trim();
+    const myId = previewActorKey(actor);
+    if (createdBy) {
+        return createdBy === myId;
+    }
+
+    // 舊暫存可能沒寫 created_by；僅總管自己存的才看得到
+    return (actor?.identity || '') === 'admin';
 }
 
 function isDealerIdentity(identity) {
@@ -405,12 +741,17 @@ function canViewOpportunity(record, actor = getPreviewActor(), partnersById = ge
         return false;
     }
 
+    // 暫存只留在新增者帳號；送出審核後才依身分權限可見
+    if (record.status === 'draft') {
+        return isDraftCreator(record, actor);
+    }
+
     const identity = actor?.identity || 'admin';
     if (identity === 'admin') {
         return true;
     }
 
-    const myId = String(actor?.partnerId || '').trim();
+    const myId = previewActorKey(actor);
     if (!myId) {
         return false;
     }
@@ -422,30 +763,13 @@ function canViewOpportunity(record, actor = getPreviewActor(), partnersById = ge
         return createdBy === myId;
     }
 
+    // 經銷與業務不綁定；內部人員只看自己新增的，或商機承接業務是自己的
     if (identity === 'oem_sales') {
-        if (oemSalesId === myId || createdBy === myId) {
-            return true;
-        }
-        const creator = partnersById.get(createdBy);
-        return Boolean(
-            creator
-            && isDealerIdentity(creator.identity)
-            && String(creator.oem_sales_id || '') === myId
-            && creator.status === 'approved'
-        );
+        return oemSalesId === myId || createdBy === myId;
     }
 
     if (identity === 'oem_manager') {
         if (createdBy === myId || oemSalesId === myId) {
-            return true;
-        }
-        const creator = partnersById.get(createdBy);
-        if (
-            creator
-            && isDealerIdentity(creator.identity)
-            && String(creator.oem_sales_id || '') === myId
-            && creator.status === 'approved'
-        ) {
             return true;
         }
 
@@ -458,6 +782,24 @@ function canViewOpportunity(record, actor = getPreviewActor(), partnersById = ge
         return reports.some((sales) => canViewOpportunity(
             record,
             { identity: 'oem_sales', partnerId: sales.id },
+            partnersById
+        ));
+    }
+
+    if (identity === 'oem_director') {
+        if (createdBy === myId || oemSalesId === myId) {
+            return true;
+        }
+
+        const reportManagers = [...partnersById.values()].filter((partner) => (
+            partner.identity === 'oem_manager'
+            && String(partner.manager_id || '') === myId
+            && partner.status === 'approved'
+        ));
+
+        return reportManagers.some((manager) => canViewOpportunity(
+            record,
+            { identity: 'oem_manager', partnerId: manager.id },
             partnersById
         ));
     }
@@ -483,6 +825,8 @@ function resolveListRecord(row) {
             amountValue: 0,
             created_by: draft?.created_by || row.dataset.createdBy || '',
             oem_sales_id: draft?.oem_sales_id || row.dataset.oemSalesId || '',
+            createdAt: draft?.createdAt || row.querySelector('[data-opp-created]')?.textContent?.trim() || '',
+            submittedAt: draft?.createdAt || '',
         };
     }
 
@@ -500,6 +844,7 @@ function resolveListRecord(row) {
         amountValue: Number(row.dataset.amount || 0),
         created_by: row.dataset.createdBy || '',
         oem_sales_id: row.dataset.oemSalesId || '',
+        submittedAt: row.querySelector('[data-opp-created]')?.textContent?.trim() || '',
     };
 }
 
@@ -565,11 +910,16 @@ function syncOpportunityStats() {
         if (!canViewOpportunity(record, actor, partnersById)) {
             return;
         }
-        const status = record?.status || row.dataset.status || '';
-        if (status === 'approved' || status === 'reviewing' || status === 'expiring') {
+        const displayStatus = record ? getDisplayStatus(record) : (row.dataset.status || '');
+        if (
+            displayStatus === 'approved'
+            || isReviewQueueStatus(displayStatus)
+            || displayStatus === 'expiring'
+            || displayStatus === 'renewal_rejected'
+        ) {
             counts.active += 1;
         }
-        if (status === 'reviewing') {
+        if (displayStatus === 'reviewing' || displayStatus === 'renewing') {
             counts.reviewing += 1;
         }
         if (status === 'draft') {
@@ -589,18 +939,68 @@ function syncOpportunityStats() {
     });
 }
 
-function defaultOemSalesIdForActor(actor = getPreviewActor(), partnersById = getPartnersById()) {
+function isOemStaffIdentity(identity) {
+    return identity === 'oem_director' || identity === 'oem_sales' || identity === 'oem_manager';
+}
+
+// 經銷新增的商機一律待總管指派；內部人員預設自己承接
+function defaultOemSalesIdForActor(actor = getPreviewActor()) {
     const myId = String(actor.partnerId || '').trim();
-    if (!myId) {
+    return myId && isOemStaffIdentity(actor.identity) ? myId : '';
+}
+
+// 表單不再選 oem_sales_id：經銷維持既有／空；內部人員沿用既有或預設自己
+function resolveFormOemSalesId(formData, existing, actor = getPreviewActor()) {
+    const existingId = String(existing?.oem_sales_id || '').trim();
+    if (isDealerIdentity(actor.identity)) {
+        return existingId;
+    }
+    return existingId || defaultOemSalesIdForActor(actor);
+}
+
+function opportunityRequestedSalesName(record) {
+    if (!record) {
         return '';
     }
-    if (actor.identity === 'oem_sales' || actor.identity === 'oem_manager') {
-        return myId;
+    const form = record.form || {};
+    return String(form.oem_sales || form.fields?.oem_sales || '').trim();
+}
+
+function partnerNameById(id) {
+    const key = String(id || '').trim();
+    if (!key) {
+        return '';
     }
-    if (isDealerIdentity(actor.identity)) {
-        return String(partnersById.get(myId)?.oem_sales_id || '').trim();
+    return String(getPartnersById().get(key)?.name || '').trim();
+}
+
+// 新增／暫存／補件：一律顯示文字欄；assignedId 未給時套預設姓名，null 只在角色切換時補空欄
+function syncOpportunityOemSalesField(form, assignedId) {
+    const section = form?.querySelector('[data-opp-oem-section]');
+    const input = form?.querySelector('[name="oem_sales"], [data-opp-oem-sales-input]');
+    if (!section || !input) {
+        return;
     }
-    return '';
+
+    section.hidden = false;
+    if (assignedId === null) {
+        if (!String(input.value || '').trim() && isOemStaffIdentity(getPreviewActor().identity)) {
+            input.value = partnerNameById(previewActorKey()) || '';
+        }
+        return;
+    }
+
+    if (assignedId !== undefined) {
+        if (!String(input.value || '').trim()) {
+            input.value = partnerNameById(assignedId) || '';
+        }
+        return;
+    }
+
+    const actor = getPreviewActor();
+    input.value = isOemStaffIdentity(actor.identity)
+        ? (partnerNameById(previewActorKey(actor)) || '')
+        : '';
 }
 
 function denyOpportunityAccess(listUrl) {
@@ -608,6 +1008,111 @@ function denyOpportunityAccess(listUrl) {
     window.setTimeout(() => {
         window.location.href = listUrl || '/opportunities/';
     }, 700);
+}
+
+const OPPORTUNITY_SOURCE_LABELS = {
+    self: '自行開發',
+    oem: '原廠派發',
+};
+
+const OPPORTUNITY_RELATION_LABELS = {
+    first: '第一次接洽',
+    repeat: '多次接洽(未成交)',
+    other: '其他',
+};
+
+function exportText(value) {
+    return String(value ?? '').trim();
+}
+
+function recordForExport(record) {
+    if (!record || record.form || record.status !== 'draft') {
+        return record;
+    }
+    const draft = getOpportunityDraft(record.id);
+    if (!draft?.data) {
+        return record;
+    }
+    return { ...record, form: draft.data };
+}
+
+function exportReporterCompany(record) {
+    const createdBy = exportText(record?.created_by);
+    if (!createdBy) {
+        return '';
+    }
+    if (createdBy === 'admin') {
+        return '總管理者';
+    }
+    const partner = getPartnersById().get(createdBy);
+    if (!partner) {
+        return opportunityReporterName(record);
+    }
+    const company = exportText(partner.company);
+    const name = exportText(partner.name);
+    return company && name ? `${company}／${name}` : (name || company);
+}
+
+function exportProductLines(formData) {
+    const products = Array.isArray(formData?.products) ? formData.products : [];
+    const units = Array.isArray(formData?.units) ? formData.units : [];
+    return products.map((product, index) => {
+        const name = exportText(product);
+        const unit = exportText(units[index]);
+        if (!name && !unit) {
+            return '';
+        }
+        return unit ? `${name} / ${unit}` : name;
+    }).filter(Boolean).join('；');
+}
+
+function opportunityExportCells(record) {
+    const source = recordForExport(record);
+    const formData = catalogFormFallback(source);
+    const fields = formData.fields || {};
+    const field = (key) => exportText(fields[key]);
+    const partner = getPartnersById().get(exportText(source.created_by));
+    const attachment = formData.attachment || source.attachment || null;
+    const review = source.review || {};
+    const renewal = source.renewal || {};
+
+    return [
+        exportText(source.id),
+        source.statusLabel || getStatusLabel(source.status) || exportText(source.status),
+        OPPORTUNITY_SOURCE_LABELS[formData.source] || exportText(formData.source),
+        field('oem_sales') || exportText(formData.oem_sales),
+        exportReporterCompany(source),
+        opportunityReporterIdentity(source),
+        exportText(partner?.phone),
+        field('customer_company') || exportText(source.customer_company),
+        field('customer_address'),
+        field('contact_name'),
+        field('contact_title'),
+        field('contact_phone'),
+        field('contact_email'),
+        OPPORTUNITY_RELATION_LABELS[formData.customer_relation] || exportText(formData.customer_relation),
+        field('keyman_name'),
+        field('keyman_phone'),
+        field('keyman_email'),
+        exportProductLines(formData),
+        field('poc_date'),
+        field('decision_date'),
+        field('delivery_date'),
+        field('complete_date'),
+        exportText(formData.competitors),
+        exportText(attachment?.name),
+        opportunitySalesName(source),
+        protectionForStatus(source.status, source.protection),
+        opportunityCreatedAt(source),
+        exportText(review.resultLabel),
+        exportText(review.note),
+        exportText(review.reviewedAt),
+        renewal.days ? String(renewal.days) : '',
+        exportText(renewal.oldProtection),
+        exportText(renewal.newProtection),
+        exportText(renewal.reason),
+        exportText(formatAttachmentNames(renewal.attachments || renewal.attachment)),
+    ];
 }
 
 function exportVisibleOpportunities() {
@@ -622,33 +1127,46 @@ function exportVisibleOpportunities() {
         return;
     }
 
-    const headers = ['編號', '客戶', '所屬', '狀態', '保護期', '建立者', '原廠業務'];
-    const lines = [headers.join(',')];
-    const dealerLabels = getDealerLabels();
-
-    records.forEach((record) => {
-        const cells = [
-            record.id || '',
-            record.customer_company || '',
-            dealerLabels[record.dealer] || record.dealer || '',
-            record.statusLabel || getStatusLabel(record.status) || record.status || '',
-            protectionForStatus(record.status, record.protection),
-            record.created_by || '',
-            record.oem_sales_id || '',
-        ].map((value) => `"${String(value).replace(/"/g, '""')}"`);
-        lines.push(cells.join(','));
-    });
-
-    const blob = new Blob([`\uFEFF${lines.join('\n')}`], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
+    const headers = [
+        '編號',
+        '狀態',
+        '商機來源',
+        '原廠負責業務',
+        '報備者經銷商／業務',
+        '身份',
+        '報備者聯絡電話',
+        '客戶公司名稱',
+        '客戶公司地址',
+        '客戶主要聯絡人／承辦人',
+        '客戶主要聯絡人 職稱／部門',
+        '客戶主要聯絡人電話',
+        '客戶主要聯絡人信箱',
+        '客戶關係',
+        'Key Man',
+        'Key Man 聯絡電話',
+        'Key Man 聯絡 Email',
+        '專案產品／U數',
+        '預計 POC 日',
+        '預計決策日',
+        '預計交貨日',
+        '預計完成日',
+        '備註',
+        '附件',
+        '承接業務',
+        '保護到期日',
+        '建立時間',
+        '審核結果',
+        '審核備註',
+        '審核時間',
+        '續期天數',
+        '原保護到期日',
+        '新保護到期日',
+        '續期原因',
+        '續期附件',
+    ];
+    const rows = [headers, ...records.map((record) => opportunityExportCells(record))];
     const stamp = new Date().toISOString().slice(0, 10);
-    link.href = url;
-    link.download = `opportunities-${stamp}.csv`;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
+    downloadXlsx(`opportunities-${stamp}.xlsx`, '商機', rows);
     showAppToast(`已匯出 ${records.length} 筆商機`, 'success');
 }
 
@@ -744,13 +1262,146 @@ function formatFileSize(bytes) {
 }
 
 function getFileUploadRoot(scope = document) {
-    return scope.querySelector('[data-file-upload]');
+    if (scope?.matches?.('[data-file-upload]')) {
+        return scope;
+    }
+    return scope?.querySelector?.('[data-file-upload]') || null;
+}
+
+function isMultipleFileUpload(root) {
+    return Boolean(root?.hasAttribute('data-file-multiple'));
+}
+
+function normalizeAttachmentList(value) {
+    if (Array.isArray(value)) {
+        return value.filter((item) => item && item.name);
+    }
+    if (value && value.name) {
+        return [value];
+    }
+    return [];
+}
+
+function formatAttachmentNames(value, emptyLabel = '') {
+    const names = normalizeAttachmentList(value).map((item) => item.name).filter(Boolean);
+    return names.length ? names.join('\n') : emptyLabel;
+}
+
+function attachmentFileKey(file) {
+    return `${file?.name || ''}::${file?.size || 0}`;
+}
+
+function hasOpenableAttachmentUrl(url) {
+    return Boolean(url) && url !== '#';
+}
+
+function readFileAsDataUrl(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || ''));
+        reader.onerror = () => reject(reader.error || new Error('讀取檔案失敗'));
+        reader.readAsDataURL(file);
+    });
+}
+
+function createAttachmentCard(attachment, { emptyUrlToast = '此檔案無法開啟，請重新上傳' } = {}) {
+    const row = document.createElement('div');
+    row.className = 'file-upload-item';
+
+    const left = document.createElement('div');
+    left.className = 'inline-flex items-center gap-3 min-w-0';
+
+    const iconWrap = document.createElement('span');
+    iconWrap.className = 'file-icon';
+    iconWrap.innerHTML = '<i data-lucide="file-text" class="w-4 h-4 text-gray4"></i>';
+
+    const textWrap = document.createElement('span');
+    textWrap.className = 'min-w-0 flex flex-col items-start gap-0.5';
+
+    const name = document.createElement('span');
+    name.className = 'text-cb3 text-gray5 truncate max-w-full';
+    name.textContent = attachment.name || '—';
+    name.title = attachment.name || '';
+
+    const meta = document.createElement('span');
+    meta.className = 'text-[11px] font-medium text-gray3';
+    meta.textContent = attachment.sizeLabel || formatFileSize(attachment.size) || attachment.type || '已上傳檔案';
+
+    textWrap.append(name, meta);
+    left.append(iconWrap, textWrap);
+
+    const action = document.createElement('a');
+    action.className = 'px-3 py-2 text-[12px] btn-secondary shrink-0';
+    action.textContent = '查看／下載';
+    action.rel = 'noopener noreferrer';
+
+    if (hasOpenableAttachmentUrl(attachment.url)) {
+        action.href = attachment.url;
+        action.target = '_blank';
+    } else {
+        action.href = '#';
+        action.addEventListener('click', (event) => {
+            event.preventDefault();
+            showAppToast(emptyUrlToast, 'error');
+        });
+    }
+
+    row.append(left, action);
+    return row;
+}
+
+function renderAttachmentLinks(container, attachments, emptyLabel = '未上傳') {
+    if (!container) {
+        return;
+    }
+
+    const list = normalizeAttachmentList(attachments);
+    container.replaceChildren();
+
+    if (!list.length) {
+        const empty = document.createElement('p');
+        empty.className = 'text-cb3 text-gray3';
+        empty.textContent = emptyLabel;
+        container.appendChild(empty);
+        return;
+    }
+
+    list.forEach((attachment) => {
+        container.appendChild(createAttachmentCard(attachment));
+    });
+
+    if (typeof app().refreshIcons === 'function') {
+        app().refreshIcons(container);
+    }
+}
+
+function readAttachmentsFromUpload(scope = document) {
+    const root = getFileUploadRoot(scope);
+    if (!root) {
+        return [];
+    }
+
+    if (isMultipleFileUpload(root)) {
+        const raw = root.querySelector('[data-file-list]')?.value || '[]';
+        try {
+            return normalizeAttachmentList(JSON.parse(raw));
+        } catch (error) {
+            return [];
+        }
+    }
+
+    const single = readAttachmentFromUpload(scope);
+    return single ? [single] : [];
 }
 
 function readAttachmentFromUpload(scope = document) {
     const root = getFileUploadRoot(scope);
     if (!root) {
         return null;
+    }
+
+    if (isMultipleFileUpload(root)) {
+        return readAttachmentsFromUpload(scope)[0] || null;
     }
 
     const name = root.querySelector('[data-file-name]')?.value || '';
@@ -761,13 +1412,80 @@ function readAttachmentFromUpload(scope = document) {
     const size = Number(root.querySelector('[data-file-size]')?.value || 0);
     const type = root.querySelector('[data-file-type]')?.value || '';
 
+    const url = root.querySelector('[data-file-url]')?.value || '';
+
     return {
         name,
         size,
         type,
         sizeLabel: formatFileSize(size),
-        url: '#',
+        url: url || '#',
     };
+}
+
+function setFileUploadValues(attachments, scope = document) {
+    const root = getFileUploadRoot(scope);
+    if (!root) {
+        return;
+    }
+
+    if (!isMultipleFileUpload(root)) {
+        setFileUploadValue(normalizeAttachmentList(attachments)[0] || null, scope);
+        return;
+    }
+
+    const list = normalizeAttachmentList(attachments);
+    const listInput = root.querySelector('[data-file-list]');
+    const listUi = root.querySelector('[data-file-list-ui]');
+    const template = root.querySelector('[data-file-item-template]');
+    const fileInput = root.querySelector('[data-file-input]');
+
+    if (listInput) {
+        listInput.value = JSON.stringify(list);
+    }
+    if (fileInput) {
+        fileInput.value = '';
+    }
+    if (!listUi || !template) {
+        return;
+    }
+
+    listUi.replaceChildren();
+    list.forEach((attachment, index) => {
+        const node = template.content.firstElementChild.cloneNode(true);
+        const nameEl = node.querySelector('[data-file-item-name]');
+        const metaEl = node.querySelector('[data-file-item-meta]');
+        const viewLink = node.querySelector('[data-file-view]');
+        const removeBtn = node.querySelector('[data-file-remove]');
+
+        if (nameEl) {
+            nameEl.textContent = attachment.name;
+        }
+        if (metaEl) {
+            metaEl.textContent = attachment.sizeLabel || formatFileSize(attachment.size) || attachment.type || '已選擇檔案';
+        }
+        if (viewLink) {
+            if (hasOpenableAttachmentUrl(attachment.url)) {
+                viewLink.href = attachment.url;
+                viewLink.target = '_blank';
+                viewLink.hidden = false;
+            } else {
+                viewLink.hidden = true;
+            }
+        }
+        if (removeBtn) {
+            removeBtn.addEventListener('click', () => {
+                const next = readAttachmentsFromUpload(root).filter((_, itemIndex) => itemIndex !== index);
+                setFileUploadValues(next, root);
+            });
+        }
+
+        listUi.appendChild(node);
+    });
+
+    if (typeof app().refreshIcons === 'function') {
+        app().refreshIcons(root);
+    }
 }
 
 function setFileUploadValue(attachment, scope = document) {
@@ -776,19 +1494,27 @@ function setFileUploadValue(attachment, scope = document) {
         return;
     }
 
+    if (isMultipleFileUpload(root)) {
+        setFileUploadValues(attachment ? [attachment] : [], scope);
+        return;
+    }
+
     const dropzone = root.querySelector('[data-file-trigger]');
     const item = root.querySelector('[data-file-item]');
     const nameInput = root.querySelector('[data-file-name]');
     const sizeInput = root.querySelector('[data-file-size]');
     const typeInput = root.querySelector('[data-file-type]');
+    const urlInput = root.querySelector('[data-file-url]');
     const nameEl = root.querySelector('[data-file-item-name]');
     const metaEl = root.querySelector('[data-file-item-meta]');
+    const viewLink = root.querySelector('[data-file-view]');
     const fileInput = root.querySelector('[data-file-input]');
 
     if (!attachment || !attachment.name) {
         if (nameInput) nameInput.value = '';
         if (sizeInput) sizeInput.value = '';
         if (typeInput) typeInput.value = '';
+        if (urlInput) urlInput.value = '';
         if (fileInput) fileInput.value = '';
         if (dropzone) dropzone.hidden = false;
         if (item) item.hidden = true;
@@ -798,9 +1524,19 @@ function setFileUploadValue(attachment, scope = document) {
     if (nameInput) nameInput.value = attachment.name;
     if (sizeInput) sizeInput.value = String(attachment.size || '');
     if (typeInput) typeInput.value = attachment.type || '';
+    if (urlInput) urlInput.value = hasOpenableAttachmentUrl(attachment.url) ? attachment.url : '';
     if (nameEl) nameEl.textContent = attachment.name;
     if (metaEl) {
         metaEl.textContent = attachment.sizeLabel || formatFileSize(attachment.size) || attachment.type || '已選擇檔案';
+    }
+    if (viewLink) {
+        if (hasOpenableAttachmentUrl(attachment.url)) {
+            viewLink.href = attachment.url;
+            viewLink.target = '_blank';
+            viewLink.hidden = false;
+        } else {
+            viewLink.hidden = true;
+        }
     }
     if (dropzone) dropzone.hidden = true;
     if (item) item.hidden = false;
@@ -825,31 +1561,65 @@ function bindFileUpload(scope = document) {
 
     root.dataset.bound = 'true';
     const maxBytes = 2 * 1024 * 1024;
+    const multiple = isMultipleFileUpload(root);
+    let applying = false;
 
-    const applyFile = (file) => {
-        if (!file) {
+    const toAttachment = async (file) => ({
+        name: file.name,
+        size: file.size,
+        type: file.type || '',
+        sizeLabel: formatFileSize(file.size),
+        url: await readFileAsDataUrl(file),
+    });
+
+    const applyFiles = async (fileList) => {
+        const files = Array.from(fileList || []).filter(Boolean);
+        if (!files.length || applying) {
             return;
         }
 
-        if (file.size > maxBytes) {
-            showAppToast('檔案超過 2MB，請重新選擇', 'error');
+        const oversized = files.find((file) => file.size > maxBytes);
+        if (oversized) {
+            showAppToast(`「${oversized.name}」超過 2MB，請重新選擇`, 'error');
             fileInput.value = '';
             return;
         }
 
-        setFileUploadValue({
-            name: file.name,
-            size: file.size,
-            type: file.type || '',
-            sizeLabel: formatFileSize(file.size),
-            url: '#',
-        }, root);
+        applying = true;
+        try {
+            if (!multiple) {
+                setFileUploadValue(await toAttachment(files[0]), root);
+                return;
+            }
+
+            const current = readAttachmentsFromUpload(root);
+            const seen = new Set(current.map(attachmentFileKey));
+            const next = [...current];
+
+            for (const file of files) {
+                const attachment = await toAttachment(file);
+                const key = attachmentFileKey(attachment);
+                if (seen.has(key)) {
+                    continue;
+                }
+                seen.add(key);
+                next.push(attachment);
+            }
+
+            setFileUploadValues(next, root);
+        } catch (error) {
+            console.warn(error);
+            showAppToast('檔案讀取失敗，請再試一次', 'error');
+            fileInput.value = '';
+        } finally {
+            applying = false;
+        }
     };
 
     trigger.addEventListener('click', () => fileInput.click());
 
     fileInput.addEventListener('change', () => {
-        applyFile(fileInput.files?.[0] || null);
+        applyFiles(fileInput.files);
     });
 
     ['dragenter', 'dragover'].forEach((type) => {
@@ -869,13 +1639,10 @@ function bindFileUpload(scope = document) {
     });
 
     trigger.addEventListener('drop', (event) => {
-        const file = event.dataTransfer?.files?.[0];
-        if (file) {
-            applyFile(file);
-        }
+        applyFiles(event.dataTransfer?.files);
     });
 
-    if (removeBtn) {
+    if (!multiple && removeBtn) {
         removeBtn.addEventListener('click', () => {
             setFileUploadValue(null, root);
         });
@@ -908,6 +1675,8 @@ function collectOpportunityFormData(form) {
             || name === 'attachment_name'
             || name === 'attachment_size'
             || name === 'attachment_type'
+            || name === 'attachment_url'
+            || name === 'attachments_json'
         ) {
             return;
         }
@@ -932,7 +1701,7 @@ function collectOpportunityFormData(form) {
         const product = row.querySelector('[name="products[]"]');
         const units = row.querySelector('[name="units[]"]');
         data.products.push(product ? product.value : '');
-        data.units.push(units ? units.value : '0-499');
+        data.units.push(units ? units.value : '50-300U');
     });
 
     data.attachment = readAttachmentFromUpload(form);
@@ -992,7 +1761,7 @@ function applyOpportunityFormData(form, payload) {
             const productSelect = row.querySelector('[name="products[]"]')?.closest('[data-form-select]');
             const unitsSelect = row.querySelector('[name="units[]"]')?.closest('[data-form-select]');
             setFormSelectByValue(productSelect, product || '');
-            setFormSelectByValue(unitsSelect, units[index] || '0-499');
+            setFormSelectByValue(unitsSelect, units[index] || '50-300U');
             if (typeof app().refreshIcons === 'function') {
                 app().refreshIcons(row);
             }
@@ -1006,37 +1775,92 @@ function applyOpportunityFormData(form, payload) {
     setFileUploadValue(data.attachment || payload.attachment || null, form);
 }
 
+function isOpportunityFieldHidden(el) {
+    if (!el) {
+        return true;
+    }
+
+    if (el.closest('[data-create-review-edit], [data-create-review-result]')) {
+        return true;
+    }
+
+    let node = el;
+    while (node && node !== document.documentElement) {
+        if (node.hasAttribute?.('hidden')) {
+            return true;
+        }
+
+        if (node.nodeType === 1) {
+            const style = window.getComputedStyle(node);
+            if (style.display === 'none' || style.visibility === 'hidden') {
+                return true;
+            }
+        }
+
+        node = node.parentElement;
+    }
+
+    return false;
+}
+
+function opportunityFieldLabel(el) {
+    const root = el.closest('.form-field')
+        || el.closest('[data-product-row]')
+        || el.closest('label')
+        || el;
+    const label = root.querySelector('.form-label');
+    if (label) {
+        return String(label.innerText || '').replace(/\*/g, '').replace(/\s+/g, ' ').trim();
+    }
+    if (el.closest('[data-product-row]')) {
+        return '專案產品／U數';
+    }
+    return '';
+}
+
 function validateOpportunityForm(form) {
-    let valid = true;
+    const missing = [];
     form.querySelectorAll('.form-error').forEach((el) => el.classList.remove('form-error'));
 
+    const addMissing = (el) => {
+        const label = opportunityFieldLabel(el);
+        if (label && !missing.includes(label)) {
+            missing.push(label);
+        }
+    };
+
     form.querySelectorAll('input[required], textarea[required]').forEach((field) => {
-        if (field.classList.contains('is-readonly')) {
+        if (field.classList.contains('is-readonly') || field.type === 'hidden' || isOpportunityFieldHidden(field)) {
             return;
         }
 
         if (!String(field.value || '').trim()) {
             field.classList.add('form-error');
-            valid = false;
+            addMissing(field);
         }
     });
 
     form.querySelectorAll('[data-form-select][data-required]').forEach((select) => {
+        if (isOpportunityFieldHidden(select) || select.closest('[data-create-review-edit]')) {
+            return;
+        }
+
         const hidden = select.querySelector('[data-form-select-value]');
         const trigger = select.querySelector('[data-form-select-trigger]');
         if (hidden && !String(hidden.value || '').trim()) {
             if (trigger) {
                 trigger.classList.add('form-error');
             }
-            valid = false;
+            addMissing(select);
         }
     });
 
-    return valid;
+    form._opportunityMissing = missing;
+    return missing.length === 0;
 }
 
 function focusFirstOpportunityError(form) {
-    const firstError = form.querySelector('.form-error');
+    const firstError = [...form.querySelectorAll('.form-error')].find((el) => !isOpportunityFieldHidden(el));
     if (!firstError) {
         return;
     }
@@ -1085,8 +1909,8 @@ function formDataToRecord(formData, options = {}) {
         booking_code: options.booking_code || id,
         dealer: options.dealer || 'tw',
         protection: options.protection || '-',
-        created_by: options.created_by || actor.partnerId || '',
-        oem_sales_id: options.oem_sales_id || defaultOemSalesIdForActor(actor) || '',
+        created_by: options.created_by || previewActorKey(actor),
+        oem_sales_id: options.oem_sales_id !== undefined ? options.oem_sales_id : defaultOemSalesIdForActor(actor),
         review: options.review !== undefined ? options.review : null,
         form: formData,
         local: true,
@@ -1109,7 +1933,7 @@ function catalogFormFallback(record) {
         customer_relation: '',
         competitors: record?.requirement || '',
         products: productLine.length ? productLine : [''],
-        units: productLine.map(() => '0-499'),
+        units: productLine.map(() => '50-300U'),
         attachment: record?.attachment || null,
         fields: {
             oem_sales: '',
@@ -1191,14 +2015,20 @@ function positionRowMoreMenu(trigger, menu) {
     menu.style.top = `${Math.round(top)}px`;
 }
 
-function getRowMoreActions(status) {
+function canCloseOpportunity() {
+    return typeof app().roleCan === 'function' && app().roleCan('opportunity.close');
+}
+
+function getRowMoreActions(row) {
+    const record = row?.dataset?.oppId ? getOpportunityById(row.dataset.oppId) : null;
+    const status = record ? getBaseOpportunityStatus(record) : (row?.dataset?.status || '');
     const canCreate = typeof app().roleCan === 'function' ? app().roleCan('opportunity.create') : false;
     const canActions = typeof app().roleCan === 'function' ? app().roleCan('opportunity.actions') : false;
-    // 續期／取消：有建立權限的一般使用者也可；結案：僅總管理者 + 已到期
+    // 續期／取消：有建立權限的一般使用者也可；結案：僅總管理者可見
     const canManageOwn = canCreate || canActions;
+    const canClose = canCloseOpportunity();
 
-    // 四個動作固定顯示；不可用時 gray 禁用（進入詳情／編輯由列上鉛筆負責）
-    return [
+    const actions = [
         {
             action: 'delete-draft',
             label: '刪除',
@@ -1210,26 +2040,34 @@ function getRowMoreActions(status) {
             action: 'renew',
             label: '申請續期',
             icon: 'refresh-cw',
-            enabled: (status === 'approved' || status === 'expiring') && canManageOwn,
+            enabled: canApplyRenewal(record) && canManageOwn,
         },
-        {
+    ];
+
+    if (canClose) {
+        actions.push({
             action: 'close',
             label: '結案',
             icon: 'circle-check',
-            enabled: status === 'expired' && canActions,
-        },
-        {
-            action: 'cancel',
-            label: '取消商機',
-            icon: 'ban',
-            danger: true,
-            enabled: ['approved', 'expiring', 'reviewing', 'rejected'].includes(status) && canManageOwn,
-        },
-    ];
+            enabled: status === 'expired',
+        });
+    }
+
+    actions.push({
+        action: 'cancel',
+        label: '取消商機',
+        icon: 'ban',
+        danger: true,
+        enabled: ['approved', 'expiring', 'reviewing', 'rejected'].includes(status)
+            && !isPendingRenewal(record)
+            && canManageOwn,
+    });
+
+    return actions;
 }
 
-function buildRowMoreMenuHtml(status) {
-    return getRowMoreActions(status).map((item) => {
+function buildRowMoreMenuHtml(row) {
+    return getRowMoreActions(row).map((item) => {
         const disabled = !item.enabled;
         return `
         <button
@@ -1299,14 +2137,14 @@ async function handleRowMoreAction(row, action) {
     }
 
     if (action === 'close') {
-        const canClose = typeof app().roleCan === 'function' && app().roleCan('opportunity.actions');
+        const canClose = canCloseOpportunity();
         if (!canClose || row.dataset.status !== 'expired') {
             showAppToast('僅總管理者可對已到期商機結案', 'error');
             return;
         }
         const ok = await showAppConfirm({
             title: '結案確認',
-            message: `確定將商機 ${id} 結案？結案後將不再保留保護期。`,
+            message: `確定將商機 ${id} 結案？結案後將不再保留保護到期日。`,
             confirmLabel: '確認結案',
             cancelLabel: '取消',
         });
@@ -1327,7 +2165,7 @@ async function handleRowMoreAction(row, action) {
             protection: '-',
         });
         syncOpportunityListUi();
-        showAppToast('已結案，不再保留保護期', 'success');
+        showAppToast('已結案，不再保留保護到期日', 'success');
         return;
     }
 
@@ -1395,7 +2233,7 @@ function bindRowMore(wrap) {
         }
 
         const row = wrap.closest('[data-opp-row]');
-        menu.innerHTML = buildRowMoreMenuHtml(row?.dataset.status || '');
+        menu.innerHTML = buildRowMoreMenuHtml(row);
         document.body.appendChild(menu);
         menu.hidden = false;
         menu.classList.add('is-open');
@@ -1428,7 +2266,9 @@ function bindAllRowMoreMenus(scope = document) {
 
 function updateRowActions(row) {
     const id = row.dataset.oppId;
-    const status = row.dataset.status;
+    const record = getOpportunityById(id);
+    const status = record ? getBaseOpportunityStatus(record) : row.dataset.status;
+    const displayStatus = record ? getDisplayStatus(record) : status;
     const meta = getListMeta();
     const actions = row.querySelector('[data-opp-actions]');
     if (!actions || !id) {
@@ -1462,21 +2302,28 @@ function updateRowActions(row) {
         editBtn.title = '繼續編輯暫存檔';
         editBtn.hidden = !canCreate;
         editBtn.classList.toggle('is-role-hidden', !canCreate);
+    } else if (isRejectedRenewal(record)) {
+        // 續期退回：先進入同一商機內容頁，再從「續期申請內容」編輯進續期補件
+        editBtn.href = reviewUrl;
+        editBtn.removeAttribute('data-requires');
+        editBtn.setAttribute('aria-label', `檢視 ${id}`);
+        editBtn.title = '檢視商機／續期補件';
+        editBtn.hidden = false;
+        editBtn.classList.remove('is-role-hidden');
     } else if (status === 'rejected') {
-        const record = getOpportunityById(id);
-        editBtn.href = isRejectedRenewal(record)
-            ? renewalPageUrl(id, meta)
-            : `${createUrl}?id=${encodeURIComponent(id)}`;
+        editBtn.href = `${createUrl}?id=${encodeURIComponent(id)}`;
         editBtn.removeAttribute('data-requires');
         editBtn.setAttribute('aria-label', `補件編輯 ${id}`);
-        editBtn.title = isRejectedRenewal(record) ? '補件編輯續期申請' : '補件編輯';
+        editBtn.title = '補件編輯';
         editBtn.hidden = !canCreate;
         editBtn.classList.toggle('is-role-hidden', !canCreate);
     } else {
         editBtn.href = reviewUrl;
         editBtn.removeAttribute('data-requires');
         editBtn.setAttribute('aria-label', `編輯 ${id}`);
-        editBtn.title = status === 'reviewing' && canReview ? '檢視／審核商機' : '編輯商機';
+        editBtn.title = isPendingRenewal(record) && canReview
+            ? '檢視／審核續期'
+            : (status === 'reviewing' && canReview ? '檢視／審核商機' : '編輯商機');
         editBtn.hidden = false;
         editBtn.classList.remove('is-role-hidden');
     }
@@ -1498,38 +2345,13 @@ function updateRowPrimaryAction(row) {
 
 function setRowStatusUi(row, status, label) {
     row.dataset.status = status;
-    const select = row.querySelector('[data-status-select]');
-    const trigger = select?.querySelector('[data-status-trigger]');
-    const labelEl = select?.querySelector('[data-status-label]');
-    const iconEl = select?.querySelector('[data-status-icon]');
-    const icons = getStatusIcons();
-
-    if (trigger) {
-        trigger.className = `status-trigger status-${status}`;
+    const pill = row.querySelector('[data-opp-status]');
+    if (pill) {
+        pill.className = `status-pill status-${status}`;
+        // 以 status 對應文案為準，避免 store 裡殘留舊的 statusLabel
+        pill.textContent = getStatusLabel(status) || label || status;
     }
-    if (labelEl) {
-        labelEl.textContent = label || getStatusLabel(status);
-    }
-    if (iconEl) {
-        const nextIcon = document.createElement('i');
-        nextIcon.setAttribute('data-lucide', icons[status] || 'circle');
-        nextIcon.className = 'status-trigger-icon';
-        nextIcon.setAttribute('data-status-icon', '');
-        iconEl.replaceWith(nextIcon);
-    }
-
-    if (select?.querySelector('[data-status-menu]')) {
-        select.querySelectorAll('[data-status-option]').forEach((option) => {
-            const selected = option.dataset.value === status;
-            option.classList.toggle('is-selected', selected);
-            option.setAttribute('aria-selected', selected ? 'true' : 'false');
-        });
-    }
-
     updateRowPrimaryAction(row);
-    if (typeof app().refreshIcons === 'function') {
-        app().refreshIcons(row);
-    }
 }
 
 function persistOpportunityRowStatus(row, status, label) {
@@ -1590,44 +2412,38 @@ function ensureRowMoreShell(row) {
 
 function buildOpportunityListRow(record) {
     const meta = getListMeta();
-    const icons = getStatusIcons();
-    const status = record.status || 'reviewing';
-    const label = record.statusLabel || getStatusLabel(status);
+    const status = getDisplayStatus(record) || record.status || 'reviewing';
+    const label = getStatusLabel(status);
     const row = document.createElement('div');
-    row.className = 'list-row py-2';
+    row.className = 'list-row opp-list-cols py-2';
     row.dataset.oppRow = '';
     row.dataset.oppId = record.id;
     row.dataset.dealer = record.dealer || 'tw';
     row.dataset.amount = String(record.amountValue || 0);
     row.dataset.status = status;
-    row.dataset.search = opportunitySearchText(record.id, record.customer_company, record.dealer);
+    row.dataset.search = opportunitySearchText(record.id, record.customer_company, record.dealer, opportunitySalesName(record), opportunityReporterLabel(record));
     row.dataset.createdBy = record.created_by || '';
     row.dataset.oemSalesId = record.oem_sales_id || '';
     row.dataset.localRecord = 'true';
+    setRowQueryMeta(row, record);
 
     const reviewUrl = `${meta.reviewUrl || '/opportunities/review/'}?id=${encodeURIComponent(record.id)}`;
-    const sampleMenu = document.querySelector('[data-opp-row] [data-status-menu]');
-    const menuHtml = sampleMenu ? sampleMenu.outerHTML : '';
 
     row.innerHTML = `
-        <div class="w-36 text-eb2 text-gray5 uppercase">${record.id}</div>
-        <div class="flex-1 text-cb3 text-gray5" data-opp-customer></div>
-        <div class="w-32 shrink-0 text-cb3 text-gray5" data-opp-dealer>${getDealerLabel(record.dealer)}</div>
-        <div class="w-40 shrink-0 flex items-center">
-            <div class="status-select" data-status-select>
-                <button type="button" class="status-trigger status-${status}" data-status-trigger aria-haspopup="listbox" aria-expanded="false">
-                    <span class="status-trigger-main">
-                        <i data-lucide="${icons[status] || 'circle'}" class="status-trigger-icon" data-status-icon></i>
-                        <span class="truncate" data-status-label>${label}</span>
-                    </span>
-                    <i data-lucide="chevron-down" class="status-trigger-caret"></i>
-                </button>
-                ${menuHtml}
-            </div>
+        <div class="min-w-0 truncate text-eb2 text-gray5 uppercase">${record.id}</div>
+        <div class="min-w-0 truncate text-cb3 text-gray5" data-opp-customer></div>
+        <div class="min-w-0" data-opp-reporter>
+            <p class="truncate text-cb3 text-gray5" data-opp-reporter-name>—</p>
+            <p class="truncate text-[12px] font-medium tracking-[0.04em] text-gray3" data-opp-reporter-identity hidden></p>
         </div>
-        <div class="w-28 shrink-0 text-eb3 text-gray5 uppercase" data-opp-protection>${protectionForStatus(status, record.protection)}</div>
-        <div class="w-32 shrink-0 inline-flex items-center justify-end gap-1" data-opp-actions>
-            <a href="${status === 'rejected' ? (isRejectedRenewal(record) ? renewalPageUrl(record.id, meta) : `${meta.createUrl || '/opportunities/create/'}?id=${encodeURIComponent(record.id)}`) : reviewUrl}" class="icon-action" data-opp-edit-action aria-label="編輯 ${record.id}" title="${status === 'reviewing' ? '檢視／審核商機' : '編輯商機'}">
+        <div class="min-w-0 truncate text-cb3 text-gray5" data-opp-sales>—</div>
+        <div class="min-w-0">
+            <span class="status-pill" data-opp-status></span>
+        </div>
+        <div class="min-w-0 whitespace-nowrap text-eb3 text-gray5 uppercase" data-opp-protection>${protectionForStatus(getBaseOpportunityStatus(record), record.protection)}</div>
+        <div class="min-w-0 whitespace-nowrap text-eb3 text-gray5" data-opp-created>—</div>
+        <div class="min-w-0 inline-flex items-center justify-end gap-1" data-opp-actions>
+            <a href="${getBaseOpportunityStatus(record) === 'rejected' && !isRejectedRenewal(record) ? `${meta.createUrl || '/opportunities/create/'}?id=${encodeURIComponent(record.id)}` : reviewUrl}" class="icon-action" data-opp-edit-action aria-label="編輯 ${record.id}" title="${isRejectedRenewal(record) ? '檢視商機／續期補件' : (isPendingRenewal(record) ? '檢視／審核續期' : (status === 'reviewing' ? '檢視／審核商機' : (status === 'rejected' ? '補件編輯' : '編輯商機')))}">
                 <i data-lucide="square-pen" class="w-4 h-4"></i>
             </a>
             <div class="row-more" data-row-more>
@@ -1643,61 +2459,10 @@ function buildOpportunityListRow(record) {
     if (customerEl) {
         customerEl.textContent = record.customer_company || record.id;
     }
-
-    const select = row.querySelector('[data-status-select]');
-    const menu = row.querySelector('[data-status-menu]');
-    const trigger = row.querySelector('[data-status-trigger]');
-    if (select && menu && trigger && !select.dataset.statusId) {
-        // Bind like initial status selects
-        const index = `local-${record.id}`;
-        select.dataset.statusId = index;
-        menu.dataset.owner = index;
-        menu._statusOwner = select;
-        select._statusMenu = menu;
-        menu.hidden = true;
-        menu.classList.remove('is-open');
-
-        trigger.addEventListener('click', (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            if (select.classList.contains('is-readonly')) {
-                return;
-            }
-            const willOpen = !select.classList.contains('is-open');
-            if (typeof app().closeStatusSelects === 'function') {
-                app().closeStatusSelects();
-            }
-            closeRowMoreMenus();
-            if (!willOpen) {
-                return;
-            }
-            document.body.appendChild(menu);
-            menu.hidden = false;
-            menu.classList.add('is-open');
-            select.classList.add('is-open');
-            trigger.setAttribute('aria-expanded', 'true');
-            const rect = trigger.getBoundingClientRect();
-            menu.style.position = 'fixed';
-            menu.style.top = `${Math.round(rect.bottom + 6)}px`;
-            menu.style.left = `${Math.round(rect.left)}px`;
-            if (typeof app().refreshIcons === 'function') {
-                app().refreshIcons(menu);
-            }
-        });
-
-        menu.addEventListener('click', (event) => event.stopPropagation());
-        menu.querySelectorAll('[data-status-option]').forEach((option) => {
-            option.addEventListener('click', (event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                setRowStatusUi(row, option.dataset.value, option.dataset.label);
-                persistOpportunityRowStatus(row, option.dataset.value, option.dataset.label);
-                if (typeof app().closeStatusSelects === 'function') {
-                    app().closeStatusSelects();
-                }
-            });
-        });
-    }
+    setRowSalesUi(row, record);
+    setRowReporterUi(row, record);
+    setRowCreatedUi(row, record);
+    setRowStatusUi(row, status, label);
 
     return row;
 }
@@ -1707,34 +2472,32 @@ function buildDraftOpportunityRow(draft) {
     const createUrl = `${meta.createUrl || '/opportunities/create/'}?draft=${encodeURIComponent(draft.id)}`;
     const label = draftListLabel(draft);
     const row = document.createElement('div');
-    row.className = 'list-row py-2';
+    row.className = 'list-row opp-list-cols py-2';
     row.dataset.oppRow = '';
     row.dataset.oppId = draft.id;
     row.dataset.dealer = draft.dealer || 'tw';
     row.dataset.amount = '0';
     row.dataset.status = 'draft';
-    row.dataset.search = opportunitySearchText(draft.id, label, draft.dealer || 'tw');
+    row.dataset.search = opportunitySearchText(draft.id, label, draft.dealer || 'tw', opportunitySalesName(draft), opportunityReporterLabel(draft));
     row.dataset.createdBy = draft.created_by || '';
     row.dataset.oemSalesId = draft.oem_sales_id || '';
     row.dataset.localDraft = 'true';
+    setRowQueryMeta(row, draft);
 
     row.innerHTML = `
-        <div class="w-36 text-eb2 text-gray5 uppercase">${draft.id}</div>
-        <div class="flex-1 text-cb3 text-gray5" data-opp-customer></div>
-        <div class="w-32 shrink-0 text-cb3 text-gray5" data-opp-dealer>${getDealerLabel('tw')}</div>
-        <div class="w-40 shrink-0 flex items-center">
-            <div class="status-select is-readonly" data-status-select>
-                <button type="button" class="status-trigger status-draft" data-status-trigger aria-haspopup="listbox" aria-expanded="false" aria-disabled="true">
-                    <span class="status-trigger-main">
-                        <i data-lucide="file-pen-line" class="status-trigger-icon" data-status-icon></i>
-                        <span class="truncate" data-status-label>暫存</span>
-                    </span>
-                    <i data-lucide="chevron-down" class="status-trigger-caret"></i>
-                </button>
-            </div>
+        <div class="min-w-0 truncate text-eb2 text-gray5 uppercase">${draft.id}</div>
+        <div class="min-w-0 truncate text-cb3 text-gray5" data-opp-customer></div>
+        <div class="min-w-0" data-opp-reporter>
+            <p class="truncate text-cb3 text-gray5" data-opp-reporter-name>—</p>
+            <p class="truncate text-[12px] font-medium tracking-[0.04em] text-gray3" data-opp-reporter-identity hidden></p>
         </div>
-        <div class="w-28 shrink-0 text-eb3 text-gray5 uppercase" data-opp-protection>-</div>
-        <div class="w-32 shrink-0 inline-flex items-center justify-end gap-1" data-opp-actions>
+        <div class="min-w-0 truncate text-cb3 text-gray5" data-opp-sales>—</div>
+        <div class="min-w-0">
+            <span class="status-pill status-draft" data-opp-status>暫存</span>
+        </div>
+        <div class="min-w-0 whitespace-nowrap text-eb3 text-gray5 uppercase" data-opp-protection>-</div>
+        <div class="min-w-0 whitespace-nowrap text-eb3 text-gray5" data-opp-created>—</div>
+        <div class="min-w-0 inline-flex items-center justify-end gap-1" data-opp-actions>
             <a href="${createUrl}" class="icon-action" data-requires="opportunity.create" data-opp-edit-action aria-label="繼續編輯 ${draft.id}" title="繼續編輯暫存檔">
                 <i data-lucide="square-pen" class="w-4 h-4"></i>
             </a>
@@ -1751,6 +2514,9 @@ function buildDraftOpportunityRow(draft) {
     if (customerEl) {
         customerEl.textContent = label;
     }
+    setRowSalesUi(row, draft);
+    setRowReporterUi(row, draft);
+    setRowCreatedUi(row, draft);
     return row;
 }
 
@@ -1785,12 +2551,17 @@ function syncOpportunityListUi() {
             }
             row.dataset.amount = String(record.amountValue || 0);
             setRowDealerUi(row, record.dealer || row.dataset.dealer || 'tw');
-            row.dataset.search = opportunitySearchText(id, record.customer_company, row.dataset.dealer);
+            setRowReporterUi(row, record);
+            row.dataset.search = opportunitySearchText(id, record.customer_company, row.dataset.dealer, opportunitySalesName(record), opportunityReporterLabel(record));
             const protection = row.querySelector('[data-opp-protection]');
             if (protection) {
-                protection.textContent = protectionForStatus(record.status || row.dataset.status, record.protection);
+                protection.textContent = protectionForStatus(getBaseOpportunityStatus(record), record.protection);
             }
-            setRowStatusUi(row, record.status || row.dataset.status, record.statusLabel);
+            const displayStatus = getDisplayStatus(record);
+            setRowStatusUi(row, displayStatus, getStatusLabel(displayStatus));
+            setRowSalesUi(row, record);
+            setRowCreatedUi(row, record, seed[id]);
+            setRowQueryMeta(row, record, seed[id]);
         }
 
         if (row.dataset.status === 'draft' && drafts[id]) {
@@ -1799,7 +2570,11 @@ function syncOpportunityListUi() {
             if (customerEl) {
                 customerEl.textContent = label;
             }
-            row.dataset.search = opportunitySearchText(id, label, row.dataset.dealer || 'tw');
+            row.dataset.search = opportunitySearchText(id, label, row.dataset.dealer || 'tw', opportunitySalesName(drafts[id]), opportunityReporterLabel(drafts[id]));
+            setRowSalesUi(row, drafts[id]);
+            setRowReporterUi(row, drafts[id]);
+            setRowCreatedUi(row, drafts[id]);
+            setRowQueryMeta(row, drafts[id]);
         }
 
         ensureRowMoreShell(row);
@@ -1845,6 +2620,7 @@ function syncOpportunityListUi() {
         }
     });
 
+    sortOpportunityListRows(list);
     bindAllRowMoreMenus(list);
     bindOpportunityExport();
     syncOpportunityVisibility();
@@ -1856,11 +2632,6 @@ function syncOpportunityListUi() {
             const allowed = app().roleCan(element.dataset.requires);
             element.hidden = !allowed;
             element.classList.toggle('is-role-hidden', !allowed);
-        });
-        document.querySelectorAll('[data-status-select]').forEach((select) => {
-            const canEdit = app().roleCan('opportunity.status.edit');
-            const isDraft = select.closest('[data-opp-row]')?.dataset.status === 'draft';
-            select.classList.toggle('is-readonly', !canEdit || isDraft);
         });
     }
 
@@ -1893,9 +2664,9 @@ function renderReviewProductRows(formData) {
     const units = Array.isArray(formData?.units) ? formData.units : [];
 
     host.innerHTML = products.map((product, index) => `
-        <div class="self-stretch inline-flex items-center gap-3" data-review-product-row>
-            <input type="text" class="form-input flex-1 min-w-0 is-readonly" data-review-product value="${String(product || '—').replace(/"/g, '&quot;')}" readonly tabindex="-1">
-            <input type="text" class="form-input w-48 shrink-0 is-readonly" data-review-units value="${String(units[index] || '—').replace(/"/g, '&quot;')}" readonly tabindex="-1">
+        <div class="self-stretch flex flex-col md:flex-row md:items-center gap-3" data-review-product-row>
+            <input type="text" class="form-input w-full min-w-0 md:flex-1 is-readonly" data-review-product value="${String(product || '—').replace(/"/g, '&quot;')}" readonly tabindex="-1">
+            <input type="text" class="form-input w-full md:w-48 shrink-0 is-readonly" data-review-units value="${String(units[index] || '—').replace(/"/g, '&quot;')}" readonly tabindex="-1">
         </div>
     `).join('');
 }
@@ -1931,8 +2702,9 @@ function renderReviewPage(record) {
 
     const pill = page.querySelector('[data-review-status-pill]');
     if (pill) {
-        pill.className = `status-pill status-${record.status}`;
-        pill.textContent = record.statusLabel || getStatusLabel(record.status);
+        const displayStatus = getDisplayStatus(record);
+        pill.className = `status-pill status-${displayStatus}`;
+        pill.textContent = getStatusLabel(displayStatus) || record.statusLabel || displayStatus;
     }
 
     const renewalBlock = page.querySelector('[data-review-renewal]');
@@ -1944,7 +2716,22 @@ function renderReviewPage(record) {
             setText('[data-review-renewal-old]', renewal.oldProtection || record.protection || '—');
             setText('[data-review-renewal-new]', renewal.newProtection || '—');
             setText('[data-review-renewal-reason]', renewal.reason || '—');
-            setText('[data-review-renewal-file]', renewal.attachment?.name || '未上傳');
+            renderAttachmentLinks(
+                page.querySelector('[data-review-renewal-file]'),
+                renewal.attachments || renewal.attachment,
+                '未上傳',
+            );
+        }
+
+        const renewalEdit = renewalBlock.querySelector('[data-review-renewal-edit]');
+        if (renewalEdit) {
+            const canResubmitRenewal = isRejectedRenewal(record)
+                && typeof app().roleCan === 'function'
+                && app().roleCan('opportunity.create');
+            renewalEdit.hidden = !canResubmitRenewal;
+            if (canResubmitRenewal) {
+                renewalEdit.href = `${page.dataset.renewUrl || '/opportunities/renew/'}?id=${encodeURIComponent(record.id)}`;
+            }
         }
     }
 
@@ -1959,7 +2746,13 @@ function renderReviewPage(record) {
     }
 
     setReviewField('source', sourceLabels[formData.source] || formData.source || '—');
-    setReviewField('oem_sales', fields.oem_sales || formData.oem_sales || '—');
+    setReviewField('oem_sales', (() => {
+        const assigned = opportunitySalesName(record);
+        if (assigned && assigned !== UNASSIGNED_SALES_LABEL) {
+            return assigned;
+        }
+        return opportunityRequestedSalesName(record) || assigned || '—';
+    })());
     setReviewField(
         'reporter_dealer',
         `${page.dataset.partnerCompany || '經銷商'}／${page.dataset.partnerContact || ''}`
@@ -2006,7 +2799,14 @@ function renderReviewPage(record) {
             attachmentMeta.textContent = attachment.sizeLabel || formatFileSize(attachment.size) || attachment.type || '已上傳檔案';
         }
         if (attachmentLink) {
-            attachmentLink.href = attachment.url || '#';
+            if (hasOpenableAttachmentUrl(attachment.url)) {
+                attachmentLink.href = attachment.url;
+                attachmentLink.target = '_blank';
+                attachmentLink.rel = 'noopener noreferrer';
+            } else {
+                attachmentLink.href = '#';
+                attachmentLink.removeAttribute('target');
+            }
         }
     } else {
         if (attachmentWrap) {
@@ -2026,11 +2826,19 @@ function renderReviewPage(record) {
     const cancelEditBtn = page.querySelector('[data-review-cancel-edit]');
     const cancelLink = page.querySelector('[data-review-cancel]');
     const canReview = typeof app().roleCan === 'function' && app().roleCan('opportunity.review');
-    const isReviewing = record.status === 'reviewing';
-    const hasReview = Boolean(record.review);
-    const allowAdminEdit = canReview && !['draft', 'completed'].includes(record.status);
+    const isReviewing = isInReviewQueue(record);
+    const displayStatus = getDisplayStatus(record);
+    const renewalReview = record.renewal?.review || null;
+    const hasReview = isRejectedRenewal(record) ? Boolean(renewalReview || record.review) : Boolean(record.review);
+    // 續期退回補件：等經銷商補件再送，總管理者不可再改審核結果
+    if (isRejectedRenewal(record)) {
+        delete page.dataset.reviewEditing;
+    }
+    const allowAdminEdit = canReview
+        && !isRejectedRenewal(record)
+        && !['draft', 'completed'].includes(getBaseOpportunityStatus(record));
     const isEditing = allowAdminEdit && page.dataset.reviewEditing === '1' && !isReviewing;
-    // 審核中：空白表單；已審核：結果卡；按「修改審核」後才展開表單
+    // 審核中／續期審核中：空白表單；已審核：結果卡；按「修改審核」後才展開表單
     const showForm = allowAdminEdit && (isReviewing || isEditing);
     const showSummary = !showForm;
     const dash = (value) => {
@@ -2048,36 +2856,55 @@ function renderReviewPage(record) {
 
     if (showSummary) {
         if (isReviewing) {
-            setText('[data-review-summary-title]', record.statusLabel || getStatusLabel(record.status) || '審核中');
+            setText('[data-review-summary-title]', getStatusLabel(displayStatus) || '審核中');
             setText('[data-review-done-result]', '-');
-            setText('[data-review-done-status]', dash(record.statusLabel || getStatusLabel(record.status)));
+            setText('[data-review-done-status]', dash(getStatusLabel(displayStatus)));
             setText('[data-review-done-sales]', '-');
             setText('[data-review-done-note]', '-');
+        } else if (isRejectedRenewal(record)) {
+            setText('[data-review-summary-title]', getStatusLabel('renewal_rejected'));
+            setText('[data-review-done-result]', dash(renewalReview?.resultLabel || record.review?.resultLabel));
+            setText('[data-review-done-status]', dash(getStatusLabel('renewal_rejected')));
+            setText('[data-review-done-sales]', dash(renewalReview?.salesLabel || record.review?.salesLabel));
+            setText('[data-review-done-note]', dash(renewalReview?.note || record.review?.note));
         } else {
-            setText('[data-review-summary-title]', hasReview ? '已完成審核' : (record.statusLabel || getStatusLabel(record.status) || '-'));
+            setText('[data-review-summary-title]', hasReview ? '已完成審核' : (getStatusLabel(displayStatus) || '-'));
             setText('[data-review-done-result]', dash(record.review?.resultLabel));
-            setText('[data-review-done-status]', dash(record.statusLabel || getStatusLabel(record.status)));
+            setText('[data-review-done-status]', dash(getStatusLabel(displayStatus)));
             setText('[data-review-done-sales]', dash(record.review?.salesLabel));
             setText('[data-review-done-note]', dash(record.review?.note));
         }
     }
 
+    // 續期審核用專用下拉；一般商機審核用原本 8 項
+    page.querySelectorAll('[data-review-result-scope="opportunity"]').forEach((el) => {
+        el.hidden = isPendingRenewal(record);
+    });
+    page.querySelectorAll('[data-review-result-scope="renewal"]').forEach((el) => {
+        el.hidden = !isPendingRenewal(record);
+    });
+
     if (hint) {
         hint.hidden = !showForm;
         if (showForm) {
             if (isPendingRenewal(record)) {
-                hint.textContent = '此為續期申請，僅總管理者可操作。審核通過後保護期才會延長 90 天。';
+                hint.textContent = '此為續期申請，僅總管理者可操作。審核通過需確認／指派承接業務，保護到期日才會延長 90 天。';
             } else if (isEditing) {
                 hint.textContent = '修改後送出，會依新的審核結果更新案件狀態。';
             } else {
-                hint.textContent = '僅總管理者可操作。選擇審核結果後會更新商機狀態；指派原廠業務後，該筆會出現在對應業務帳號。';
+                hint.textContent = '僅總管理者可操作。審核通過需指派承接業務；指派後該筆會出現在承接業務與其主管的帳號。';
             }
         }
     }
 
-    page.querySelectorAll('[data-review-result-field], [data-review-sales-field], [data-review-note-field]').forEach((el) => {
+    page.querySelectorAll('[data-review-result-field], [data-review-note-field]').forEach((el) => {
         el.hidden = !showForm;
     });
+
+    const salesField = page.querySelector('[data-review-sales-field]');
+    if (salesField) {
+        salesField.hidden = !showForm;
+    }
 
     if (showForm && form) {
         const resultSelect = form.querySelector('[name="review_result"]')?.closest('[data-form-select]');
@@ -2088,18 +2915,20 @@ function renderReviewPage(record) {
             if (record.review?.result) {
                 setFormSelectByValue(resultSelect, record.review.result);
             }
-            if (record.review?.sales) {
-                setFormSelectByValue(salesSelect, record.review.sales);
-            }
             if (note) {
                 note.value = record.review?.note || '';
             }
         } else {
             clearFormSelect(resultSelect, '請選擇審核結果');
-            clearFormSelect(salesSelect, '請選擇派發業務');
             if (note) {
                 note.value = '';
             }
+        }
+
+        if (record.oem_sales_id) {
+            setFormSelectByValue(salesSelect, record.oem_sales_id);
+        } else {
+            clearFormSelect(salesSelect, '請選擇承接業務');
         }
     }
 
@@ -2125,7 +2954,7 @@ function renderReviewPage(record) {
 
     if (resubmitLink) {
         // 總管理者用「修改審核」；一般使用者才顯示「前往補件編輯」
-        const canResubmit = record.status === 'rejected'
+        const canResubmit = (record.status === 'rejected' || isRejectedRenewal(record))
             && typeof app().roleCan === 'function'
             && app().roleCan('opportunity.create')
             && !canReview
@@ -2218,7 +3047,7 @@ function initReviewPage() {
     if (
         getQueryParam('edit') === '1'
         && record.review
-        && record.status !== 'reviewing'
+        && !isReviewQueueStatus(record.status)
         && !['draft', 'completed'].includes(record.status)
         && typeof app().roleCan === 'function'
         && app().roleCan('opportunity.review')
@@ -2253,13 +3082,18 @@ function initReviewPage() {
             return;
         }
 
-        if (['draft', 'completed'].includes(current.status)) {
+        if (['draft', 'completed'].includes(getBaseOpportunityStatus(current))) {
             showAppToast('此商機狀態目前無法變更審核結果', 'error');
             return;
         }
 
-        // 已審核案件需先按「修改審核」才可送出
-        if (current.status !== 'reviewing' && page.dataset.reviewEditing !== '1') {
+        if (isRejectedRenewal(current)) {
+            showAppToast('續期退回補件中，請待經銷商補件再送後再審核', 'error');
+            return;
+        }
+
+        // 已審核案件需先按「修改審核」才可送出（續期待審可視為審核佇列）
+        if (!isInReviewQueue(current) && page.dataset.reviewEditing !== '1') {
             showAppToast('請先點選修改審核', 'error');
             return;
         }
@@ -2273,64 +3107,106 @@ function initReviewPage() {
         const resultValue = resultSelect?.querySelector('[data-form-select-value]')?.value || '';
         const salesValue = salesSelect?.querySelector('[data-form-select-value]')?.value || '';
 
+        const resultOption = (resultSelect?._formMenu || resultSelect?.querySelector('[data-form-select-menu]'))
+            ?.querySelector(`[data-form-select-option][data-value="${CSS.escape(resultValue)}"]`);
+        const salesOption = salesValue
+            ? (salesSelect?._formMenu || salesSelect?.querySelector('[data-form-select-menu]'))
+                ?.querySelector(`[data-form-select-option][data-value="${CSS.escape(salesValue)}"]`)
+            : null;
+
+        const pendingRenewal = isPendingRenewal(current) ? current.renewal : null;
+        const renewalOutcome = resultOption?.dataset.renewalStatus || '';
+        const requiresSales = pendingRenewal
+            ? renewalOutcome === 'approved'
+            : (resultOption?.dataset.status || 'approved') === 'approved';
         let valid = true;
         if (!resultValue) {
             resultSelect?.querySelector('[data-form-select-trigger]')?.classList.add('form-error');
             valid = false;
         }
-        if (!salesValue) {
+        if (!salesValue && requiresSales) {
             salesSelect?.querySelector('[data-form-select-trigger]')?.classList.add('form-error');
             valid = false;
         }
 
         if (!valid) {
-            showAppToast('請完成必填的審核欄位', 'error');
+            showAppToast(
+                resultValue ? '審核通過需指派承接業務' : '請完成必填的審核欄位',
+                'error'
+            );
             focusFirstOpportunityError(form);
             return;
         }
 
-        const resultOption = (resultSelect?._formMenu || resultSelect?.querySelector('[data-form-select-menu]'))
-            ?.querySelector(`[data-form-select-option][data-value="${CSS.escape(resultValue)}"]`);
-        const salesOption = (salesSelect?._formMenu || salesSelect?.querySelector('[data-form-select-menu]'))
-            ?.querySelector(`[data-form-select-option][data-value="${CSS.escape(salesValue)}"]`);
-
-        const nextStatus = resultOption?.dataset.status || 'approved';
-        const nextStatusLabel = resultOption?.dataset.statusLabel || getStatusLabel(nextStatus);
         const resultLabel = resultOption?.dataset.label || resultValue;
-        const salesLabel = salesOption?.dataset.label || salesValue;
+        const nextSalesId = salesValue || current.oem_sales_id || '';
+        const salesLabel = salesOption?.dataset.label || salesValue || opportunitySalesName(current) || '';
+        const reviewPayload = {
+            result: resultValue,
+            resultLabel,
+            sales: nextSalesId,
+            salesLabel,
+            note: String(note?.value || '').trim(),
+            reviewedAt: formatDateTime(),
+        };
 
-        const pendingRenewal = isPendingRenewal(current) ? current.renewal : null;
+        let nextStatus = getBaseOpportunityStatus(current);
+        let nextStatusLabel = getStatusLabel(nextStatus);
         let nextProtection = current.protection;
         let nextRenewal = current.renewal || null;
+        let nextReview = current.review || null;
 
         if (pendingRenewal) {
-            if (nextStatus === 'approved') {
+            const baseStatus = pendingRenewal.previousStatus || getBaseOpportunityStatus(current) || 'approved';
+            nextProtection = pendingRenewal.oldProtection || current.protection;
+            if (renewalOutcome === 'approved') {
+                nextStatus = resultOption?.dataset.status || 'approved';
+                nextStatusLabel = getStatusLabel(nextStatus);
                 nextProtection = pendingRenewal.newProtection
                     || addDaysIso(RENEWAL_DAYS, parseIsoDate(pendingRenewal.oldProtection || current.protection));
-                nextRenewal = { ...pendingRenewal, status: 'approved' };
+                nextRenewal = {
+                    ...pendingRenewal,
+                    status: 'approved',
+                    review: reviewPayload,
+                };
+            } else if (renewalOutcome === 'rejected') {
+                nextStatus = baseStatus;
+                nextStatusLabel = getStatusLabel(baseStatus);
+                nextRenewal = {
+                    ...pendingRenewal,
+                    status: 'rejected',
+                    review: reviewPayload,
+                };
             } else {
-                nextProtection = pendingRenewal.oldProtection || current.protection;
-                nextRenewal = { ...pendingRenewal, status: nextStatus === 'rejected' ? 'rejected' : 'closed' };
+                // closed／不同意續期：維持原商機狀態，不延長保護
+                nextStatus = baseStatus;
+                nextStatusLabel = getStatusLabel(baseStatus);
+                nextRenewal = {
+                    ...pendingRenewal,
+                    status: renewalOutcome || 'closed',
+                    review: reviewPayload,
+                };
             }
-        } else if (nextStatus === 'approved') {
-            nextProtection = current.protection !== '-' ? current.protection : addDaysIso(RENEWAL_DAYS);
+            // 續期審核不覆寫原本商機審核紀錄
+            nextReview = current.review || null;
+        } else {
+            nextStatus = resultOption?.dataset.status || 'approved';
+            nextStatusLabel = resultOption?.dataset.statusLabel || getStatusLabel(nextStatus);
+            if (nextStatus === 'approved') {
+                nextProtection = current.protection !== '-' ? current.protection : addDaysIso(RENEWAL_DAYS);
+            }
+            nextReview = reviewPayload;
         }
 
-        const wasReviewed = Boolean(current.review) && current.status !== 'reviewing';
+        const wasReviewed = Boolean(current.review) && !isInReviewQueue(current);
         const updated = upsertOpportunity({
             ...current,
             status: nextStatus,
             statusLabel: nextStatusLabel,
             protection: protectionForStatus(nextStatus, nextProtection),
             renewal: nextRenewal,
-            review: {
-                result: resultValue,
-                resultLabel,
-                sales: salesValue,
-                salesLabel,
-                note: String(note?.value || '').trim(),
-                reviewedAt: formatDateTime(),
-            },
+            oem_sales_id: nextSalesId || current.oem_sales_id || '',
+            review: nextReview,
         });
 
         delete page.dataset.reviewEditing;
@@ -2443,8 +3319,9 @@ function showCreateReviewResult(review, status, recordId = '') {
         if (review.result) {
             setFormSelectByValue(resultSelect, review.result);
         }
-        if (review.sales) {
-            setFormSelectByValue(salesSelect, review.sales);
+        const assignedSalesId = getOpportunityById(id)?.oem_sales_id || '';
+        if (assignedSalesId) {
+            setFormSelectByValue(salesSelect, assignedSalesId);
         }
         if (noteInput) {
             noteInput.value = review.note || '';
@@ -2457,16 +3334,21 @@ function showCreateReviewResult(review, status, recordId = '') {
 
     panel.hidden = false;
     if (hint) {
-        hint.hidden = status !== 'rejected';
+        hint.hidden = status !== 'rejected' || showEditReview;
     }
     if (editPanel) {
         editPanel.hidden = true;
     }
     if (asideHint) {
         asideHint.hidden = false;
+        if (status === 'rejected') {
+            asideHint.textContent = showEditReview
+                ? '可查看退回原因，並以「修改審核」更新審核結果。'
+                : '請依審核備註修正資料後再次確認送出，送出後會回到「審核中」。';
+        }
     }
     if (submitBtn) {
-        submitBtn.hidden = false;
+        submitBtn.hidden = showEditReview;
     }
     if (saveDraftBtn) {
         saveDraftBtn.hidden = status === 'rejected';
@@ -2506,24 +3388,26 @@ function applyCreateReviewUpdate(recordId) {
     const resultValue = resultSelect?.querySelector('[data-form-select-value]')?.value || '';
     const salesValue = salesSelect?.querySelector('[data-form-select-value]')?.value || '';
 
+    const resultOption = (resultSelect?._formMenu || resultSelect?.querySelector('[data-form-select-menu]'))
+        ?.querySelector(`[data-form-select-option][data-value="${CSS.escape(resultValue)}"]`);
+    const salesOption = salesValue
+        ? (salesSelect?._formMenu || salesSelect?.querySelector('[data-form-select-menu]'))
+            ?.querySelector(`[data-form-select-option][data-value="${CSS.escape(salesValue)}"]`)
+        : null;
+
     let valid = true;
     if (!resultValue) {
         resultSelect?.querySelector('[data-form-select-trigger]')?.classList.add('form-error');
         valid = false;
     }
-    if (!salesValue) {
+    if (!salesValue && (resultOption?.dataset.status || 'approved') === 'approved') {
         salesSelect?.querySelector('[data-form-select-trigger]')?.classList.add('form-error');
         valid = false;
     }
     if (!valid) {
-        showAppToast('請完成必填的審核欄位', 'error');
+        showAppToast(resultValue ? '審核通過需指派承接業務' : '請完成必填的審核欄位', 'error');
         return;
     }
-
-    const resultOption = (resultSelect?._formMenu || resultSelect?.querySelector('[data-form-select-menu]'))
-        ?.querySelector(`[data-form-select-option][data-value="${CSS.escape(resultValue)}"]`);
-    const salesOption = (salesSelect?._formMenu || salesSelect?.querySelector('[data-form-select-menu]'))
-        ?.querySelector(`[data-form-select-option][data-value="${CSS.escape(salesValue)}"]`);
 
     const nextStatus = resultOption?.dataset.status || 'approved';
     const nextStatusLabel = resultOption?.dataset.statusLabel || getStatusLabel(nextStatus);
@@ -2540,6 +3424,7 @@ function applyCreateReviewUpdate(recordId) {
         status: nextStatus,
         statusLabel: nextStatusLabel,
         protection: protectionForStatus(nextStatus, nextProtection),
+        oem_sales_id: salesValue,
         review: {
             result: resultValue,
             resultLabel,
@@ -2573,6 +3458,7 @@ function initOpportunityForm() {
     const asideHint = document.querySelector('[data-create-aside-hint]');
     const saveDraftBtn = opportunityForm.querySelector('[data-save-draft]');
     const submitLabel = opportunityForm.querySelector('[data-create-submit-label]');
+    const cancelLink = opportunityForm.querySelector('[data-create-cancel]');
 
     function syncTitles(mode, id) {
         if (mode === 'draft') {
@@ -2598,6 +3484,9 @@ function initOpportunityForm() {
             }
             document.querySelector('[data-create-update-review]')?.setAttribute('hidden', '');
             document.querySelector('[data-create-cancel-edit-review]')?.setAttribute('hidden', '');
+            if (cancelLink) {
+                cancelLink.textContent = '取消編輯';
+            }
             return;
         }
 
@@ -2611,14 +3500,23 @@ function initOpportunityForm() {
             if (asideTitle) {
                 asideTitle.textContent = '退回補件';
             }
+            const canReview = typeof app().roleCan === 'function' && app().roleCan('opportunity.review');
             if (asideHint) {
-                asideHint.textContent = '請依審核備註修正資料後再次確認送出，送出後會回到「審核中」。';
+                asideHint.textContent = canReview
+                    ? '可查看退回原因，並以「修改審核」更新審核結果。'
+                    : '請依審核備註修正資料後再次確認送出，送出後會回到「審核中」。';
             }
             if (submitLabel) {
                 submitLabel.textContent = '再次送出';
+                if (canReview) {
+                    submitLabel.hidden = true;
+                }
             }
             if (saveDraftBtn) {
                 saveDraftBtn.hidden = true;
+            }
+            if (cancelLink) {
+                cancelLink.textContent = '取消編輯';
             }
         }
     }
@@ -2637,6 +3535,7 @@ function initOpportunityForm() {
         if (existing) {
             applyOpportunityFormData(opportunityForm, existing);
         }
+        syncOpportunityOemSalesField(opportunityForm, existing ? existing.oem_sales_id || '' : undefined);
         syncTitles('draft', activeDraftId);
     } else if (activeRecordId) {
         const record = getOpportunityById(activeRecordId);
@@ -2660,6 +3559,7 @@ function initOpportunityForm() {
         }
 
         applyOpportunityFormData(opportunityForm, catalogFormFallback(record));
+        syncOpportunityOemSalesField(opportunityForm, record.oem_sales_id || '');
         showCreateReviewResult(record.review, record.status, activeRecordId);
         syncTitles('resubmit', activeRecordId);
 
@@ -2693,7 +3593,10 @@ function initOpportunityForm() {
         }
         document.querySelector('[data-create-update-review]')?.setAttribute('hidden', '');
         document.querySelector('[data-create-cancel-edit-review]')?.setAttribute('hidden', '');
+        syncOpportunityOemSalesField(opportunityForm);
     }
+
+    document.addEventListener('upas:rolechange', () => syncOpportunityOemSalesField(opportunityForm, null));
 
     if (saveDraftBtn) {
         saveDraftBtn.addEventListener('click', () => {
@@ -2708,8 +3611,9 @@ function initOpportunityForm() {
                 id: activeDraftId,
                 status: 'draft',
                 updatedAt: new Date().toISOString(),
-                created_by: existingDraft?.created_by || actor.partnerId || '',
-                oem_sales_id: existingDraft?.oem_sales_id || defaultOemSalesIdForActor(actor) || '',
+                createdAt: existingDraft?.createdAt || formatDateTime(),
+                created_by: existingDraft?.created_by || previewActorKey(actor),
+                oem_sales_id: resolveFormOemSalesId(data, existingDraft, actor),
                 dealer: existingDraft?.dealer || (isDealerIdentity(actor.identity)
                     ? (actor.identity === 'dealer_overseas' ? 'overseas' : 'tw')
                     : 'oem'),
@@ -2727,49 +3631,61 @@ function initOpportunityForm() {
         });
     }
 
+    opportunityForm.noValidate = true;
+
+    async function submitOpportunityWithoutValidation() {
+        try {
+            const data = collectOpportunityFormData(opportunityForm);
+            const existing = activeRecordId ? getOpportunityById(activeRecordId) : null;
+            const existingDraft = activeDraftId ? getOpportunityDraft(activeDraftId) : null;
+            const actor = getPreviewActor();
+            const createdAt = existing?.submittedAt || existing?.createdAt || existingDraft?.createdAt || formatDateTime();
+            const record = formDataToRecord(data, {
+                id: activeRecordId || undefined,
+                status: 'reviewing',
+                amount: existing?.amount || '-',
+                amountValue: existing?.amountValue || 0,
+                dealer: existing?.dealer || (isDealerIdentity(actor.identity)
+                    ? (actor.identity === 'dealer_overseas' ? 'overseas' : 'tw')
+                    : 'oem'),
+                protection: existing?.protection || '-',
+                booking_code: existing?.booking_code || activeRecordId || undefined,
+                review: existing?.review || null,
+                submittedAt: createdAt,
+                created_by: existing?.created_by || previewActorKey(actor),
+                oem_sales_id: resolveFormOemSalesId(data, existing, actor),
+            });
+
+            upsertOpportunity(record);
+
+            if (activeDraftId) {
+                removeOpportunityDraft(activeDraftId);
+            }
+        } catch (error) {
+            console.warn(error);
+        }
+
+        await showSubmitReviewNotice(
+            activeRecordId ? '已再次送出，商機回到審核中' : '已送出，商機進入審核中',
+        );
+        window.location.href = opportunityForm.dataset.listUrl
+            || opportunityForm.dataset.cancelUrl
+            || '/opportunities/';
+    }
+
     opportunityForm.addEventListener('submit', (event) => {
         event.preventDefault();
+        event.stopPropagation();
+        submitOpportunityWithoutValidation();
+    });
 
-        if (opportunityForm.dataset.createReviewEditing === '1') {
+    submitLabel?.addEventListener('click', (event) => {
+        if (window.__upasSubmitNoticeShown) {
             return;
         }
-
-        if (!validateOpportunityForm(opportunityForm)) {
-            focusFirstOpportunityError(opportunityForm);
-            showAppToast('請先完成必填欄位', 'error');
-            return;
-        }
-
-        const data = collectOpportunityFormData(opportunityForm);
-        const existing = activeRecordId ? getOpportunityById(activeRecordId) : null;
-        const actor = getPreviewActor();
-        const record = formDataToRecord(data, {
-            id: activeRecordId || undefined,
-            status: 'reviewing',
-            amount: existing?.amount || '-',
-            amountValue: existing?.amountValue || 0,
-            dealer: existing?.dealer || (isDealerIdentity(actor.identity)
-                ? (actor.identity === 'dealer_overseas' ? 'overseas' : 'tw')
-                : 'oem'),
-            protection: existing?.protection || '-',
-            booking_code: existing?.booking_code || activeRecordId || undefined,
-            review: existing?.review || null,
-            created_by: existing?.created_by || actor.partnerId || '',
-            oem_sales_id: existing?.oem_sales_id || defaultOemSalesIdForActor(actor) || '',
-        });
-
-        upsertOpportunity(record);
-
-        if (activeDraftId) {
-            removeOpportunityDraft(activeDraftId);
-        }
-
-        showAppToast(activeRecordId ? '已再次送出，商機回到審核中' : '已送出，商機進入審核中', 'success');
-        window.setTimeout(() => {
-            window.location.href = opportunityForm.dataset.listUrl
-                || opportunityForm.dataset.cancelUrl
-                || '/opportunities/';
-        }, 500);
+        event.preventDefault();
+        event.stopPropagation();
+        submitOpportunityWithoutValidation();
     });
 }
 
@@ -2821,8 +3737,9 @@ function initRenewPage() {
 
     const pill = page.querySelector('[data-renew-status-pill]');
     if (pill) {
-        pill.className = `status-pill status-${record.status}`;
-        pill.textContent = record.statusLabel || getStatusLabel(record.status);
+        const displayStatus = getDisplayStatus(record);
+        pill.className = `status-pill status-${displayStatus}`;
+        pill.textContent = getStatusLabel(displayStatus) || record.statusLabel || displayStatus;
     }
 
     const oldProtectionEl = page.querySelector('[data-renew-old-protection]');
@@ -2836,6 +3753,10 @@ function initRenewPage() {
     }
 
     bindFileUpload(form);
+
+    if (isRejectedRenewal(record)) {
+        setFileUploadValues(record.renewal?.attachments || record.renewal?.attachment || [], form);
+    }
 
     function selectedDays() {
         return RENEWAL_DAYS;
@@ -2893,11 +3814,15 @@ function initRenewPage() {
     }
 
     function fillConfirm() {
-        const attachment = readAttachmentFromUpload(form);
+        const attachments = readAttachmentsFromUpload(form);
         setText('[data-renew-confirm-days]', selectedDaysLabel());
         setText('[data-renew-confirm-protection]', updateNewProtection());
         setText('[data-renew-confirm-reason]', String(reasonInput?.value || '').trim() || '—');
-        setText('[data-renew-confirm-file]', attachment?.name || '未上傳');
+        renderAttachmentLinks(
+            page.querySelector('[data-renew-confirm-file]'),
+            attachments,
+            '未上傳',
+        );
     }
 
     nextBtn?.addEventListener('click', () => {
@@ -2914,7 +3839,7 @@ function initRenewPage() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
-    form.addEventListener('submit', (event) => {
+    form.addEventListener('submit', async (event) => {
         event.preventDefault();
         if (!validateStepOne()) {
             setStep(1);
@@ -2922,28 +3847,32 @@ function initRenewPage() {
         }
 
         const nextProtection = updateNewProtection();
+        const baseStatus = getBaseOpportunityStatus(record) || record.status || 'approved';
         upsertOpportunity({
             ...record,
+            // 商機狀態與續期狀態分開：不改寫為 renewing
+            status: baseStatus,
+            statusLabel: getStatusLabel(baseStatus),
             protection: oldProtection,
-            status: 'reviewing',
-            statusLabel: getStatusLabel('reviewing'),
-            review: null,
-            renewal: {
-                days: selectedDays(),
-                oldProtection,
-                newProtection: nextProtection,
-                previousStatus: record.renewal?.previousStatus || record.status,
-                reason: String(reasonInput?.value || '').trim(),
-                attachment: readAttachmentFromUpload(form),
-                submittedAt: formatDateTime(),
-                status: 'pending',
-            },
+            renewal: (() => {
+                const attachments = readAttachmentsFromUpload(form);
+                return {
+                    days: selectedDays(),
+                    oldProtection,
+                    newProtection: nextProtection,
+                    previousStatus: baseStatus,
+                    reason: String(reasonInput?.value || '').trim(),
+                    attachments,
+                    attachment: attachments[0] || null,
+                    submittedAt: formatDateTime(),
+                    status: 'pending',
+                    review: null,
+                };
+            })(),
         });
 
-        showAppToast('已送出續期申請，進入審核中', 'success');
-        window.setTimeout(() => {
-            window.location.href = listUrl;
-        }, 550);
+        await showSubmitReviewNotice('已送出續期申請，進入續期審核中');
+        window.location.href = listUrl;
     });
 }
 
@@ -2956,7 +3885,7 @@ document.querySelectorAll('[data-opp-row]').forEach((row) => {
     }
 });
 
-syncOpportunityListUi();
-initReviewPage();
-initOpportunityForm();
-initRenewPage();
+try { syncOpportunityListUi(); } catch (error) { console.warn(error); }
+try { initReviewPage(); } catch (error) { console.warn(error); }
+try { initOpportunityForm(); } catch (error) { console.warn(error); }
+try { initRenewPage(); } catch (error) { console.warn(error); }

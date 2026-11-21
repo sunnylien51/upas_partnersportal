@@ -1,17 +1,17 @@
 ---
-title: 經銷商登入
+title: 登入
 ---
 @extends('_layouts.auth')
 
 @section('body')
     <div class="self-stretch flex flex-col items-start gap-1">
-        <h1 class="text-ch4 text-gray5">經銷商登入</h1>
-        <p class="text-cb3 text-gray4">登入後可使用案件管理、行銷與技術資源等經銷商專屬功能</p>
+        <h1 class="text-ch4 text-gray5">登入</h1>
+        <p class="text-cb3 text-gray4">總管理者、系統管理員、原廠與經銷商使用同一入口。登入後依身分權限顯示可用功能。</p>
     </div>
 
     <form
         class="self-stretch flex flex-col items-start gap-8"
-        action="{{ $page->baseUrl }}/"
+        action="{{ site_href($page, '/') }}"
         method="get"
     >
         <div class="self-stretch flex flex-col items-start gap-3">
@@ -52,7 +52,7 @@ title: 經銷商登入
                     <input type="checkbox" name="remember" value="1" class="auth-checkbox">
                     <span>保持登入</span>
                 </label>
-                <a href="{{ $page->baseUrl }}/forgot-password/" class="auth-link">忘記密碼？</a>
+                <a href="{{ site_href($page, '/forgot-password') }}" class="auth-link">忘記密碼？</a>
             </div>
         </div>
 
@@ -63,7 +63,7 @@ title: 經銷商登入
                 <span>尚未有帳號</span>
             </div>
 
-            <a href="{{ $page->baseUrl }}/register/" class="btn-secondary w-full">申請經銷商帳號</a>
+            <a href="{{ site_href($page, '/register') }}" class="btn-secondary w-full">申請經銷商帳號</a>
 
             <p class="text-cb3 text-gray4">帳號尚未啟用或被鎖定，請聯絡 UPAS 系統管理者。</p>
         </div>

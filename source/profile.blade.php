@@ -22,7 +22,7 @@ title: 夥伴管理
     }
 
     $identityFilters = $page->partnerIdentityFilters ?? [
-        ['value' => 'oem', 'label' => '原廠業務', 'identities' => ['oem_manager', 'oem_sales']],
+        ['value' => 'oem', 'label' => '原廠業務', 'identities' => ['oem_director', 'oem_manager', 'oem_sales']],
         ['value' => 'dealer_overseas', 'label' => '海外經銷商', 'identities' => ['dealer_overseas']],
         ['value' => 'dealer_tw', 'label' => '國內經銷商', 'identities' => ['dealer_tw']],
     ];
@@ -56,26 +56,18 @@ title: 夥伴管理
         return in_array($identity, ['dealer_tw', 'dealer_overseas'], true);
     };
 
-    $oemSalesListDisplay = function ($item) use ($isDealerIdentity, $partners) {
-        $requested = trim((string) ($item['oem_sales'] ?? ''));
-        $boundId = trim((string) ($item['oem_sales_id'] ?? ''));
-        $status = $item['status'] ?? '';
-        $identity = $item['identity'] ?? '';
+    $salesNameById = [];
+    foreach ($partners as $partner) {
+        $salesNameById[$partner['id']] = $partner['name'] ?? '';
+    }
 
-        if ($status === 'approved' && $isDealerIdentity($identity) && $boundId !== '') {
-            foreach ($partners as $candidate) {
-                if (($candidate['id'] ?? '') === $boundId) {
-                    return $candidate['name'] ?? ($requested !== '' ? $requested : $boundId);
-                }
-            }
-            return $requested !== '' ? $requested : $boundId;
+    $assignedSalesDisplay = function ($item) use ($salesNameById) {
+        $salesId = trim((string) ($item['assigned_sales_id'] ?? ''));
+        if ($salesId === '') {
+            return '—';
         }
-
-        if ($requested !== '') {
-            return '申請：' . $requested;
-        }
-
-        return '—';
+        $name = trim((string) ($salesNameById[$salesId] ?? ''));
+        return $name !== '' ? $name : '—';
     };
 @endphp
 
@@ -85,7 +77,7 @@ title: 夥伴管理
             class="content-wrapper"
             data-partner-list
             data-page-size="8"
-            data-edit-url="{{ $page->baseUrl }}/profile/edit/"
+            data-edit-url="{{ site_href($page, '/profile/edit') }}"
         >
 
             <div class="self-stretch flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
@@ -129,8 +121,8 @@ title: 夥伴管理
                 </div>
 
                 <div class="flex flex-wrap items-center gap-2">
-                    <a href="{{ $page->baseUrl }}/profile/create/" class="btn-primary" data-requires="profile.manage">新增帳號</a>
-                    <button type="button" class="btn-secondary" data-requires="profile.manage" data-partner-export>匯出 Excel</button>
+                    <a href="{{ site_href($page, '/profile/relations') }}" class="btn-secondary" data-requires="profile.manage">組織關係</a>
+                    <a href="{{ site_href($page, '/profile/create') }}" class="btn-primary" data-requires="profile.manage">新增帳號</a>
                 </div>
             </div>
 
@@ -153,13 +145,13 @@ title: 夥伴管理
             <div class="list-card">
                 <div class="list-card-body">
                     <div class="self-stretch overflow-x-auto">
-                        <div class="min-w-[980px]">
+                        <div class="min-w-[880px]">
                             <div class="list-head">
+                                <div class="w-36 shrink-0 text-cb3 text-gray4">會員編號</div>
                                 <div class="flex-[1.3] min-w-[12rem] text-cb3 text-gray4">公司資料</div>
                                 <div class="w-36 text-cb3 text-gray4">身分權限</div>
-                                <div class="w-28 text-cb3 text-gray4">原廠業務</div>
                                 <div class="flex-1 min-w-[10rem] text-cb3 text-gray4">申請人</div>
-                                <div class="flex-[1.2] min-w-[12rem] text-cb3 text-gray4">聯絡方式</div>
+                                <div class="w-28 text-cb3 text-gray4">所屬業務</div>
                                 <div class="w-20 text-cb3 text-gray4">狀態</div>
                                 <div class="w-20 shrink-0"></div>
                             </div>
@@ -178,40 +170,36 @@ title: 夥伴管理
                                         $identityDisplay = $identityLabel !== ''
                                             ? ($levelLabel !== '' ? $identityLabel . '/' . $levelLabel : $identityLabel)
                                             : '—';
-                                        $oemSalesDisplay = $oemSalesListDisplay($item);
+                                        $assignedSales = $assignedSalesDisplay($item);
                                     @endphp
                                     <div
                                         class="list-row list-row-link py-3"
                                         data-partner-row
                                         data-partner-id="{{ $item['id'] }}"
-                                        data-edit-href="{{ $page->baseUrl }}/profile/edit/?id={{ urlencode($item['id']) }}"
+                                        data-edit-href="{{ site_href($page, '/profile/edit') }}?id={{ urlencode($item['id']) }}"
                                         data-status="{{ $item['status'] }}"
                                         data-country="{{ $item['country'] }}"
                                         data-identity="{{ $identity }}"
                                         data-level="{{ $level }}"
                                         data-applied-at="{{ $item['applied_at'] ?? '' }}"
-                                        data-search="{{ $item['id'] }} {{ $item['company'] }} {{ $item['tax_id'] }} {{ $countryLabel }} {{ $item['oem_sales'] }} {{ $item['name'] }} {{ $item['email'] }} {{ $item['phone'] }} {{ $item['job_title'] }} {{ $identityDisplay }}"
+                                        data-search="{{ $item['id'] }} {{ $item['company'] }} {{ $item['tax_id'] }} {{ $countryLabel }} {{ $assignedSales }} {{ $item['name'] }} {{ $item['email'] }} {{ $item['phone'] }} {{ $item['job_title'] }} {{ $identityDisplay }}"
                                     >
+                                        <div class="w-36 shrink-0 text-eb2 text-gray5 uppercase" data-partner-member-id>{{ $item['id'] }}</div>
                                         <div class="flex-[1.3] min-w-[12rem] pr-4">
                                             <p class="text-cb3 text-gray5" data-partner-company>{{ $item['company'] }}</p>
-                                            <p class="text-[12px] font-en font-medium uppercase tracking-[0.06em] text-gray3" data-partner-member-id>{{ $item['id'] }}</p>
                                         </div>
                                         <div class="w-36 shrink-0 text-cb3 text-gray5" data-partner-identity>{{ $identityDisplay }}</div>
-                                        <div class="w-28 shrink-0 text-cb3 text-gray5" data-partner-oem-sales>{{ $oemSalesDisplay }}</div>
                                         <div class="flex-1 min-w-[10rem] pr-4">
                                             <p class="text-cb3 text-gray5" data-partner-name>{{ $item['name'] }}</p>
                                             <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-title>{{ $item['job_title'] }}</p>
                                         </div>
-                                        <div class="flex-[1.2] min-w-[12rem] pr-4">
-                                            <p class="text-eb2 text-gray5 break-all" data-partner-email>{{ $item['email'] }}</p>
-                                            <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-phone>{{ $item['phone'] }}</p>
-                                        </div>
+                                        <div class="w-28 shrink-0 text-cb3 text-gray5" data-partner-assigned-sales>{{ $assignedSales }}</div>
                                         <div class="w-20 shrink-0">
                                             <span class="status-pill status-{{ $status['value'] }}" data-partner-status>{{ $status['label'] }}</span>
                                         </div>
                                         <div class="w-20 shrink-0 inline-flex items-center justify-end" data-partner-actions>
                                             <a
-                                                href="{{ $page->baseUrl }}/profile/edit/?id={{ urlencode($item['id']) }}"
+                                                href="{{ site_href($page, '/profile/edit') }}?id={{ urlencode($item['id']) }}"
                                                 class="icon-action"
                                                 data-requires="profile.manage"
                                                 aria-label="編輯 {{ $item['company'] }}"
@@ -244,20 +232,16 @@ title: 夥伴管理
                                     data-level=""
                                     data-search=""
                                 >
+                                    <div class="w-36 shrink-0 text-eb2 text-gray5 uppercase" data-partner-member-id>—</div>
                                     <div class="flex-[1.3] min-w-[12rem] pr-4">
                                         <p class="text-cb3 text-gray5" data-partner-company>—</p>
-                                        <p class="text-[12px] font-en font-medium uppercase tracking-[0.06em] text-gray3" data-partner-member-id>—</p>
                                     </div>
                                     <div class="w-36 shrink-0 text-cb3 text-gray5" data-partner-identity>—</div>
-                                    <div class="w-28 shrink-0 text-cb3 text-gray5" data-partner-oem-sales>—</div>
                                     <div class="flex-1 min-w-[10rem] pr-4">
                                         <p class="text-cb3 text-gray5" data-partner-name>—</p>
                                         <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-title>—</p>
                                     </div>
-                                    <div class="flex-[1.2] min-w-[12rem] pr-4">
-                                        <p class="text-eb2 text-gray5 break-all" data-partner-email>—</p>
-                                        <p class="text-[12px] font-medium tracking-[0.04em] text-gray3" data-partner-phone>—</p>
-                                    </div>
+                                    <div class="w-28 shrink-0 text-cb3 text-gray5" data-partner-assigned-sales>—</div>
                                     <div class="w-20 shrink-0">
                                         <span class="status-pill" data-partner-status>—</span>
                                     </div>
@@ -337,12 +321,12 @@ title: 夥伴管理
                         <p class="text-cb3 text-gray5" data-partner-preview-country>—</p>
                     </div>
                     <div class="flex flex-col">
-                        <p class="text-cb4 text-brand2">原廠業務</p>
-                        <p class="text-cb3 text-gray5" data-partner-preview-oem-sales>—</p>
-                    </div>
-                    <div class="flex flex-col">
                         <p class="text-cb4 text-brand2">申請人</p>
                         <p class="text-cb3 text-gray5" data-partner-preview-name>—</p>
+                    </div>
+                    <div class="flex flex-col">
+                        <p class="text-cb4 text-brand2">所屬業務</p>
+                        <p class="text-cb3 text-gray5" data-partner-preview-assigned-sales>—</p>
                     </div>
                     <div class="flex flex-col">
                         <p class="text-cb4 text-brand2">職稱 / 部門</p>
@@ -352,7 +336,7 @@ title: 夥伴管理
                         <p class="text-cb4 text-brand2">E-mail</p>
                         <p class="text-eb2 text-gray5 break-all" data-partner-preview-email>—</p>
                     </div>
-                    <div class="flex flex-col md:col-span-2">
+                    <div class="flex flex-col">
                         <p class="text-cb4 text-brand2">聯絡電話</p>
                         <p class="text-cb3 text-gray5" data-partner-preview-phone>—</p>
                     </div>
@@ -374,7 +358,7 @@ title: 夥伴管理
             'levels' => $levelLabels,
             'identities' => $identityLabels,
             'identityFilters' => $identityFilters,
-            'editUrl' => rtrim($page->baseUrl, '/') . '/profile/edit/',
+            'editUrl' => site_href($page, '/profile/edit'),
         ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}
     </script>
 @endsection

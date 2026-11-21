@@ -10,7 +10,7 @@ title: 編輯夥伴資料
         'identity' => '',
         'level' => '',
         'oem_sales' => '',
-        'oem_sales_id' => '',
+        'assigned_sales_id' => '',
         'manager_id' => '',
         'company' => '',
         'tax_id' => '',
@@ -46,31 +46,38 @@ title: 編輯夥伴資料
     $sampleLevel = $sample['level'] ?? '';
     $sampleLevelLabel = $levelLabels[$sampleLevel] ?? '請選擇會員等級';
 
-    $oemSalesOptions = [];
+    $oemDirectorOptions = [];
     $oemManagerOptions = [];
+    $oemSalesOptions = [];
     foreach ($partners as $item) {
         if (($item['status'] ?? '') !== 'approved') {
             continue;
         }
-        if (($item['identity'] ?? '') === 'oem_sales') {
+        $identity = $item['identity'] ?? '';
+        if ($identity === 'oem_director') {
+            $oemDirectorOptions[] = $item;
+        }
+        if ($identity === 'oem_manager') {
+            $oemManagerOptions[] = $item;
+        }
+        if ($identity === 'oem_sales') {
             $oemSalesOptions[] = $item;
         }
-        if (($item['identity'] ?? '') === 'oem_manager') {
-            $oemManagerOptions[] = $item;
+    }
+
+    $managerCandidates = array_merge($oemDirectorOptions, $oemManagerOptions);
+    $boundManager = null;
+    foreach ($managerCandidates as $item) {
+        if (($item['id'] ?? '') === ($sample['manager_id'] ?? '')) {
+            $boundManager = $item;
+            break;
         }
     }
 
     $boundSales = null;
     foreach ($oemSalesOptions as $item) {
-        if (($item['id'] ?? '') === ($sample['oem_sales_id'] ?? '')) {
+        if (($item['id'] ?? '') === ($sample['assigned_sales_id'] ?? '')) {
             $boundSales = $item;
-            break;
-        }
-    }
-    $boundManager = null;
-    foreach ($oemManagerOptions as $item) {
-        if (($item['id'] ?? '') === ($sample['manager_id'] ?? '')) {
-            $boundManager = $item;
             break;
         }
     }
@@ -88,7 +95,7 @@ title: 編輯夥伴資料
                     </div>
                     <p class="text-[12px] font-en font-medium uppercase tracking-[0.06em] text-gray3" data-partner-member-id>{{ $sample['id'] }}</p>
                 </div>
-                <a href="{{ $page->baseUrl }}/profile/" class="btn-secondary">返回列表</a>
+                <a href="{{ site_href($page, '/profile') }}" class="btn-secondary">返回列表</a>
             </div>
 
             <div class="list-empty" data-partner-missing hidden>
@@ -98,12 +105,11 @@ title: 編輯夥伴資料
             <form
                 class="self-stretch"
                 data-partner-edit-form
-                data-list-url="{{ $page->baseUrl }}/profile/"
+                data-list-url="{{ site_href($page, '/profile') }}"
                 novalidate
             >
                 <input type="hidden" name="id" value="{{ $sample['id'] }}">
                 <input type="hidden" name="applied_at" value="{{ $sample['applied_at'] }}">
-                <input type="hidden" name="oem_sales" value="{{ $sample['oem_sales'] ?? '' }}">
 
                 <div class="review-layout">
                     <div class="review-main">
@@ -115,35 +121,6 @@ title: 編輯夥伴資料
                             </div>
 
                             <div class="self-stretch grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="form-field">
-                                    <span class="form-label">
-                                        <span class="text-red">*</span>
-                                        <span>狀態</span>
-                                    </span>
-                                    <div class="form-select" data-form-select data-required>
-                                        <input type="hidden" name="status" value="{{ $sample['status'] }}" data-form-select-value required>
-                                        <button type="button" class="form-select-trigger" data-form-select-trigger aria-haspopup="listbox" aria-expanded="false">
-                                            <span data-form-select-label>{{ $sampleStatus['label'] }}</span>
-                                            <i data-lucide="chevron-down" class="w-4 h-4 text-gray4"></i>
-                                        </button>
-                                        <div class="form-select-menu" data-form-select-menu hidden role="listbox">
-                                            @foreach ($page->partnerStatuses as $option)
-                                                <button
-                                                    type="button"
-                                                    class="form-select-option {{ $option['value'] === $sample['status'] ? 'is-selected' : '' }}"
-                                                    role="option"
-                                                    data-form-select-option
-                                                    data-value="{{ $option['value'] }}"
-                                                    data-label="{{ $option['label'] }}"
-                                                    @if ($option['value'] === $sample['status']) aria-selected="true" @endif
-                                                >
-                                                    {{ $option['label'] }}
-                                                </button>
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <div class="form-field">
                                     <span class="form-label">申請日期</span>
                                     <input type="text" class="form-input is-readonly" value="{{ $sample['applied_at'] }}" data-partner-applied readonly tabindex="-1">
@@ -209,41 +186,40 @@ title: 編輯夥伴資料
                                 </div>
                             </div>
 
-                            <div class="form-field" data-partner-oem-sales-field hidden>
+                            <label class="form-field" data-partner-oem-sales-field hidden>
                                 <span class="form-label">
-                                    <span class="text-red">*</span>
-                                    <span>綁定原廠業務</span>
+                                    <span>主要業務窗口</span>
                                 </span>
-                                <p class="text-cb3 text-gray3">一間經銷只綁一位業務；人事異動時在此更改。</p>
-                                <p class="text-cb3 text-gray3" data-partner-oem-sales-requested {{ trim((string) ($sample['oem_sales'] ?? '')) === '' ? 'hidden' : '' }}>
-                                    申請填寫：<span data-partner-oem-sales-requested-name>{{ $sample['oem_sales'] ?? '' }}</span>
-                                </p>
-                                <div class="form-select" data-form-select data-partner-oem-sales-select>
-                                    <input type="hidden" name="oem_sales_id" value="{{ $sample['oem_sales_id'] ?? '' }}" data-form-select-value>
+                                <p class="text-cb3 text-gray3">僅供參考；不影響商機歸屬，商機由總管理者審核時指派承接業務。</p>
+                                <input type="text" name="oem_sales" class="form-input" value="{{ $sample['oem_sales'] ?? '' }}" placeholder="例如：林佳穎">
+                            </label>
+
+                            <div class="form-field" data-partner-assigned-sales-field hidden>
+                                <span class="form-label">所屬業務</span>
+                                <p class="text-cb3 text-gray3">審核時指定一位原廠業務。選定後才會出現在夥伴列表；未選顯示「—」。</p>
+                                <div class="form-select" data-form-select data-partner-assigned-sales-select>
+                                    <input type="hidden" name="assigned_sales_id" value="{{ $sample['assigned_sales_id'] ?? '' }}" data-form-select-value>
                                     <button type="button" class="form-select-trigger" data-form-select-trigger aria-haspopup="listbox" aria-expanded="false">
-                                        <span class="{{ ($sample['oem_sales_id'] ?? '') ? '' : 'is-placeholder' }}" data-form-select-label>
-                                            {{ $boundSales ? ($boundSales['name'] . '（' . $boundSales['id'] . '）') : '請選擇原廠業務' }}
+                                        <span class="{{ $boundSales ? '' : 'is-placeholder' }}" data-form-select-label>
+                                            {{ $boundSales ? ($boundSales['name'] . '（' . $boundSales['id'] . '）') : '請選擇所屬業務' }}
                                         </span>
                                         <i data-lucide="chevron-down" class="w-4 h-4 text-gray4"></i>
                                     </button>
                                     <div class="form-select-menu" data-form-select-menu hidden role="listbox">
-                                        <div class="form-select-options" data-form-select-options>
-                                            <button type="button" class="form-select-option {{ ($sample['oem_sales_id'] ?? '') === '' ? 'is-selected' : '' }}" role="option" data-form-select-option data-value="" data-label="請選擇原廠業務">請選擇原廠業務</button>
-                                            @foreach ($oemSalesOptions as $option)
-                                                <button
-                                                    type="button"
-                                                    class="form-select-option {{ ($sample['oem_sales_id'] ?? '') === $option['id'] ? 'is-selected' : '' }}"
-                                                    role="option"
-                                                    data-form-select-option
-                                                    data-value="{{ $option['id'] }}"
-                                                    data-label="{{ $option['name'] }}（{{ $option['id'] }}）"
-                                                    data-name="{{ $option['name'] }}"
-                                                    @if (($sample['oem_sales_id'] ?? '') === $option['id']) aria-selected="true" @endif
-                                                >
-                                                    {{ $option['name'] }}（{{ $option['id'] }}）
-                                                </button>
-                                            @endforeach
-                                        </div>
+                                        <button type="button" class="form-select-option {{ ($sample['assigned_sales_id'] ?? '') === '' ? 'is-selected' : '' }}" role="option" data-form-select-option data-value="" data-label="請選擇所屬業務">請選擇所屬業務</button>
+                                        @foreach ($oemSalesOptions as $option)
+                                            <button
+                                                type="button"
+                                                class="form-select-option {{ ($sample['assigned_sales_id'] ?? '') === $option['id'] ? 'is-selected' : '' }}"
+                                                role="option"
+                                                data-form-select-option
+                                                data-value="{{ $option['id'] }}"
+                                                data-label="{{ $option['name'] }}（{{ $option['id'] }}）"
+                                                @if (($sample['assigned_sales_id'] ?? '') === $option['id']) aria-selected="true" @endif
+                                            >
+                                                {{ $option['name'] }}（{{ $option['id'] }}）
+                                            </button>
+                                        @endforeach
                                     </div>
                                 </div>
                             </div>
@@ -251,9 +227,9 @@ title: 編輯夥伴資料
                             <div class="form-field" data-partner-manager-field hidden>
                                 <span class="form-label">
                                     <span class="text-red">*</span>
-                                    <span>直屬主管</span>
+                                    <span data-partner-manager-label>直屬主管</span>
                                 </span>
-                                <p class="text-cb3 text-gray3">一位主管可掛多名業務；沒有再下一層。</p>
+                                <p class="text-cb3 text-gray3" data-partner-manager-hint>一位業務主管可掛多名業務。</p>
                                 <div class="form-select" data-form-select data-partner-manager-select>
                                     <input type="hidden" name="manager_id" value="{{ $sample['manager_id'] ?? '' }}" data-form-select-value>
                                     <button type="button" class="form-select-trigger" data-form-select-trigger aria-haspopup="listbox" aria-expanded="false">
@@ -264,13 +240,29 @@ title: 編輯夥伴資料
                                     </button>
                                     <div class="form-select-menu" data-form-select-menu hidden role="listbox">
                                         <div class="form-select-options" data-form-select-options>
-                                            <button type="button" class="form-select-option {{ ($sample['manager_id'] ?? '') === '' ? 'is-selected' : '' }}" role="option" data-form-select-option data-value="" data-label="請選擇直屬主管">請選擇直屬主管</button>
+                                            <button type="button" class="form-select-option {{ ($sample['manager_id'] ?? '') === '' ? 'is-selected' : '' }}" role="option" data-form-select-option data-value="" data-label="請選擇直屬主管" data-manager-placeholder>請選擇直屬主管</button>
+                                            @foreach ($oemDirectorOptions as $option)
+                                                <button
+                                                    type="button"
+                                                    class="form-select-option {{ ($sample['manager_id'] ?? '') === $option['id'] ? 'is-selected' : '' }}"
+                                                    role="option"
+                                                    data-form-select-option
+                                                    data-manager-for="oem_manager"
+                                                    data-value="{{ $option['id'] }}"
+                                                    data-label="{{ $option['name'] }}（{{ $option['id'] }}）"
+                                                    @if (($sample['manager_id'] ?? '') === $option['id']) aria-selected="true" @endif
+                                                    hidden
+                                                >
+                                                    {{ $option['name'] }}（{{ $option['id'] }}）
+                                                </button>
+                                            @endforeach
                                             @foreach ($oemManagerOptions as $option)
                                                 <button
                                                     type="button"
                                                     class="form-select-option {{ ($sample['manager_id'] ?? '') === $option['id'] ? 'is-selected' : '' }}"
                                                     role="option"
                                                     data-form-select-option
+                                                    data-manager-for="oem_sales"
                                                     data-value="{{ $option['id'] }}"
                                                     data-label="{{ $option['name'] }}（{{ $option['id'] }}）"
                                                     @if (($sample['manager_id'] ?? '') === $option['id']) aria-selected="true" @endif
@@ -385,6 +377,24 @@ title: 編輯夥伴資料
                                 </label>
                             </div>
                         </section>
+
+                        <section class="card-panel gap-4">
+                            <div class="self-stretch inline-flex items-center gap-3">
+                                <span class="section-accent" aria-hidden="true"></span>
+                                <h2 class="text-ch5 text-gray5">變更密碼</h2>
+                            </div>
+                            <p class="text-cb3 text-gray3">總管理者可直接重設此帳號密碼，不需填寫目前密碼。留空則不變更。</p>
+                            <div class="self-stretch grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <label class="form-field">
+                                    <span class="form-label">新密碼</span>
+                                    <input type="password" name="password" class="form-input" placeholder="請輸入新密碼" autocomplete="new-password">
+                                </label>
+                                <label class="form-field">
+                                    <span class="form-label">確認新密碼</span>
+                                    <input type="password" name="password_confirmation" class="form-input" placeholder="請再次輸入新密碼" autocomplete="new-password">
+                                </label>
+                            </div>
+                        </section>
                     </div>
 
                     <aside class="review-aside">
@@ -393,12 +403,40 @@ title: 編輯夥伴資料
                                 <span class="section-accent" aria-hidden="true"></span>
                                 <h2 class="text-ch5 text-gray5">儲存變更</h2>
                             </div>
+                            <div class="form-field self-stretch">
+                                <span class="form-label">
+                                    <span class="text-red">*</span>
+                                    <span>狀態</span>
+                                </span>
+                                <div class="form-select" data-form-select data-required>
+                                    <input type="hidden" name="status" value="{{ $sample['status'] }}" data-form-select-value required>
+                                    <button type="button" class="form-select-trigger" data-form-select-trigger aria-haspopup="listbox" aria-expanded="false">
+                                        <span data-form-select-label>{{ $sampleStatus['label'] }}</span>
+                                        <i data-lucide="chevron-down" class="w-4 h-4 text-gray4"></i>
+                                    </button>
+                                    <div class="form-select-menu" data-form-select-menu hidden role="listbox">
+                                        @foreach ($page->partnerStatuses as $option)
+                                            <button
+                                                type="button"
+                                                class="form-select-option {{ $option['value'] === $sample['status'] ? 'is-selected' : '' }}"
+                                                role="option"
+                                                data-form-select-option
+                                                data-value="{{ $option['value'] }}"
+                                                data-label="{{ $option['label'] }}"
+                                                @if ($option['value'] === $sample['status']) aria-selected="true" @endif
+                                            >
+                                                {{ $option['label'] }}
+                                            </button>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
                             <p class="text-cb3 text-gray3">
-                                身分權限、等級與綁定由內部指定，核准後仍可再改。狀態改為已核准時，請補齊對應必填欄位。
+                                身分權限、等級與綁定由內部指定，核准後仍可再改。狀態改為已核准時，請補齊對應必填欄位。若要重設密碼，請填寫新密碼與確認新密碼。
                             </p>
                             <div class="self-stretch inline-flex flex-col gap-2 pt-1">
                                 <button type="submit" class="btn-primary w-full h-11" data-requires="profile.manage">儲存變更</button>
-                                <a href="{{ $page->baseUrl }}/profile/" class="btn-secondary w-full h-11">取消</a>
+                                <a href="{{ site_href($page, '/profile') }}" class="btn-secondary w-full h-11">取消</a>
                             </div>
                         </div>
                     </aside>
@@ -414,9 +452,6 @@ title: 編輯夥伴資料
             'statuses' => $statusLabels,
             'levels' => $levelLabels,
             'identities' => $identityLabels,
-            'oemSalesOptions' => array_map(function ($item) {
-                return ['id' => $item['id'], 'name' => $item['name']];
-            }, $oemSalesOptions),
             'oemManagerOptions' => array_map(function ($item) {
                 return ['id' => $item['id'], 'name' => $item['name']];
             }, $oemManagerOptions),

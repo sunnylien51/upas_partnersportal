@@ -11,7 +11,7 @@ title: 忘記密碼
 
     <form
         class="self-stretch flex flex-col items-start gap-8"
-        action="{{ $page->baseUrl }}/forgot-password/sent/"
+        action="{{ site_href($page, '/forgot-password/sent') }}"
         method="get"
     >
         <div class="self-stretch flex flex-col items-start gap-3">
@@ -35,7 +35,7 @@ title: 忘記密碼
         <div class="self-stretch flex flex-col items-start gap-5">
             <button type="submit" class="btn-primary w-full h-11">寄送重設連結</button>
 
-            <a href="{{ $page->baseUrl }}/login/" class="btn-secondary w-full">返回登入</a>
+            <a href="{{ site_href($page, '/login') }}" class="btn-secondary w-full">返回登入</a>
 
             <p class="text-cb3 text-gray4">若收不到信件，請檢查垃圾郵件匣，或聯絡 UPAS 系統管理者。</p>
         </div>
