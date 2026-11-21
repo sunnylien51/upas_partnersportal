@@ -57,9 +57,21 @@ title: 商機審核
                 <div class="review-main" data-review-detail>
 
                     <section class="card-panel gap-4" data-review-renewal hidden>
-                        <div class="self-stretch inline-flex items-center gap-3">
-                            <span class="section-accent" aria-hidden="true"></span>
-                            <h2 class="text-ch5 text-gray5">續期申請內容</h2>
+                        <div class="self-stretch inline-flex items-center justify-between gap-3">
+                            <div class="inline-flex items-center gap-3 min-w-0">
+                                <span class="section-accent" aria-hidden="true"></span>
+                                <h2 class="text-ch5 text-gray5">續期申請內容</h2>
+                            </div>
+                            <a
+                                href="#"
+                                class="icon-action"
+                                data-review-renewal-edit
+                                hidden
+                                aria-label="編輯續期申請"
+                                title="編輯續期申請／補件"
+                            >
+                                <i data-lucide="square-pen" class="w-4 h-4"></i>
+                            </a>
                         </div>
                         <div class="review-result-card">
                             <div class="review-result-row">
@@ -78,9 +90,9 @@ title: 商機審核
                                 <span class="text-cb3 text-gray3 shrink-0">續期原因</span>
                                 <span class="text-cb3 text-gray5 min-w-0 flex-1 whitespace-pre-wrap" data-review-renewal-reason>—</span>
                             </div>
-                            <div class="review-result-row">
-                                <span class="text-cb3 text-gray3 shrink-0">上傳附件</span>
-                                <span class="text-cb3 text-gray5 min-w-0 flex-1" data-review-renewal-file>—</span>
+                            <div class="self-stretch flex flex-col items-stretch gap-2">
+                                <span class="text-cb3 text-gray3">上傳附件</span>
+                                <div class="self-stretch flex flex-col items-stretch gap-2" data-review-renewal-file></div>
                             </div>
                         </div>
                     </section>
@@ -342,6 +354,7 @@ title: 商機審核
                                             class="form-select-option"
                                             role="option"
                                             data-form-select-option
+                                            data-review-result-scope="opportunity"
                                             data-value="{{ $result['value'] }}"
                                             data-label="{{ $result['label'] }}"
                                             data-status="{{ $result['status'] ?? '' }}"
@@ -353,6 +366,31 @@ title: 商機審核
                                                 @if (!empty($result['statusLabel']))
                                                     <span class="text-[11px] font-normal text-gray3 tracking-normal">
                                                         → 狀態：{{ $result['statusLabel'] }}
+                                                    </span>
+                                                @endif
+                                            </span>
+                                        </button>
+                                    @endforeach
+                                    @foreach ($page->opportunityRenewalReviewResults ?? [] as $result)
+                                        <button
+                                            type="button"
+                                            class="form-select-option"
+                                            role="option"
+                                            data-form-select-option
+                                            data-review-result-scope="renewal"
+                                            hidden
+                                            data-value="{{ $result['value'] }}"
+                                            data-label="{{ $result['label'] }}"
+                                            data-status="{{ $result['status'] ?? '' }}"
+                                            data-status-label="{{ $result['statusLabel'] ?? '' }}"
+                                            data-renewal-status="{{ $result['renewalStatus'] ?? '' }}"
+                                            data-allow-resubmit="{{ !empty($result['allowResubmit']) ? '1' : '0' }}"
+                                        >
+                                            <span class="inline-flex flex-col items-start gap-0.5 min-w-0">
+                                                <span>{{ $result['label'] }}</span>
+                                                @if (!empty($result['statusLabel']))
+                                                    <span class="text-[11px] font-normal text-gray3 tracking-normal">
+                                                        → {{ $result['statusLabel'] }}
                                                     </span>
                                                 @endif
                                             </span>

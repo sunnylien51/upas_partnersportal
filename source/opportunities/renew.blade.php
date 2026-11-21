@@ -112,12 +112,10 @@ title: 商機續期申請
 
                     <div class="form-field">
                         <span class="form-label"><span>上傳附件</span></span>
-                        <p class="text-cb3 text-gray3">選填。可上傳 PDF、JPG，單檔 2MB 內。</p>
-                        <div class="file-upload" data-file-upload>
-                            <input type="file" class="sr-only" data-file-input accept=".pdf,.png,.jpg,.jpeg">
-                            <input type="hidden" name="attachment_name" value="" data-file-name>
-                            <input type="hidden" name="attachment_size" value="" data-file-size>
-                            <input type="hidden" name="attachment_type" value="" data-file-type>
+                        <p class="text-cb3 text-gray3">選填。可一次或分次上傳多個 PDF、JPG，單檔 2MB 內。</p>
+                        <div class="file-upload" data-file-upload data-file-multiple>
+                            <input type="file" class="sr-only" data-file-input accept=".pdf,.png,.jpg,.jpeg" multiple>
+                            <input type="hidden" name="attachments_json" value="[]" data-file-list>
 
                             <button type="button" class="file-upload-dropzone" data-file-trigger>
                                 <span class="file-icon">
@@ -125,24 +123,31 @@ title: 商機續期申請
                                 </span>
                                 <span class="min-w-0 flex flex-col items-start gap-0.5">
                                     <span class="text-cb3 text-gray5">點擊或拖曳檔案到此處上傳</span>
-                                    <span class="text-[11px] font-medium text-gray3">支援 PDF、JPG，單檔 2MB 內</span>
+                                    <span class="text-[11px] font-medium text-gray3">可選多個檔案；支援 PDF、JPG，單檔 2MB 內</span>
                                 </span>
                             </button>
 
-                            <div class="file-upload-item" data-file-item hidden>
-                                <div class="inline-flex items-center gap-3 min-w-0">
-                                    <span class="file-icon">
-                                        <i data-lucide="file-text" class="w-4 h-4 text-gray4"></i>
-                                    </span>
-                                    <span class="min-w-0 flex flex-col items-start gap-0.5">
-                                        <span class="text-cb3 text-gray5 truncate max-w-full" data-file-item-name>—</span>
-                                        <span class="text-cb3 text-gray3" data-file-item-meta>—</span>
+                            <div class="self-stretch flex flex-col items-stretch gap-2" data-file-list-ui></div>
+
+                            <template data-file-item-template>
+                                <div class="file-upload-item">
+                                    <div class="inline-flex items-center gap-3 min-w-0">
+                                        <span class="file-icon">
+                                            <i data-lucide="file-text" class="w-4 h-4 text-gray4"></i>
+                                        </span>
+                                        <span class="min-w-0 flex flex-col items-start gap-0.5">
+                                            <span class="text-cb3 text-gray5 truncate max-w-full" data-file-item-name>—</span>
+                                            <span class="text-[11px] font-medium text-gray3" data-file-item-meta>—</span>
+                                        </span>
+                                    </div>
+                                    <span class="inline-flex items-center gap-2 shrink-0">
+                                        <a href="#" class="px-3 py-2 text-[12px] btn-secondary" data-file-view target="_blank" rel="noopener noreferrer">查看／下載</a>
+                                        <button type="button" class="icon-action" data-file-remove aria-label="移除檔案">
+                                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                        </button>
                                     </span>
                                 </div>
-                                <button type="button" class="icon-action" data-file-remove aria-label="移除檔案">
-                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                </button>
-                            </div>
+                            </template>
                         </div>
                     </div>
                 </section>
@@ -166,9 +171,9 @@ title: 商機續期申請
                             <span class="text-cb3 text-gray3 shrink-0">續期原因</span>
                             <span class="text-cb3 text-gray5 min-w-0 flex-1 whitespace-pre-wrap" data-renew-confirm-reason>—</span>
                         </div>
-                        <div class="review-result-row">
-                            <span class="text-cb3 text-gray3 shrink-0">上傳附件</span>
-                            <span class="text-cb3 text-gray5 min-w-0 flex-1" data-renew-confirm-file>—</span>
+                        <div class="self-stretch flex flex-col items-stretch gap-2">
+                            <span class="text-cb3 text-gray3">上傳附件</span>
+                            <div class="self-stretch flex flex-col items-stretch gap-2" data-renew-confirm-file></div>
                         </div>
                     </div>
                 </section>

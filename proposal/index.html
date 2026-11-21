@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>商機中心篩選提案</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand: #FFC800;
+    --gray5: #2F3131;
+    --gray4: #636568;
+    --gray3: #969CA6;
+    --gray2: #C2C6CD;
+    --gray1: #EBEBEB;
+    --bg: #F3F4F5;
+    --bg2: #FBFBFC;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--gray5);
+    font-family: "Noto Sans TC", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .page { max-width: 1180px; margin: 0 auto; padding: 28px 32px 64px; }
+  h1 { font-size: 22px; font-weight: 700; margin: 0 0 6px; letter-spacing: 0.06em; }
+  .lead { color: var(--gray4); margin: 0 0 28px; line-height: 1.7; }
+  .block { margin-bottom: 36px; }
+  .block-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px; }
+  .tag {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    background: var(--gray5);
+    color: white;
+    border-radius: 4px;
+    padding: 2px 8px;
+  }
+  .tag.alt { background: white; color: var(--gray4); border: 1px solid var(--gray1); }
+  h2 { font-size: 16px; margin: 0; font-weight: 700; }
+  .note { color: var(--gray4); font-size: 13px; line-height: 1.7; margin: 8px 0 0; }
+  .card {
+    background: white;
+    border-radius: 16px;
+    padding: 12px 12px 8px;
+  }
+  .tray {
+    background: var(--bg);
+    border: 1px solid var(--gray1);
+    border-radius: 8px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .tray-row { display: flex; align-items: center; gap: 8px; }
+  .search {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    border: 1px solid var(--gray1);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--gray3);
+  }
+  .search input {
+    border: 0;
+    outline: 0;
+    width: 100%;
+    font: inherit;
+    color: var(--gray5);
+    background: transparent;
+  }
+  .search input::placeholder { color: var(--gray3); }
+  button { font: inherit; cursor: pointer; }
+  .btn {
+    border-radius: 8px;
+    padding: 10px 16px;
+    border: 1px solid transparent;
+    white-space: nowrap;
+  }
+  .btn-dark { background: rgba(47,49,49,0.9); color: white; }
+  .btn-line { background: white; color: var(--gray4); border-color: var(--gray1); }
+  .btn-line.is-on { color: var(--gray5); border-color: var(--gray5); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: white;
+    border: 1px solid var(--gray1);
+    border-radius: 999px;
+    padding: 4px 8px 4px 10px;
+    color: var(--gray5);
+    font-size: 13px;
+  }
+  .chip button {
+    border: 0;
+    background: transparent;
+    color: var(--gray3);
+    padding: 0;
+    line-height: 1;
+  }
+  .panel {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    padding: 4px 4px 2px;
+  }
+  .field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .field span { color: var(--gray4); font-size: 12px; }
+  .fake-select, .fake-date {
+    background: white;
+    border: 1px solid var(--gray1);
+    border-radius: 8px;
+    padding: 10px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    color: var(--gray5);
+  }
+  .fake-select.is-empty, .fake-date.is-empty { color: var(--gray3); }
+  .dates { grid-column: span 2; display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: end; }
+  .dates .dash { color: var(--gray3); padding-bottom: 10px; }
+  .list-head, .list-row {
+    display: grid;
+    grid-template-columns: 140px 1fr 120px 140px 110px 90px;
+    gap: 8px;
+    padding: 12px 16px;
+    align-items: center;
+  }
+  .list-head { background: var(--bg); border-radius: 10px 10px 0 0; color: var(--gray4); margin-top: 12px; }
+  .list-row { border-bottom: 1px solid var(--gray1); }
+  .muted { color: var(--gray3); }
+  .hidden { display: none; }
+  @media (max-width: 900px) {
+    .panel { grid-template-columns: 1fr 1fr; }
+    .dates { grid-column: span 2; }
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <h1>商機中心篩選提案</h1>
+    <p class="lead">還沒改正式頁。兩種都把「搜尋」和「清除條件」做成按鈕，條件設完才查，避免資料變多時每改一個下拉就重抓。</p>
+
+    <section class="block">
+      <div class="block-head">
+        <span class="tag">建議</span>
+        <h2>平常只留搜尋。條件收進「篩選」</h2>
+      </div>
+      <div class="card">
+        <div class="tray">
+          <div class="tray-row">
+            <label class="search">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
+              <input id="q" type="search" placeholder="搜尋案件/客戶" value="醫院">
+            </label>
+            <button class="btn btn-dark" type="button" id="run">搜尋</button>
+            <button class="btn btn-line" type="button" id="clear">清除條件</button>
+            <button class="btn btn-line" type="button" id="toggle">篩選</button>
+          </div>
+          <div class="chips" id="chips"></div>
+          <div class="panel hidden" id="panel">
+            <label class="field"><span>狀態</span><div class="fake-select is-empty" data-key="狀態" data-empty="全部">全部 <span class="muted">▾</span></div></label>
+            <label class="field"><span>承接業務</span><div class="fake-select is-empty" data-key="承接業務" data-empty="全部">全部 <span class="muted">▾</span></div></label>
+            <label class="field"><span>身份</span><div class="fake-select" data-key="身份" data-value="海外經銷商" data-empty="全部">海外經銷商 <span class="muted">▾</span></div></label>
+            <label class="field"><span>國家</span><div class="fake-select" data-key="國家" data-value="香港" data-empty="全部">香港 <span class="muted">▾</span></div></label>
+            <div class="dates">
+              <label class="field"><span>保護到期日起日</span><div class="fake-date" data-key="保護到期日起" data-value="2026-07-01">2026-07-01</div></label>
+              <span class="dash">–</span>
+              <label class="field"><span>保護到期日迄日</span><div class="fake-date" data-key="保護到期日迄" data-value="2026-09-30">2026-09-30</div></label>
+            </div>
+          </div>
+        </div>
+        <div class="list-head"><div>編號</div><div>客戶</div><div>身份</div><div>承接業務</div><div>狀態</div><div>保護到期日</div></div>
+        <div class="list-row"><div>N260728001</div><div>A 醫院</div><div>海外經銷商</div><div>林佳穎</div><div>即將到期</div><div>2026-07-15</div></div>
+        <div class="list-row"><div>N260728005</div><div>A 公司</div><div>台灣經銷商</div><div>林佳穎</div><div>已核准</div><div>2026-09-30</div></div>
+      </div>
+      <p class="note">預設一行：搜尋框、搜尋、清除條件、篩選。有套用的條件收成標籤，不用把下拉一直攤開。點「篩選」可展開狀態、承接業務、身份、國家、保護到期日。</p>
+    </section>
+
+    <section class="block">
+      <div class="block-head">
+        <span class="tag alt">備案</span>
+        <h2>條件一直看得到，但不要跟搜尋擠同一行</h2>
+      </div>
+      <div class="card">
+        <div class="tray">
+          <div class="tray-row">
+            <label class="search">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
+              <input type="search" placeholder="搜尋案件/客戶" value="">
+            </label>
+            <button class="btn btn-dark" type="button">搜尋</button>
+            <button class="btn btn-line" type="button">清除條件</button>
+          </div>
+          <div class="panel">
+            <label class="field"><span>狀態</span><div class="fake-select is-empty">全部 <span class="muted">▾</span></div></label>
+            <label class="field"><span>承接業務</span><div class="fake-select is-empty">全部 <span class="muted">▾</span></div></label>
+            <label class="field"><span>身份</span><div class="fake-select is-empty">全部 <span class="muted">▾</span></div></label>
+            <label class="field"><span>國家</span><div class="fake-select is-empty">全部 <span class="muted">▾</span></div></label>
+            <div class="dates">
+              <label class="field"><span>保護到期日起日</span><div class="fake-date is-empty">年 / 月 / 日</div></label>
+              <span class="dash">–</span>
+              <label class="field"><span>保護到期日迄日</span><div class="fake-date is-empty">年 / 月 / 日</div></label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="note">篩選永遠展開，各自有欄名，寬度平均分配。適合希望一進頁就看到全部條件的情況，列表上方會高一截。</p>
+    </section>
+  </div>
+  <script>
+    const panel = document.getElementById("panel");
+    const toggle = document.getElementById("toggle");
+    const chips = document.getElementById("chips");
+    const q = document.getElementById("q");
+
+    function renderChips() {
+      const items = [];
+      const query = q.value.trim();
+      if (query) items.push({ key: "關鍵字", label: query });
+      panel.querySelectorAll("[data-key]").forEach((el) => {
+        const value = el.dataset.value || "";
+        if (value) items.push({ key: el.dataset.key, label: value });
+      });
+      chips.innerHTML = items.map((item) => (
+        `<span class="chip">${item.key}：${item.label}<button type="button" data-remove="${item.key}" aria-label="移除${item.key}">×</button></span>`
+      )).join("");
+    }
+
+    toggle.addEventListener("click", () => {
+      const open = panel.classList.toggle("hidden") === false;
+      toggle.classList.toggle("is-on", open);
+      toggle.textContent = open ? "收合篩選" : "篩選";
+    });
+
+    document.getElementById("clear").addEventListener("click", () => {
+      q.value = "";
+      panel.querySelectorAll("[data-key]").forEach((el) => {
+        delete el.dataset.value;
+        el.classList.add("is-empty");
+        const empty = el.dataset.empty || "年 / 月 / 日";
+        el.innerHTML = el.classList.contains("fake-select")
+          ? `${empty} <span class="muted">▾</span>`
+          : empty;
+      });
+      renderChips();
+    });
+
+    chips.addEventListener("click", (event) => {
+      const key = event.target.closest("[data-remove]")?.dataset.remove;
+      if (!key) return;
+      if (key === "關鍵字") q.value = "";
+      const field = panel.querySelector(`[data-key="${key}"]`);
+      if (field) {
+        delete field.dataset.value;
+        field.classList.add("is-empty");
+        const empty = field.dataset.empty || "年 / 月 / 日";
+        field.innerHTML = field.classList.contains("fake-select")
+          ? `${empty} <span class="muted">▾</span>`
+          : empty;
+      }
+      renderChips();
+    });
+
+    q.addEventListener("input", renderChips);
+    renderChips();
+    toggle.click();
+  </script>
+</body>
+</html>

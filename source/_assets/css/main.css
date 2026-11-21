@@ -237,7 +237,7 @@
 
   .opp-list-fit {
     width: 100%;
-    min-width: 58.5rem;
+    min-width: 60.25rem;
   }
 
   .list-head.opp-list-cols,
@@ -251,7 +251,7 @@
       minmax(8rem, 1fr)
       11.25rem
       5.75rem
-      5rem
+      6.75rem
       6rem
       9.25rem
       4.75rem;
@@ -520,8 +520,10 @@
   }
 
   .status-trigger.status-rejected,
+  .status-trigger.status-renewal_rejected,
   .status-trigger.status-expired,
   .status-option.status-rejected,
+  .status-option.status-renewal_rejected,
   .status-option.status-expired {
     @apply text-red;
   }
@@ -1145,7 +1147,7 @@
   }
 
   .status-pill {
-    @apply shrink-0 px-2.5 py-1 rounded-[5px] bg-bg2 border border-gray1 text-[12px] font-medium tracking-[0.06em] leading-5;
+    @apply inline-block shrink-0 whitespace-nowrap px-2.5 py-1 rounded-[5px] bg-bg2 border border-gray1 text-[12px] font-medium tracking-[0.06em] leading-5;
   }
 
   .status-pill.status-reviewing,
@@ -1165,7 +1167,8 @@
     @apply text-gray3;
   }
 
-  .status-pill.status-rejected {
+  .status-pill.status-rejected,
+  .status-pill.status-renewal_rejected {
     @apply text-red;
   }
 

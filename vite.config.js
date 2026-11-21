@@ -1,6 +1,51 @@
 import jigsaw from '@tighten/jigsaw-vite-plugin';
 import { defineConfig } from 'vite';
 import { spawn } from 'child_process';
+import { existsSync, readFileSync, statSync } from 'fs';
+import path from 'path';
+
+const root = process.cwd();
+const localBuildDir = path.join(root, 'build_local');
+const hotFile = path.join(root, 'source', 'hot');
+
+const mimeTypes = {
+    '.html': 'text/html; charset=utf-8',
+    '.css': 'text/css; charset=utf-8',
+    '.js': 'text/javascript; charset=utf-8',
+    '.json': 'application/json; charset=utf-8',
+    '.svg': 'image/svg+xml',
+    '.png': 'image/png',
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.gif': 'image/gif',
+    '.webp': 'image/webp',
+    '.ico': 'image/x-icon',
+    '.woff': 'font/woff',
+    '.woff2': 'font/woff2',
+    '.pdf': 'application/pdf',
+    '.txt': 'text/plain; charset=utf-8',
+    '.xml': 'application/xml; charset=utf-8',
+};
+
+function resolveLocalFile(url) {
+    const pathname = decodeURIComponent(String(url || '').split('?')[0]);
+    const filePath = path.join(localBuildDir, pathname);
+
+    if (!filePath.startsWith(localBuildDir)) {
+        return null;
+    }
+
+    if (existsSync(filePath) && statSync(filePath).isFile()) {
+        return filePath;
+    }
+
+    const indexPath = path.join(filePath, 'index.html');
+    if (existsSync(indexPath)) {
+        return indexPath;
+    }
+
+    return null;
+}
 
 function asyncJigsawBuildPlugin() {
     let building = false;
@@ -67,8 +112,65 @@ function asyncJigsawBuildPlugin() {
                     triggerBuild();
                 }
             });
+
+            // 直接從 build_local 提供頁面，避免官方外掛把目錄路徑導成說明頁
+            server.middlewares.use((req, res, next) => {
+                if (req.method !== 'GET' && req.method !== 'HEAD') {
+                    next();
+                    return;
+                }
+
+                const pathname = String(req.url || '').split('?')[0];
+                if (!pathname.endsWith('/') && !path.extname(pathname) && resolveLocalFile(`${pathname}/`)) {
+                    res.statusCode = 301;
+                    res.setHeader('Location', `${pathname}/`);
+                    res.end();
+                    return;
+                }
+
+                const filePath = resolveLocalFile(req.url);
+                if (!filePath) {
+                    next();
+                    return;
+                }
+
+                const extension = path.extname(filePath).toLowerCase();
+                let body = readFileSync(filePath);
+
+                if (extension === '.html' && existsSync(hotFile)) {
+                    const devServerUrl = readFileSync(hotFile, 'utf8').trim();
+                    if (devServerUrl) {
+                        body = Buffer.from(body.toString().replaceAll(`${devServerUrl}/`, '/'));
+                    }
+                }
+
+                res.setHeader('Content-Type', mimeTypes[extension] ?? 'application/octet-stream');
+                res.setHeader('Cache-Control', 'no-store');
+                res.end(req.method === 'HEAD' ? undefined : body);
+            });
         },
     };
+}
+
+// 拿掉官方 jigsaw 外掛的 configureServer（會把 / 與子頁導成 Vite 說明頁）
+function officialJigsawPlugin() {
+    return jigsaw({
+        input: [
+            'source/_assets/js/main.js',
+            'source/_assets/css/main.css',
+        ],
+        refresh: false,
+        outDir: 'source/static',
+        publicDirectory: 'source',
+        buildDirectory: 'static',
+    }).map((plugin) => {
+        if (plugin.name !== 'jigsaw') {
+            return plugin;
+        }
+
+        const { configureServer, ...rest } = plugin;
+        return rest;
+    });
 }
 
 export default defineConfig({
@@ -77,7 +179,7 @@ export default defineConfig({
     },
     server: {
         host: true,
-        port: 5173,
+        port: 5174,
         strictPort: true,
         cors: true,
         hmr: {
@@ -89,16 +191,7 @@ export default defineConfig({
         },
     },
     plugins: [
-        jigsaw({
-            input: [
-                'source/_assets/js/main.js',
-                'source/_assets/css/main.css',
-            ],
-            refresh: false,
-            outDir: 'source/static',
-            publicDirectory: 'source',
-            buildDirectory: 'static',
-        }),
+        ...officialJigsawPlugin(),
         asyncJigsawBuildPlugin(),
     ],
 });

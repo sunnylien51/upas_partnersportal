@@ -268,6 +268,7 @@ title: 新增商機
                                     <input type="hidden" name="attachment_name" value="" data-file-name>
                                     <input type="hidden" name="attachment_size" value="" data-file-size>
                                     <input type="hidden" name="attachment_type" value="" data-file-type>
+                                    <input type="hidden" name="attachment_url" value="" data-file-url>
 
                                     <button type="button" class="file-upload-dropzone" data-file-trigger>
                                         <span class="file-icon">
@@ -289,9 +290,12 @@ title: 新增商機
                                                 <span class="text-[11px] font-medium text-gray3" data-file-item-meta>—</span>
                                             </span>
                                         </div>
-                                        <button type="button" class="icon-action" data-file-remove aria-label="移除檔案">
-                                            <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                        </button>
+                                        <span class="inline-flex items-center gap-2 shrink-0">
+                                            <a href="#" class="px-3 py-2 text-[12px] btn-secondary" data-file-view target="_blank" rel="noopener noreferrer" hidden>查看／下載</a>
+                                            <button type="button" class="icon-action" data-file-remove aria-label="移除檔案">
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
+                                        </span>
                                     </div>
                                 </div>
                             </section>

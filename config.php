@@ -298,6 +298,7 @@ return [
         ['value' => 'approved', 'label' => '已核准', 'icon' => 'check-circle'],
         ['value' => 'reviewing', 'label' => '審核中', 'icon' => 'clock'],
         ['value' => 'renewing', 'label' => '續期審核中', 'icon' => 'refresh-cw'],
+        ['value' => 'renewal_rejected', 'label' => '續期退回補件', 'icon' => 'file-warning'],
         ['value' => 'rejected', 'label' => '退回補件', 'icon' => 'file-warning'],
         ['value' => 'expiring', 'label' => '即將到期', 'icon' => 'alert-circle'],
         ['value' => 'expired', 'label' => '已到期', 'icon' => 'circle-x'],
@@ -330,6 +331,7 @@ return [
                 ['value' => 'approved', 'label' => '已核准'],
                 ['value' => 'reviewing', 'label' => '審核中'],
                 ['value' => 'renewing', 'label' => '續期審核中'],
+                ['value' => 'renewal_rejected', 'label' => '續期退回補件'],
                 ['value' => 'rejected', 'label' => '退回補件'],
                 ['value' => 'expiring', 'label' => '即將到期'],
                 ['value' => 'expired', 'label' => '已到期'],
@@ -1018,6 +1020,14 @@ HTML,
         ['value' => 'no_demand', 'label' => '商機已失效／暫無需求', 'status' => 'invalid', 'statusLabel' => '已失效', 'allowResubmit' => false],
         ['value' => 'rejected', 'label' => '審核不通過', 'status' => 'invalid', 'statusLabel' => '已失效', 'allowResubmit' => false],
         ['value' => 'other', 'label' => '其他', 'status' => 'rejected', 'statusLabel' => '退回補件', 'allowResubmit' => true],
+    ],
+    // 續期審核專用：不改寫為已失效；列表顯示由續期狀態推導
+    'opportunityRenewalReviewResults' => [
+        ['value' => 'renewal_approved', 'label' => '續期通過', 'status' => 'approved', 'statusLabel' => '已核准', 'renewalStatus' => 'approved', 'allowResubmit' => false],
+        ['value' => 'renewal_insufficient', 'label' => '資料不足，請補充', 'status' => '', 'statusLabel' => '續期退回補件', 'renewalStatus' => 'rejected', 'allowResubmit' => true],
+        ['value' => 'renewal_need_confirm', 'label' => '續期資訊需確認', 'status' => '', 'statusLabel' => '續期退回補件', 'renewalStatus' => 'rejected', 'allowResubmit' => true],
+        ['value' => 'renewal_denied', 'label' => '不同意續期', 'status' => '', 'statusLabel' => '維持原商機狀態', 'renewalStatus' => 'closed', 'allowResubmit' => false],
+        ['value' => 'renewal_other', 'label' => '其他', 'status' => '', 'statusLabel' => '續期退回補件', 'renewalStatus' => 'rejected', 'allowResubmit' => true],
     ],
     // 承接業務選項由 partners 動態產生，見 bootstrap.php oem_staff_options()
     'opportunityCatalog' => [

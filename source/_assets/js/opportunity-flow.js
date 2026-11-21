@@ -12,6 +12,7 @@ const DEFAULT_STATUS_LABELS = {
     approved: '已核准',
     reviewing: '審核中',
     renewing: '續期審核中',
+    renewal_rejected: '續期退回補件',
     rejected: '退回補件',
     expiring: '即將到期',
     expired: '已到期',
@@ -25,6 +26,7 @@ const DEFAULT_STATUS_ICONS = {
     approved: 'check-circle',
     reviewing: 'clock',
     renewing: 'refresh-cw',
+    renewal_rejected: 'file-warning',
     rejected: 'file-warning',
     expiring: 'alert-circle',
     expired: 'circle-x',
@@ -571,27 +573,57 @@ function getStatusLabel(status) {
 }
 
 function isPendingRenewal(record) {
+    // 分開模型：以續期紀錄為準；兼容舊資料曾把商機 status 寫成 renewing
     return record?.renewal?.status === 'pending' || record?.status === 'renewing';
 }
 
 function isRejectedRenewal(record) {
-    return Boolean(record?.renewal) && record?.status === 'rejected';
+    return record?.renewal?.status === 'rejected';
 }
 
 function isRenewalReview(record) {
-    return Boolean(record?.renewal) && (record?.status === 'renewing' || record?.status === 'rejected');
+    return isPendingRenewal(record) || isRejectedRenewal(record);
 }
 
 function isReviewQueueStatus(status) {
     return status === 'reviewing' || status === 'renewing';
 }
 
-function canApplyRenewal(record) {
+/** 列表／篩選用顯示狀態（商機 status 與續期 status 分開） */
+function getDisplayStatus(record) {
     if (!record) {
+        return '';
+    }
+    if (record.renewal?.status === 'pending' || record.status === 'renewing') {
+        return 'renewing';
+    }
+    if (record.renewal?.status === 'rejected') {
+        return 'renewal_rejected';
+    }
+    return record.status || '';
+}
+
+function getBaseOpportunityStatus(record) {
+    if (!record) {
+        return '';
+    }
+    if (record.status === 'renewing') {
+        return record.renewal?.previousStatus || 'approved';
+    }
+    return record.status || '';
+}
+
+function isInReviewQueue(record) {
+    return record?.status === 'reviewing' || isPendingRenewal(record);
+}
+
+function canApplyRenewal(record) {
+    if (!record || isPendingRenewal(record)) {
         return false;
     }
 
-    if (record.status === 'approved' || record.status === 'expiring') {
+    const base = getBaseOpportunityStatus(record);
+    if (base === 'approved' || base === 'expiring') {
         return true;
     }
 
@@ -878,11 +910,16 @@ function syncOpportunityStats() {
         if (!canViewOpportunity(record, actor, partnersById)) {
             return;
         }
-        const status = record?.status || row.dataset.status || '';
-        if (status === 'approved' || isReviewQueueStatus(status) || status === 'expiring') {
+        const displayStatus = record ? getDisplayStatus(record) : (row.dataset.status || '');
+        if (
+            displayStatus === 'approved'
+            || isReviewQueueStatus(displayStatus)
+            || displayStatus === 'expiring'
+            || displayStatus === 'renewal_rejected'
+        ) {
             counts.active += 1;
         }
-        if (isReviewQueueStatus(status)) {
+        if (displayStatus === 'reviewing' || displayStatus === 'renewing') {
             counts.reviewing += 1;
         }
         if (status === 'draft') {
@@ -1074,7 +1111,7 @@ function opportunityExportCells(record) {
         exportText(renewal.oldProtection),
         exportText(renewal.newProtection),
         exportText(renewal.reason),
-        exportText(renewal.attachment?.name),
+        exportText(formatAttachmentNames(renewal.attachments || renewal.attachment)),
     ];
 }
 
@@ -1225,13 +1262,146 @@ function formatFileSize(bytes) {
 }
 
 function getFileUploadRoot(scope = document) {
-    return scope.querySelector('[data-file-upload]');
+    if (scope?.matches?.('[data-file-upload]')) {
+        return scope;
+    }
+    return scope?.querySelector?.('[data-file-upload]') || null;
+}
+
+function isMultipleFileUpload(root) {
+    return Boolean(root?.hasAttribute('data-file-multiple'));
+}
+
+function normalizeAttachmentList(value) {
+    if (Array.isArray(value)) {
+        return value.filter((item) => item && item.name);
+    }
+    if (value && value.name) {
+        return [value];
+    }
+    return [];
+}
+
+function formatAttachmentNames(value, emptyLabel = '') {
+    const names = normalizeAttachmentList(value).map((item) => item.name).filter(Boolean);
+    return names.length ? names.join('\n') : emptyLabel;
+}
+
+function attachmentFileKey(file) {
+    return `${file?.name || ''}::${file?.size || 0}`;
+}
+
+function hasOpenableAttachmentUrl(url) {
+    return Boolean(url) && url !== '#';
+}
+
+function readFileAsDataUrl(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || ''));
+        reader.onerror = () => reject(reader.error || new Error('讀取檔案失敗'));
+        reader.readAsDataURL(file);
+    });
+}
+
+function createAttachmentCard(attachment, { emptyUrlToast = '此檔案無法開啟，請重新上傳' } = {}) {
+    const row = document.createElement('div');
+    row.className = 'file-upload-item';
+
+    const left = document.createElement('div');
+    left.className = 'inline-flex items-center gap-3 min-w-0';
+
+    const iconWrap = document.createElement('span');
+    iconWrap.className = 'file-icon';
+    iconWrap.innerHTML = '<i data-lucide="file-text" class="w-4 h-4 text-gray4"></i>';
+
+    const textWrap = document.createElement('span');
+    textWrap.className = 'min-w-0 flex flex-col items-start gap-0.5';
+
+    const name = document.createElement('span');
+    name.className = 'text-cb3 text-gray5 truncate max-w-full';
+    name.textContent = attachment.name || '—';
+    name.title = attachment.name || '';
+
+    const meta = document.createElement('span');
+    meta.className = 'text-[11px] font-medium text-gray3';
+    meta.textContent = attachment.sizeLabel || formatFileSize(attachment.size) || attachment.type || '已上傳檔案';
+
+    textWrap.append(name, meta);
+    left.append(iconWrap, textWrap);
+
+    const action = document.createElement('a');
+    action.className = 'px-3 py-2 text-[12px] btn-secondary shrink-0';
+    action.textContent = '查看／下載';
+    action.rel = 'noopener noreferrer';
+
+    if (hasOpenableAttachmentUrl(attachment.url)) {
+        action.href = attachment.url;
+        action.target = '_blank';
+    } else {
+        action.href = '#';
+        action.addEventListener('click', (event) => {
+            event.preventDefault();
+            showAppToast(emptyUrlToast, 'error');
+        });
+    }
+
+    row.append(left, action);
+    return row;
+}
+
+function renderAttachmentLinks(container, attachments, emptyLabel = '未上傳') {
+    if (!container) {
+        return;
+    }
+
+    const list = normalizeAttachmentList(attachments);
+    container.replaceChildren();
+
+    if (!list.length) {
+        const empty = document.createElement('p');
+        empty.className = 'text-cb3 text-gray3';
+        empty.textContent = emptyLabel;
+        container.appendChild(empty);
+        return;
+    }
+
+    list.forEach((attachment) => {
+        container.appendChild(createAttachmentCard(attachment));
+    });
+
+    if (typeof app().refreshIcons === 'function') {
+        app().refreshIcons(container);
+    }
+}
+
+function readAttachmentsFromUpload(scope = document) {
+    const root = getFileUploadRoot(scope);
+    if (!root) {
+        return [];
+    }
+
+    if (isMultipleFileUpload(root)) {
+        const raw = root.querySelector('[data-file-list]')?.value || '[]';
+        try {
+            return normalizeAttachmentList(JSON.parse(raw));
+        } catch (error) {
+            return [];
+        }
+    }
+
+    const single = readAttachmentFromUpload(scope);
+    return single ? [single] : [];
 }
 
 function readAttachmentFromUpload(scope = document) {
     const root = getFileUploadRoot(scope);
     if (!root) {
         return null;
+    }
+
+    if (isMultipleFileUpload(root)) {
+        return readAttachmentsFromUpload(scope)[0] || null;
     }
 
     const name = root.querySelector('[data-file-name]')?.value || '';
@@ -1242,13 +1412,80 @@ function readAttachmentFromUpload(scope = document) {
     const size = Number(root.querySelector('[data-file-size]')?.value || 0);
     const type = root.querySelector('[data-file-type]')?.value || '';
 
+    const url = root.querySelector('[data-file-url]')?.value || '';
+
     return {
         name,
         size,
         type,
         sizeLabel: formatFileSize(size),
-        url: '#',
+        url: url || '#',
     };
+}
+
+function setFileUploadValues(attachments, scope = document) {
+    const root = getFileUploadRoot(scope);
+    if (!root) {
+        return;
+    }
+
+    if (!isMultipleFileUpload(root)) {
+        setFileUploadValue(normalizeAttachmentList(attachments)[0] || null, scope);
+        return;
+    }
+
+    const list = normalizeAttachmentList(attachments);
+    const listInput = root.querySelector('[data-file-list]');
+    const listUi = root.querySelector('[data-file-list-ui]');
+    const template = root.querySelector('[data-file-item-template]');
+    const fileInput = root.querySelector('[data-file-input]');
+
+    if (listInput) {
+        listInput.value = JSON.stringify(list);
+    }
+    if (fileInput) {
+        fileInput.value = '';
+    }
+    if (!listUi || !template) {
+        return;
+    }
+
+    listUi.replaceChildren();
+    list.forEach((attachment, index) => {
+        const node = template.content.firstElementChild.cloneNode(true);
+        const nameEl = node.querySelector('[data-file-item-name]');
+        const metaEl = node.querySelector('[data-file-item-meta]');
+        const viewLink = node.querySelector('[data-file-view]');
+        const removeBtn = node.querySelector('[data-file-remove]');
+
+        if (nameEl) {
+            nameEl.textContent = attachment.name;
+        }
+        if (metaEl) {
+            metaEl.textContent = attachment.sizeLabel || formatFileSize(attachment.size) || attachment.type || '已選擇檔案';
+        }
+        if (viewLink) {
+            if (hasOpenableAttachmentUrl(attachment.url)) {
+                viewLink.href = attachment.url;
+                viewLink.target = '_blank';
+                viewLink.hidden = false;
+            } else {
+                viewLink.hidden = true;
+            }
+        }
+        if (removeBtn) {
+            removeBtn.addEventListener('click', () => {
+                const next = readAttachmentsFromUpload(root).filter((_, itemIndex) => itemIndex !== index);
+                setFileUploadValues(next, root);
+            });
+        }
+
+        listUi.appendChild(node);
+    });
+
+    if (typeof app().refreshIcons === 'function') {
+        app().refreshIcons(root);
+    }
 }
 
 function setFileUploadValue(attachment, scope = document) {
@@ -1257,19 +1494,27 @@ function setFileUploadValue(attachment, scope = document) {
         return;
     }
 
+    if (isMultipleFileUpload(root)) {
+        setFileUploadValues(attachment ? [attachment] : [], scope);
+        return;
+    }
+
     const dropzone = root.querySelector('[data-file-trigger]');
     const item = root.querySelector('[data-file-item]');
     const nameInput = root.querySelector('[data-file-name]');
     const sizeInput = root.querySelector('[data-file-size]');
     const typeInput = root.querySelector('[data-file-type]');
+    const urlInput = root.querySelector('[data-file-url]');
     const nameEl = root.querySelector('[data-file-item-name]');
     const metaEl = root.querySelector('[data-file-item-meta]');
+    const viewLink = root.querySelector('[data-file-view]');
     const fileInput = root.querySelector('[data-file-input]');
 
     if (!attachment || !attachment.name) {
         if (nameInput) nameInput.value = '';
         if (sizeInput) sizeInput.value = '';
         if (typeInput) typeInput.value = '';
+        if (urlInput) urlInput.value = '';
         if (fileInput) fileInput.value = '';
         if (dropzone) dropzone.hidden = false;
         if (item) item.hidden = true;
@@ -1279,9 +1524,19 @@ function setFileUploadValue(attachment, scope = document) {
     if (nameInput) nameInput.value = attachment.name;
     if (sizeInput) sizeInput.value = String(attachment.size || '');
     if (typeInput) typeInput.value = attachment.type || '';
+    if (urlInput) urlInput.value = hasOpenableAttachmentUrl(attachment.url) ? attachment.url : '';
     if (nameEl) nameEl.textContent = attachment.name;
     if (metaEl) {
         metaEl.textContent = attachment.sizeLabel || formatFileSize(attachment.size) || attachment.type || '已選擇檔案';
+    }
+    if (viewLink) {
+        if (hasOpenableAttachmentUrl(attachment.url)) {
+            viewLink.href = attachment.url;
+            viewLink.target = '_blank';
+            viewLink.hidden = false;
+        } else {
+            viewLink.hidden = true;
+        }
     }
     if (dropzone) dropzone.hidden = true;
     if (item) item.hidden = false;
@@ -1306,31 +1561,65 @@ function bindFileUpload(scope = document) {
 
     root.dataset.bound = 'true';
     const maxBytes = 2 * 1024 * 1024;
+    const multiple = isMultipleFileUpload(root);
+    let applying = false;
 
-    const applyFile = (file) => {
-        if (!file) {
+    const toAttachment = async (file) => ({
+        name: file.name,
+        size: file.size,
+        type: file.type || '',
+        sizeLabel: formatFileSize(file.size),
+        url: await readFileAsDataUrl(file),
+    });
+
+    const applyFiles = async (fileList) => {
+        const files = Array.from(fileList || []).filter(Boolean);
+        if (!files.length || applying) {
             return;
         }
 
-        if (file.size > maxBytes) {
-            showAppToast('檔案超過 2MB，請重新選擇', 'error');
+        const oversized = files.find((file) => file.size > maxBytes);
+        if (oversized) {
+            showAppToast(`「${oversized.name}」超過 2MB，請重新選擇`, 'error');
             fileInput.value = '';
             return;
         }
 
-        setFileUploadValue({
-            name: file.name,
-            size: file.size,
-            type: file.type || '',
-            sizeLabel: formatFileSize(file.size),
-            url: '#',
-        }, root);
+        applying = true;
+        try {
+            if (!multiple) {
+                setFileUploadValue(await toAttachment(files[0]), root);
+                return;
+            }
+
+            const current = readAttachmentsFromUpload(root);
+            const seen = new Set(current.map(attachmentFileKey));
+            const next = [...current];
+
+            for (const file of files) {
+                const attachment = await toAttachment(file);
+                const key = attachmentFileKey(attachment);
+                if (seen.has(key)) {
+                    continue;
+                }
+                seen.add(key);
+                next.push(attachment);
+            }
+
+            setFileUploadValues(next, root);
+        } catch (error) {
+            console.warn(error);
+            showAppToast('檔案讀取失敗，請再試一次', 'error');
+            fileInput.value = '';
+        } finally {
+            applying = false;
+        }
     };
 
     trigger.addEventListener('click', () => fileInput.click());
 
     fileInput.addEventListener('change', () => {
-        applyFile(fileInput.files?.[0] || null);
+        applyFiles(fileInput.files);
     });
 
     ['dragenter', 'dragover'].forEach((type) => {
@@ -1350,13 +1639,10 @@ function bindFileUpload(scope = document) {
     });
 
     trigger.addEventListener('drop', (event) => {
-        const file = event.dataTransfer?.files?.[0];
-        if (file) {
-            applyFile(file);
-        }
+        applyFiles(event.dataTransfer?.files);
     });
 
-    if (removeBtn) {
+    if (!multiple && removeBtn) {
         removeBtn.addEventListener('click', () => {
             setFileUploadValue(null, root);
         });
@@ -1389,6 +1675,8 @@ function collectOpportunityFormData(form) {
             || name === 'attachment_name'
             || name === 'attachment_size'
             || name === 'attachment_type'
+            || name === 'attachment_url'
+            || name === 'attachments_json'
         ) {
             return;
         }
@@ -1731,7 +2019,9 @@ function canCloseOpportunity() {
     return typeof app().roleCan === 'function' && app().roleCan('opportunity.close');
 }
 
-function getRowMoreActions(status) {
+function getRowMoreActions(row) {
+    const record = row?.dataset?.oppId ? getOpportunityById(row.dataset.oppId) : null;
+    const status = record ? getBaseOpportunityStatus(record) : (row?.dataset?.status || '');
     const canCreate = typeof app().roleCan === 'function' ? app().roleCan('opportunity.create') : false;
     const canActions = typeof app().roleCan === 'function' ? app().roleCan('opportunity.actions') : false;
     // 續期／取消：有建立權限的一般使用者也可；結案：僅總管理者可見
@@ -1750,7 +2040,7 @@ function getRowMoreActions(status) {
             action: 'renew',
             label: '申請續期',
             icon: 'refresh-cw',
-            enabled: (status === 'approved' || status === 'expiring') && canManageOwn,
+            enabled: canApplyRenewal(record) && canManageOwn,
         },
     ];
 
@@ -1768,14 +2058,16 @@ function getRowMoreActions(status) {
         label: '取消商機',
         icon: 'ban',
         danger: true,
-            enabled: ['approved', 'expiring', 'reviewing', 'renewing', 'rejected'].includes(status) && canManageOwn,
+        enabled: ['approved', 'expiring', 'reviewing', 'rejected'].includes(status)
+            && !isPendingRenewal(record)
+            && canManageOwn,
     });
 
     return actions;
 }
 
-function buildRowMoreMenuHtml(status) {
-    return getRowMoreActions(status).map((item) => {
+function buildRowMoreMenuHtml(row) {
+    return getRowMoreActions(row).map((item) => {
         const disabled = !item.enabled;
         return `
         <button
@@ -1941,7 +2233,7 @@ function bindRowMore(wrap) {
         }
 
         const row = wrap.closest('[data-opp-row]');
-        menu.innerHTML = buildRowMoreMenuHtml(row?.dataset.status || '');
+        menu.innerHTML = buildRowMoreMenuHtml(row);
         document.body.appendChild(menu);
         menu.hidden = false;
         menu.classList.add('is-open');
@@ -1974,7 +2266,9 @@ function bindAllRowMoreMenus(scope = document) {
 
 function updateRowActions(row) {
     const id = row.dataset.oppId;
-    const status = row.dataset.status;
+    const record = getOpportunityById(id);
+    const status = record ? getBaseOpportunityStatus(record) : row.dataset.status;
+    const displayStatus = record ? getDisplayStatus(record) : status;
     const meta = getListMeta();
     const actions = row.querySelector('[data-opp-actions]');
     if (!actions || !id) {
@@ -2008,23 +2302,28 @@ function updateRowActions(row) {
         editBtn.title = '繼續編輯暫存檔';
         editBtn.hidden = !canCreate;
         editBtn.classList.toggle('is-role-hidden', !canCreate);
+    } else if (isRejectedRenewal(record)) {
+        // 續期退回：先進入同一商機內容頁，再從「續期申請內容」編輯進續期補件
+        editBtn.href = reviewUrl;
+        editBtn.removeAttribute('data-requires');
+        editBtn.setAttribute('aria-label', `檢視 ${id}`);
+        editBtn.title = '檢視商機／續期補件';
+        editBtn.hidden = false;
+        editBtn.classList.remove('is-role-hidden');
     } else if (status === 'rejected') {
-        const record = getOpportunityById(id);
-        editBtn.href = isRejectedRenewal(record)
-            ? renewalPageUrl(id, meta)
-            : `${createUrl}?id=${encodeURIComponent(id)}`;
+        editBtn.href = `${createUrl}?id=${encodeURIComponent(id)}`;
         editBtn.removeAttribute('data-requires');
         editBtn.setAttribute('aria-label', `補件編輯 ${id}`);
-        editBtn.title = isRejectedRenewal(record) ? '補件編輯續期申請' : '補件編輯';
+        editBtn.title = '補件編輯';
         editBtn.hidden = !canCreate;
         editBtn.classList.toggle('is-role-hidden', !canCreate);
     } else {
         editBtn.href = reviewUrl;
         editBtn.removeAttribute('data-requires');
         editBtn.setAttribute('aria-label', `編輯 ${id}`);
-        editBtn.title = isReviewQueueStatus(status) && canReview
-            ? (status === 'renewing' ? '檢視／審核續期' : '檢視／審核商機')
-            : '編輯商機';
+        editBtn.title = isPendingRenewal(record) && canReview
+            ? '檢視／審核續期'
+            : (status === 'reviewing' && canReview ? '檢視／審核商機' : '編輯商機');
         editBtn.hidden = false;
         editBtn.classList.remove('is-role-hidden');
     }
@@ -2113,8 +2412,8 @@ function ensureRowMoreShell(row) {
 
 function buildOpportunityListRow(record) {
     const meta = getListMeta();
-    const status = record.status || 'reviewing';
-    const label = record.statusLabel || getStatusLabel(status);
+    const status = getDisplayStatus(record) || record.status || 'reviewing';
+    const label = getStatusLabel(status);
     const row = document.createElement('div');
     row.className = 'list-row opp-list-cols py-2';
     row.dataset.oppRow = '';
@@ -2141,10 +2440,10 @@ function buildOpportunityListRow(record) {
         <div class="min-w-0">
             <span class="status-pill" data-opp-status></span>
         </div>
-        <div class="min-w-0 whitespace-nowrap text-eb3 text-gray5 uppercase" data-opp-protection>${protectionForStatus(status, record.protection)}</div>
+        <div class="min-w-0 whitespace-nowrap text-eb3 text-gray5 uppercase" data-opp-protection>${protectionForStatus(getBaseOpportunityStatus(record), record.protection)}</div>
         <div class="min-w-0 whitespace-nowrap text-eb3 text-gray5" data-opp-created>—</div>
         <div class="min-w-0 inline-flex items-center justify-end gap-1" data-opp-actions>
-            <a href="${status === 'rejected' ? (isRejectedRenewal(record) ? renewalPageUrl(record.id, meta) : `${meta.createUrl || '/opportunities/create/'}?id=${encodeURIComponent(record.id)}`) : reviewUrl}" class="icon-action" data-opp-edit-action aria-label="編輯 ${record.id}" title="${isReviewQueueStatus(status) ? (status === 'renewing' ? '檢視／審核續期' : '檢視／審核商機') : '編輯商機'}">
+            <a href="${getBaseOpportunityStatus(record) === 'rejected' && !isRejectedRenewal(record) ? `${meta.createUrl || '/opportunities/create/'}?id=${encodeURIComponent(record.id)}` : reviewUrl}" class="icon-action" data-opp-edit-action aria-label="編輯 ${record.id}" title="${isRejectedRenewal(record) ? '檢視商機／續期補件' : (isPendingRenewal(record) ? '檢視／審核續期' : (status === 'reviewing' ? '檢視／審核商機' : (status === 'rejected' ? '補件編輯' : '編輯商機')))}">
                 <i data-lucide="square-pen" class="w-4 h-4"></i>
             </a>
             <div class="row-more" data-row-more>
@@ -2256,9 +2555,10 @@ function syncOpportunityListUi() {
             row.dataset.search = opportunitySearchText(id, record.customer_company, row.dataset.dealer, opportunitySalesName(record), opportunityReporterLabel(record));
             const protection = row.querySelector('[data-opp-protection]');
             if (protection) {
-                protection.textContent = protectionForStatus(record.status || row.dataset.status, record.protection);
+                protection.textContent = protectionForStatus(getBaseOpportunityStatus(record), record.protection);
             }
-            setRowStatusUi(row, record.status || row.dataset.status, record.statusLabel);
+            const displayStatus = getDisplayStatus(record);
+            setRowStatusUi(row, displayStatus, getStatusLabel(displayStatus));
             setRowSalesUi(row, record);
             setRowCreatedUi(row, record, seed[id]);
             setRowQueryMeta(row, record, seed[id]);
@@ -2402,8 +2702,9 @@ function renderReviewPage(record) {
 
     const pill = page.querySelector('[data-review-status-pill]');
     if (pill) {
-        pill.className = `status-pill status-${record.status}`;
-        pill.textContent = getStatusLabel(record.status) || record.statusLabel || record.status;
+        const displayStatus = getDisplayStatus(record);
+        pill.className = `status-pill status-${displayStatus}`;
+        pill.textContent = getStatusLabel(displayStatus) || record.statusLabel || displayStatus;
     }
 
     const renewalBlock = page.querySelector('[data-review-renewal]');
@@ -2415,7 +2716,22 @@ function renderReviewPage(record) {
             setText('[data-review-renewal-old]', renewal.oldProtection || record.protection || '—');
             setText('[data-review-renewal-new]', renewal.newProtection || '—');
             setText('[data-review-renewal-reason]', renewal.reason || '—');
-            setText('[data-review-renewal-file]', renewal.attachment?.name || '未上傳');
+            renderAttachmentLinks(
+                page.querySelector('[data-review-renewal-file]'),
+                renewal.attachments || renewal.attachment,
+                '未上傳',
+            );
+        }
+
+        const renewalEdit = renewalBlock.querySelector('[data-review-renewal-edit]');
+        if (renewalEdit) {
+            const canResubmitRenewal = isRejectedRenewal(record)
+                && typeof app().roleCan === 'function'
+                && app().roleCan('opportunity.create');
+            renewalEdit.hidden = !canResubmitRenewal;
+            if (canResubmitRenewal) {
+                renewalEdit.href = `${page.dataset.renewUrl || '/opportunities/renew/'}?id=${encodeURIComponent(record.id)}`;
+            }
         }
     }
 
@@ -2483,7 +2799,14 @@ function renderReviewPage(record) {
             attachmentMeta.textContent = attachment.sizeLabel || formatFileSize(attachment.size) || attachment.type || '已上傳檔案';
         }
         if (attachmentLink) {
-            attachmentLink.href = attachment.url || '#';
+            if (hasOpenableAttachmentUrl(attachment.url)) {
+                attachmentLink.href = attachment.url;
+                attachmentLink.target = '_blank';
+                attachmentLink.rel = 'noopener noreferrer';
+            } else {
+                attachmentLink.href = '#';
+                attachmentLink.removeAttribute('target');
+            }
         }
     } else {
         if (attachmentWrap) {
@@ -2503,9 +2826,17 @@ function renderReviewPage(record) {
     const cancelEditBtn = page.querySelector('[data-review-cancel-edit]');
     const cancelLink = page.querySelector('[data-review-cancel]');
     const canReview = typeof app().roleCan === 'function' && app().roleCan('opportunity.review');
-    const isReviewing = isReviewQueueStatus(record.status);
-    const hasReview = Boolean(record.review);
-    const allowAdminEdit = canReview && !['draft', 'completed'].includes(record.status);
+    const isReviewing = isInReviewQueue(record);
+    const displayStatus = getDisplayStatus(record);
+    const renewalReview = record.renewal?.review || null;
+    const hasReview = isRejectedRenewal(record) ? Boolean(renewalReview || record.review) : Boolean(record.review);
+    // 續期退回補件：等經銷商補件再送，總管理者不可再改審核結果
+    if (isRejectedRenewal(record)) {
+        delete page.dataset.reviewEditing;
+    }
+    const allowAdminEdit = canReview
+        && !isRejectedRenewal(record)
+        && !['draft', 'completed'].includes(getBaseOpportunityStatus(record));
     const isEditing = allowAdminEdit && page.dataset.reviewEditing === '1' && !isReviewing;
     // 審核中／續期審核中：空白表單；已審核：結果卡；按「修改審核」後才展開表單
     const showForm = allowAdminEdit && (isReviewing || isEditing);
@@ -2525,25 +2856,39 @@ function renderReviewPage(record) {
 
     if (showSummary) {
         if (isReviewing) {
-            setText('[data-review-summary-title]', getStatusLabel(record.status) || record.statusLabel || '審核中');
+            setText('[data-review-summary-title]', getStatusLabel(displayStatus) || '審核中');
             setText('[data-review-done-result]', '-');
-            setText('[data-review-done-status]', dash(getStatusLabel(record.status) || record.statusLabel));
+            setText('[data-review-done-status]', dash(getStatusLabel(displayStatus)));
             setText('[data-review-done-sales]', '-');
             setText('[data-review-done-note]', '-');
+        } else if (isRejectedRenewal(record)) {
+            setText('[data-review-summary-title]', getStatusLabel('renewal_rejected'));
+            setText('[data-review-done-result]', dash(renewalReview?.resultLabel || record.review?.resultLabel));
+            setText('[data-review-done-status]', dash(getStatusLabel('renewal_rejected')));
+            setText('[data-review-done-sales]', dash(renewalReview?.salesLabel || record.review?.salesLabel));
+            setText('[data-review-done-note]', dash(renewalReview?.note || record.review?.note));
         } else {
-            setText('[data-review-summary-title]', hasReview ? '已完成審核' : (getStatusLabel(record.status) || record.statusLabel || '-'));
+            setText('[data-review-summary-title]', hasReview ? '已完成審核' : (getStatusLabel(displayStatus) || '-'));
             setText('[data-review-done-result]', dash(record.review?.resultLabel));
-            setText('[data-review-done-status]', dash(getStatusLabel(record.status) || record.statusLabel));
+            setText('[data-review-done-status]', dash(getStatusLabel(displayStatus)));
             setText('[data-review-done-sales]', dash(record.review?.salesLabel));
             setText('[data-review-done-note]', dash(record.review?.note));
         }
     }
 
+    // 續期審核用專用下拉；一般商機審核用原本 8 項
+    page.querySelectorAll('[data-review-result-scope="opportunity"]').forEach((el) => {
+        el.hidden = isPendingRenewal(record);
+    });
+    page.querySelectorAll('[data-review-result-scope="renewal"]').forEach((el) => {
+        el.hidden = !isPendingRenewal(record);
+    });
+
     if (hint) {
         hint.hidden = !showForm;
         if (showForm) {
             if (isPendingRenewal(record)) {
-                hint.textContent = '此為續期申請，僅總管理者可操作。審核通過後保護到期日才會延長 90 天。';
+                hint.textContent = '此為續期申請，僅總管理者可操作。審核通過需確認／指派承接業務，保護到期日才會延長 90 天。';
             } else if (isEditing) {
                 hint.textContent = '修改後送出，會依新的審核結果更新案件狀態。';
             } else {
@@ -2552,16 +2897,13 @@ function renderReviewPage(record) {
         }
     }
 
-    const pendingRenewalForm = isPendingRenewal(record);
-
     page.querySelectorAll('[data-review-result-field], [data-review-note-field]').forEach((el) => {
         el.hidden = !showForm;
     });
 
     const salesField = page.querySelector('[data-review-sales-field]');
     if (salesField) {
-        // 續期審核不改指派，隱藏承接業務
-        salesField.hidden = !showForm || pendingRenewalForm;
+        salesField.hidden = !showForm;
     }
 
     if (showForm && form) {
@@ -2583,12 +2925,10 @@ function renderReviewPage(record) {
             }
         }
 
-        if (!pendingRenewalForm) {
-            if (record.oem_sales_id) {
-                setFormSelectByValue(salesSelect, record.oem_sales_id);
-            } else {
-                clearFormSelect(salesSelect, '請選擇承接業務');
-            }
+        if (record.oem_sales_id) {
+            setFormSelectByValue(salesSelect, record.oem_sales_id);
+        } else {
+            clearFormSelect(salesSelect, '請選擇承接業務');
         }
     }
 
@@ -2614,7 +2954,7 @@ function renderReviewPage(record) {
 
     if (resubmitLink) {
         // 總管理者用「修改審核」；一般使用者才顯示「前往補件編輯」
-        const canResubmit = record.status === 'rejected'
+        const canResubmit = (record.status === 'rejected' || isRejectedRenewal(record))
             && typeof app().roleCan === 'function'
             && app().roleCan('opportunity.create')
             && !canReview
@@ -2742,13 +3082,18 @@ function initReviewPage() {
             return;
         }
 
-        if (['draft', 'completed'].includes(current.status)) {
+        if (['draft', 'completed'].includes(getBaseOpportunityStatus(current))) {
             showAppToast('此商機狀態目前無法變更審核結果', 'error');
             return;
         }
 
-        // 已審核案件需先按「修改審核」才可送出
-        if (!isReviewQueueStatus(current.status) && page.dataset.reviewEditing !== '1') {
+        if (isRejectedRenewal(current)) {
+            showAppToast('續期退回補件中，請待經銷商補件再送後再審核', 'error');
+            return;
+        }
+
+        // 已審核案件需先按「修改審核」才可送出（續期待審可視為審核佇列）
+        if (!isInReviewQueue(current) && page.dataset.reviewEditing !== '1') {
             showAppToast('請先點選修改審核', 'error');
             return;
         }
@@ -2770,65 +3115,98 @@ function initReviewPage() {
             : null;
 
         const pendingRenewal = isPendingRenewal(current) ? current.renewal : null;
+        const renewalOutcome = resultOption?.dataset.renewalStatus || '';
+        const requiresSales = pendingRenewal
+            ? renewalOutcome === 'approved'
+            : (resultOption?.dataset.status || 'approved') === 'approved';
         let valid = true;
         if (!resultValue) {
             resultSelect?.querySelector('[data-form-select-trigger]')?.classList.add('form-error');
             valid = false;
         }
-        if (!pendingRenewal && !salesValue && (resultOption?.dataset.status || 'approved') === 'approved') {
+        if (!salesValue && requiresSales) {
             salesSelect?.querySelector('[data-form-select-trigger]')?.classList.add('form-error');
             valid = false;
         }
 
         if (!valid) {
             showAppToast(
-                resultValue && !pendingRenewal ? '審核通過需指派承接業務' : '請完成必填的審核欄位',
+                resultValue ? '審核通過需指派承接業務' : '請完成必填的審核欄位',
                 'error'
             );
             focusFirstOpportunityError(form);
             return;
         }
 
-        const nextStatus = resultOption?.dataset.status || 'approved';
-        const nextStatusLabel = resultOption?.dataset.statusLabel || getStatusLabel(nextStatus);
         const resultLabel = resultOption?.dataset.label || resultValue;
-        const nextSalesId = pendingRenewal ? (current.oem_sales_id || '') : salesValue;
-        const salesLabel = pendingRenewal
-            ? (opportunitySalesName(current) || current.review?.salesLabel || '')
-            : (salesOption?.dataset.label || salesValue);
+        const nextSalesId = salesValue || current.oem_sales_id || '';
+        const salesLabel = salesOption?.dataset.label || salesValue || opportunitySalesName(current) || '';
+        const reviewPayload = {
+            result: resultValue,
+            resultLabel,
+            sales: nextSalesId,
+            salesLabel,
+            note: String(note?.value || '').trim(),
+            reviewedAt: formatDateTime(),
+        };
 
+        let nextStatus = getBaseOpportunityStatus(current);
+        let nextStatusLabel = getStatusLabel(nextStatus);
         let nextProtection = current.protection;
         let nextRenewal = current.renewal || null;
+        let nextReview = current.review || null;
 
         if (pendingRenewal) {
-            if (nextStatus === 'approved') {
+            const baseStatus = pendingRenewal.previousStatus || getBaseOpportunityStatus(current) || 'approved';
+            nextProtection = pendingRenewal.oldProtection || current.protection;
+            if (renewalOutcome === 'approved') {
+                nextStatus = resultOption?.dataset.status || 'approved';
+                nextStatusLabel = getStatusLabel(nextStatus);
                 nextProtection = pendingRenewal.newProtection
                     || addDaysIso(RENEWAL_DAYS, parseIsoDate(pendingRenewal.oldProtection || current.protection));
-                nextRenewal = { ...pendingRenewal, status: 'approved' };
+                nextRenewal = {
+                    ...pendingRenewal,
+                    status: 'approved',
+                    review: reviewPayload,
+                };
+            } else if (renewalOutcome === 'rejected') {
+                nextStatus = baseStatus;
+                nextStatusLabel = getStatusLabel(baseStatus);
+                nextRenewal = {
+                    ...pendingRenewal,
+                    status: 'rejected',
+                    review: reviewPayload,
+                };
             } else {
-                nextProtection = pendingRenewal.oldProtection || current.protection;
-                nextRenewal = { ...pendingRenewal, status: nextStatus === 'rejected' ? 'rejected' : 'closed' };
+                // closed／不同意續期：維持原商機狀態，不延長保護
+                nextStatus = baseStatus;
+                nextStatusLabel = getStatusLabel(baseStatus);
+                nextRenewal = {
+                    ...pendingRenewal,
+                    status: renewalOutcome || 'closed',
+                    review: reviewPayload,
+                };
             }
-        } else if (nextStatus === 'approved') {
-            nextProtection = current.protection !== '-' ? current.protection : addDaysIso(RENEWAL_DAYS);
+            // 續期審核不覆寫原本商機審核紀錄
+            nextReview = current.review || null;
+        } else {
+            nextStatus = resultOption?.dataset.status || 'approved';
+            nextStatusLabel = resultOption?.dataset.statusLabel || getStatusLabel(nextStatus);
+            if (nextStatus === 'approved') {
+                nextProtection = current.protection !== '-' ? current.protection : addDaysIso(RENEWAL_DAYS);
+            }
+            nextReview = reviewPayload;
         }
 
-        const wasReviewed = Boolean(current.review) && !isReviewQueueStatus(current.status);
+        const wasReviewed = Boolean(current.review) && !isInReviewQueue(current);
         const updated = upsertOpportunity({
             ...current,
             status: nextStatus,
             statusLabel: nextStatusLabel,
             protection: protectionForStatus(nextStatus, nextProtection),
             renewal: nextRenewal,
-            oem_sales_id: nextSalesId,
-            review: {
-                result: resultValue,
-                resultLabel,
-                sales: nextSalesId,
-                salesLabel,
-                note: String(note?.value || '').trim(),
-                reviewedAt: formatDateTime(),
-            },
+            oem_sales_id: nextSalesId || current.oem_sales_id || '',
+            review: nextReview,
         });
 
         delete page.dataset.reviewEditing;
@@ -3359,8 +3737,9 @@ function initRenewPage() {
 
     const pill = page.querySelector('[data-renew-status-pill]');
     if (pill) {
-        pill.className = `status-pill status-${record.status}`;
-        pill.textContent = getStatusLabel(record.status) || record.statusLabel || record.status;
+        const displayStatus = getDisplayStatus(record);
+        pill.className = `status-pill status-${displayStatus}`;
+        pill.textContent = getStatusLabel(displayStatus) || record.statusLabel || displayStatus;
     }
 
     const oldProtectionEl = page.querySelector('[data-renew-old-protection]');
@@ -3374,6 +3753,10 @@ function initRenewPage() {
     }
 
     bindFileUpload(form);
+
+    if (isRejectedRenewal(record)) {
+        setFileUploadValues(record.renewal?.attachments || record.renewal?.attachment || [], form);
+    }
 
     function selectedDays() {
         return RENEWAL_DAYS;
@@ -3431,11 +3814,15 @@ function initRenewPage() {
     }
 
     function fillConfirm() {
-        const attachment = readAttachmentFromUpload(form);
+        const attachments = readAttachmentsFromUpload(form);
         setText('[data-renew-confirm-days]', selectedDaysLabel());
         setText('[data-renew-confirm-protection]', updateNewProtection());
         setText('[data-renew-confirm-reason]', String(reasonInput?.value || '').trim() || '—');
-        setText('[data-renew-confirm-file]', attachment?.name || '未上傳');
+        renderAttachmentLinks(
+            page.querySelector('[data-renew-confirm-file]'),
+            attachments,
+            '未上傳',
+        );
     }
 
     nextBtn?.addEventListener('click', () => {
@@ -3460,22 +3847,28 @@ function initRenewPage() {
         }
 
         const nextProtection = updateNewProtection();
+        const baseStatus = getBaseOpportunityStatus(record) || record.status || 'approved';
         upsertOpportunity({
             ...record,
+            // 商機狀態與續期狀態分開：不改寫為 renewing
+            status: baseStatus,
+            statusLabel: getStatusLabel(baseStatus),
             protection: oldProtection,
-            status: 'renewing',
-            statusLabel: getStatusLabel('renewing'),
-            review: null,
-            renewal: {
-                days: selectedDays(),
-                oldProtection,
-                newProtection: nextProtection,
-                previousStatus: record.renewal?.previousStatus || record.status,
-                reason: String(reasonInput?.value || '').trim(),
-                attachment: readAttachmentFromUpload(form),
-                submittedAt: formatDateTime(),
-                status: 'pending',
-            },
+            renewal: (() => {
+                const attachments = readAttachmentsFromUpload(form);
+                return {
+                    days: selectedDays(),
+                    oldProtection,
+                    newProtection: nextProtection,
+                    previousStatus: baseStatus,
+                    reason: String(reasonInput?.value || '').trim(),
+                    attachments,
+                    attachment: attachments[0] || null,
+                    submittedAt: formatDateTime(),
+                    status: 'pending',
+                    review: null,
+                };
+            })(),
         });
 
         await showSubmitReviewNotice('已送出續期申請，進入續期審核中');
